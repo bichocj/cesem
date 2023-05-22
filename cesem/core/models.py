@@ -154,7 +154,9 @@ class ProductionUnit(models.Model):
 
 
 class VisitAnimal(models.Model):
-    visited_at = models.DateField("fecha de creación")
+    visited_at = models.DateField(
+        "fecha de creación", blank=True, null=True
+    )  # Because current XLS doesn't have all dates
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
@@ -203,8 +205,12 @@ class VisitAnimalDetails(models.Model):
 
 
 class VisitGrass(models.Model):
-    visited_at = models.DateField("fecha de creacion")
-    production_unit = models.ForeignKey(ProductionUnit, on_delete=models.CASCADE)
+    visited_at = models.DateField(
+        "fecha de creacion", blank=True, null=True
+    )  # Because current XLS doesn't have all dates
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
     utm_coordenate = models.CharField(
         "coordenadas UTM anuales", max_length=30, null=True, blank=True
     )

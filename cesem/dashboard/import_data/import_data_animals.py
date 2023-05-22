@@ -12,12 +12,12 @@ from core.models import (
 )
 import pandas as pd
 
-from .utils import HelperCommand
+from dashboard.import_data.utils.utils import HelperImport
 
 baset_path = os.path.join(settings.BASE_DIR, "core", "management", "commands", "files")
 
 
-class Command(HelperCommand):
+class ImportAnimals(HelperImport):
     help = "import xls data"
     diagnostic_names = {}
     sickness_observation_names = {}
@@ -65,13 +65,23 @@ class Command(HelperCommand):
         # if math.isnan(val):
         return val
 
-    def handle(self, *args, **kwargs):
-        creates_if_none = kwargs["creates_if_none"]
+    def nan_if_nat(self, val):
+        if type(val) is pd._libs.tslibs.nattype.NaTType:
+            return "nan"
+        else:
+            return val
 
-        path = os.path.join(baset_path, "bd_xyz.xls")
+    def none_if_nat(self, val):
+        if type(val) is pd._libs.tslibs.nattype.NaTType:
+            return None
+        else:
+            return val
+
+    def execute(self, file, creates_if_none=True):
+        # path = os.path.join(baset_path, "bd_xyz.xls")
         # columns format ['Nº', 'MES', 'FECHA', 'ZONA', 'COMUNIDAD ', 'PDE-2019', 'SECTOR/IRRIGACION DE LA UP ', 'TIPOLOGIA DE UP', 'UP  ES PILOTO?', 'NOMBRE RESPONSABLE UP', 'Nº DNI', 'SEXO RUP', 'NOMBRE DEL INTEGRANTE DE LA UP', 'Nº DNI.1', 'SEXO IUP', 'SECTOR/IRRIGACION DEL BENEFICIARIO', 'NOMBRE DE ESPECIALISTA', 'RESPONSABLE DE ACTIVIDAD', 'ACTIVIDAD REALIZADA', 'SECCION 1', 'ENFERMEDAD/TRANSTORNO/OBSERVACION', 'DIAGNOSTICO', 'VACA', 'VAQUILLONA', 'VAQUILLA', 'TERNERO', 'TORETE', 'TORO', 'VACUNOS', 'OVINOS', 'ALPACAS', 'LLAMAS', 'CANES', '1 FARMACOS /SALES', 'CANTIDAD', 'U.M.', '2 FARMACOS /SALES', 'CANTIDAD.1', 'U.M..1', '3 FARMACOS /SALES', 'CANTIDAD.2', 'U.M..2', '4 FARMACOS /SALES', 'CANTIDAD.3', 'U.M..3']
         # the order and names should be the same in xls file
-        df = pd.read_excel(path)
+        df = pd.read_excel(file)
         data = df.to_dict()
         rows_count = len(data["Nº"].keys())
         visits = []
@@ -79,26 +89,32 @@ class Command(HelperCommand):
         for i in range(rows_count):
             # data['Nº'][i]
             # data['MES'][i]
-            data_visited_at = data["FECHA"][i]
-            data_zone = data["ZONA"][i]
-            data_community = data["COMUNIDAD "][i]
+            data_visited_at = self.none_if_nat(data["FECHA"][i])
+            data_zone = self.nan_if_nat(data["ZONA"][i])
+            data_community = self.nan_if_nat(data["COMUNIDAD "][i])
             # data['PDE-2019'][i]
-            data_sector = data["SECTOR/IRRIGACION DE LA UP "][i]
-            data_tipology = data["TIPOLOGIA DE UP"][i]
-            data_is_pilot = data["UP ES PILOTO?"][i] == "SI"
-            data_up_responsable_name = data["NOMBRE RESPONSABLE UP"][i]
-            data_up_responsable_dni = data["Nº DNI"][i]
-            data_up_responsable_sex = data["SEXO RUP"][i]
-            data_up_member_name = data["NOMBRE DEL INTEGRANTE DE LA UP"][i]
-            data_up_member_dni = data["Nº DNI.1"][i]
-            data_up_member_sex = data["SEXO IUP"][i]
+            data_sector = self.nan_if_nat(data["SECTOR/IRRIGACION DE LA UP "][i])
+            data_tipology = self.nan_if_nat(data["TIPOLOGIA DE UP"][i])
+            data_is_pilot = self.nan_if_nat(data["UP ES PILOTO?"][i]) == "SI"
+            data_up_responsable_name = self.nan_if_nat(data["NOMBRE RESPONSABLE UP"][i])
+            data_up_responsable_dni = self.nan_if_nat(data["Nº DNI"][i])
+            data_up_responsable_sex = self.nan_if_nat(data["SEXO RUP"][i])
+            data_up_member_name = self.nan_if_nat(
+                data["NOMBRE DEL INTEGRANTE DE LA UP"][i]
+            )
+            data_up_member_dni = self.nan_if_nat(data["Nº DNI.1"][i])
+            data_up_member_sex = self.nan_if_nat(data["SEXO IUP"][i])
             # data['SECTOR/IRRIGACION DEL BENEFICIARIO'][i]
-            data_employ_specialist = data["NOMBRE DE ESPECIALISTA"][i]
-            data_employ_responsable = data["RESPONSABLE DE ACTIVIDAD"][i]
-            data_activity = data["ACTIVIDAD REALIZADA"][i]
+            data_employ_specialist = self.nan_if_nat(data["NOMBRE DE ESPECIALISTA"][i])
+            data_employ_responsable = self.nan_if_nat(
+                data["RESPONSABLE DE ACTIVIDAD"][i]
+            )
+            data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
             # data['SECCION 1'][i]
-            data_sickness_observation = data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
-            data_diagnostic = data["DIAGNOSTICO"][i]
+            data_sickness_observation = self.nan_if_nat(
+                data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
+            )
+            data_diagnostic = self.nan_if_nat(data["DIAGNOSTICO"][i])
             # data['VACA'][i]
             # data['VAQUILLONA'][i]
             # data['VAQUILLA'][i]
@@ -168,6 +184,7 @@ class Command(HelperCommand):
                         canes=canes,
                     )
                 )
+                print("Registrando visita de animales Nº: ", i + 1)
 
             except Zone.DoesNotExist:
                 print("row", str(i + 1), "not found zone:", data_zone)

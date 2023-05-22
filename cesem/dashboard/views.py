@@ -8,6 +8,7 @@ from .api_views.sectores import SectorViewSet, SectorPathSerializer
 from .api_views.communities import CommunityViewSet, CommunityPathSerializer
 from .api_views.activities import ActivityViewSet, ActivityPathSerializer
 from .api_views.visits_animals import VisitAnimalViewSet, VisitAnimalPathSerializer
+from .api_views.visits_grass import VisitGrassViewSet, VisitGrassPathSerializer
 from .api_views.diagnostics import DiagnosticViewSet, DiagnosticPathSerializer
 from .api_views.sickness_observations import (
     SicknessObservationViewSet,
@@ -22,12 +23,13 @@ from .api_views.production_units import (
 
 @login_required
 def home_view(request):
-    message = "hello low"
+    message = "Hello"
     return render(request, "dashboard/home.html", locals())
 
 
 people_path = PersonPathSerializer.get_path()
 visit_path = VisitAnimalPathSerializer.get_path()
+visit_grass_path = VisitGrassPathSerializer.get_path()
 diagnistic_path = DiagnosticPathSerializer.get_path()
 sickness_observations_path = SicknessObservationPathSerializer.get_path()
 activities_path = ActivityPathSerializer.get_path()
@@ -46,6 +48,7 @@ router.register(r"%s" % SectorPathSerializer.get_path(), SectorViewSet)
 router.register(r"%s" % communities_path, CommunityViewSet, basename=communities_path)
 router.register(r"%s" % activities_path, ActivityViewSet, basename=activities_path)
 router.register(r"%s" % visit_path, VisitAnimalViewSet, basename=visit_path)
+router.register(r"%s" % visit_grass_path, VisitGrassViewSet, basename=visit_grass_path)
 router.register(r"%s" % diagnistic_path, DiagnosticViewSet, basename=diagnistic_path)
 router.register(
     r"%s" % sickness_observations_path,

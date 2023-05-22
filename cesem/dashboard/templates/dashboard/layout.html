@@ -2,181 +2,182 @@
 {% load dashboard_extras %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <!-- <link rel="icon" href="../../favicon.ico"> -->
-    <link
-      rel="canonical"
-      href="https://getbootstrap.com/docs/3.4/examples/dashboard/"
-    />
 
-    <title>{% block title %}{% endblock %}</title>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <!-- <link rel="icon" href="../../favicon.ico"> -->
+  <link rel="canonical" href="https://getbootstrap.com/docs/3.4/examples/dashboard/" />
 
-    <!-- Bootstrap core CSS -->
+  <title>{% block title %}{% endblock %}</title>
 
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'rest_framework/css/bootstrap.min.css' %}"
-    />
+  <!-- Bootstrap core CSS -->
 
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link
-      href="https://getbootstrap.com/docs/3.4/assets/css/ie10-viewport-bug-workaround.css"
-      rel="stylesheet"
-    />
+  <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/bootstrap.min.css' %}" />
 
-    <!-- Custom styles for this template -->
-    <link
-      href="https://getbootstrap.com/docs/3.4/examples/dashboard/dashboard.css"
-      rel="stylesheet"
-    />
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <link href="https://getbootstrap.com/docs/3.4/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap-tweaks.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/prettify.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/default.css" %}"/>
+  <!-- Custom styles for this template -->
+  <link href="https://getbootstrap.com/docs/3.4/examples/dashboard/dashboard.css" rel="stylesheet" />
 
-    {% block style %} {% endblock %}
-    <link href="{% static 'dashboard/css/custom.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="{% static " rest_framework/css/bootstrap-tweaks.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static " rest_framework/css/prettify.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static " rest_framework/css/default.css" %}" />
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9
+  {% block style %} {% endblock %}
+  <link href="{% static 'dashboard/css/custom.css' %}" rel="stylesheet" />
+
+  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+  <!--[if lt IE 9
       ]><script src="../../assets/js/ie8-responsive-file-warning.js"></script
     ><![endif]-->
-    <script src="https://getbootstrap.com/docs/3.4/assets/js/ie-emulation-modes-warning.js"></script>
+  <script src="https://getbootstrap.com/docs/3.4/assets/js/ie-emulation-modes-warning.js"></script>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
       <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
     <![endif]-->
-  </head>
+</head>
 
-  <body>
-    <nav class="navbar navbar navbar-fixed-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button
-            type="button"
-            class="navbar-toggle collapsed"
-            data-toggle="collapse"
-            data-target="#navbar"
-            aria-expanded="false"
-            aria-controls="navbar"
-          >
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">CESEM</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url 'logout' %}">Salir</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
+<body>
+  <nav class="navbar navbar navbar-fixed-top">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">            
-            General
-          </strong>
-          <ul class="nav nav-sidebar">
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
-              href="{% url 'dashboard:reports_animals'%}">
-                Reporte de Animales
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'visits-animals'|active_if_path_match:request}}"
-              href="{% url 'dashboard:visits-animals-list'%}">
-                Vista de Animales</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'production_units'|active_if_path_match:request}}"
-              href="{% url 'dashboard:production_units-list'%}">
-                Unidades Productivas
-              </a>
-            </li>
-          </ul>
-          <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
-            Configuraciones
-          </strong>
-          <ul class="nav nav-sidebar">
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'people'|active_if_path_match:request}}"
-              href="{% url 'dashboard:people-list'%}">
-                Personas
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'zone'|active_if_path_match:request}}"
-              href="/api/zones/"> Zonas </a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'sectors'|active_if_path_match:request}}"
-              href="/api/sectors/"> Sectores </a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'communities'|active_if_path_match:request}}"
-              href="/api/communities/"> Comunidades </a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'activities'|active_if_path_match:request}}" 
-              href="{% url 'dashboard:activities-list' %}">
-                Actividades
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="bd-links-link d-inline-block rounded {{'sickness_observations'|active_if_path_match:request}}"
-                href="{% url 'dashboard:sickness_observations-list' %}"
-              >
-                Enfermedades / Obrsevaciones
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'diagnostics'|active_if_path_match:request}}"
-              href="{% url 'dashboard:diagnostics-list' %}">
-                Diagnosticos
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'drugs'|active_if_path_match:request}}"
-              href="{% url 'dashboard:drugs-list' %}">
-                Farmacos
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          {% block body %}{% endblock %}
-        </div>
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+          aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">CESEM</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{% url 'logout' %}">Salir</a></li>
+        </ul>
       </div>
     </div>
+  </nav>
 
-    <!-- Bootstrap core JavaScript
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
+          General
+        </strong>
+        <ul class="nav nav-sidebar">
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
+              href="{% url 'dashboard:reports_animals'%}">
+              Reporte de Animales
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'visits-animals'|active_if_path_match:request}}"
+              href="{% url 'dashboard:visits-animals-list'%}">
+              Visita de Animales</a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'visits-grass'|active_if_path_match:request}}"
+              href="{% url 'dashboard:visits-grass-list'%}">
+              Visita de Pastos</a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'production_units'|active_if_path_match:request}}"
+              href="{% url 'dashboard:production_units-list'%}">
+              Unidades Productivas
+            </a>
+          </li>
+        </ul>
+        <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
+          Configuraciones
+        </strong>
+        <ul class="nav nav-sidebar">
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'people'|active_if_path_match:request}}"
+              href="{% url 'dashboard:people-list'%}">
+              Personas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'zone'|active_if_path_match:request}}" href="/api/zones/">
+              Zonas </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'sectors'|active_if_path_match:request}}"
+              href="/api/sectors/"> Sectores </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'communities'|active_if_path_match:request}}"
+              href="/api/communities/"> Comunidades </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'activities'|active_if_path_match:request}}"
+              href="{% url 'dashboard:activities-list' %}">
+              Actividades
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'sickness_observations'|active_if_path_match:request}}"
+              href="{% url 'dashboard:sickness_observations-list' %}">
+              Enfermedades / Observaciones
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'diagnostics'|active_if_path_match:request}}"
+              href="{% url 'dashboard:diagnostics-list' %}">
+              Diagnosticos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'drugs'|active_if_path_match:request}}"
+              href="{% url 'dashboard:drugs-list' %}">
+              Farmacos
+            </a>
+          </li>
+        </ul>
+        <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
+          Subida de información
+        </strong>
+        <ul class="nav nav-sidebar">
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
+              href="{% url 'dashboard:import_animal_visits'%}">
+              Animales
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
+              href="{% url 'dashboard:import_grass_visits'%}">
+              Pastos </a>
+          </li>
+        </ul>
+      </div>
+      <div class=" col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        {% block body %}{% endblock %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    {% block script %}
-    <script src="{% static 'rest_framework/js/jquery-3.5.1.min.js' %}"></script>
-    <script src="{% static 'rest_framework/js/bootstrap.min.js' %}"></script>
-    
-    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <!-- <script src="../../assets/js/vendor/holder.min.js"></script> -->
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
-     {% endblock %}
-  </body>
+  <!-- Placed at the end of the document so the pages load faster -->
+  {% block script %}
+  <script src="{% static 'rest_framework/js/jquery-3.5.1.min.js' %}"></script>
+  <script src="{% static 'rest_framework/js/bootstrap.min.js' %}"></script>
+
+  <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+  <!-- <script src="../../assets/js/vendor/holder.min.js"></script> -->
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
+  {% endblock %}
+</body>
+
 </html>

@@ -4,6 +4,7 @@ from core.models import (
     Person,
     VisitAnimal,
     VisitAnimalDetails,
+    VisitGrass,
     Community,
     Diagnostic,
     Drug,
@@ -39,3 +40,4 @@ class VisitAdmin(admin.ModelAdmin):
 
 
 admin.site.register(VisitAnimal, VisitAdmin)
+admin.site.register(VisitGrass)

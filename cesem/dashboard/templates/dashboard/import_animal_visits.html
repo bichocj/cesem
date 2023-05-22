@@ -1,0 +1,41 @@
+{% extends 'dashboard/layout.html' %}
+<br />
+{% load dashboard_extras %}
+<br />
+{% block title %}CESEM | administrador{% endblock %}
+
+{% block style %}
+<style>
+  table {
+    background-color: white;
+  }
+
+  th {
+    vertical-align: bottom;
+    text-align: center;
+  }
+
+  th span {
+    -ms-writing-mode: tb-rl;
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+  }
+</style>
+
+{% endblock %}
+{% block body %}
+
+<h2>Ingreso de visitas de animales</h2>
+
+<body>
+  <form action="#" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="excel_file" required>
+    <br><br>
+    <input type="submit" value="Subir Archivo">
+  </form>
+</body>
+
+{% endblock %}
