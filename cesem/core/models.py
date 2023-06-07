@@ -151,6 +151,7 @@ class ProductionUnit(models.Model):
     class Meta:
         verbose_name = "Unidad de Producción"
         verbose_name_plural = "Unidades de Producción"
+        ordering = ("zone", "person_responsable")
 
 
 class VisitAnimal(models.Model):
@@ -192,6 +193,7 @@ class VisitAnimal(models.Model):
     class Meta:
         verbose_name = "visita animal"
         verbose_name_plural = "visitas animales"
+        ordering = ("visited_at", "production_unit")
 
 
 class VisitAnimalDetails(models.Model):
