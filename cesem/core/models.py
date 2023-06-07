@@ -57,6 +57,7 @@ class Sector(models.Model):
     class Meta:
         verbose_name = "sector"
         verbose_name_plural = "sectores"
+        ordering = ("name",)
 
     def __str__(self) -> str:
         return self.name

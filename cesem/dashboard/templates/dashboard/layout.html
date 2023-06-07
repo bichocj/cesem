@@ -149,13 +149,13 @@
         <ul class="nav nav-sidebar">
           <li class="nav-item">
             <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
-              href="{% url 'dashboard:import_animal_visits'%}">
+              href="{% url 'dashboard:upload_file' 'animales' %}">
               Animales
             </a>
           </li>
           <li class="nav-item">
             <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
-              href="{% url 'dashboard:import_grass_visits'%}">
+              href="{% url 'dashboard:upload_file' 'pastos' %}">
               Pastos </a>
           </li>
         </ul>

@@ -10,6 +10,7 @@ from core.models import (
     Drug,
     SicknessObservation,
     Zone,
+    Sector,
 )
 
 
@@ -27,6 +28,7 @@ admin.site.register(Diagnostic)
 admin.site.register(Drug)
 admin.site.register(SicknessObservation)
 admin.site.register(Zone)
+admin.site.register(Sector)
 
 
 class VisitDetailInline(admin.TabularInline):

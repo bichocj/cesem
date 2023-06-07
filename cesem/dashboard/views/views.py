@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from rest_framework import routers
+
+from .utils.import_data.import_data_animals import ImportAnimals
+from .utils.import_data.import_data_grass import ImportGrass
 from .api_views.people import PersonViewSet, PersonPathSerializer
 from .api_views.users import UserViewSet, UserPathSerializer
 from .api_views.zones import ZoneViewSet, ZonePathSerializer
@@ -25,6 +28,18 @@ from .api_views.production_units import (
 def home_view(request):
     message = "Hello"
     return render(request, "dashboard/home.html", locals())
+
+
+@login_required
+def upload_file(request, file_type):
+    if "POST" == request.method:
+        excel_file = request.FILES["excel_file"]
+        if file_type == "animal":
+            importer = ImportAnimals()
+        elif file_type == "pasto":
+            importer = ImportGrass()
+        importer.execute(excel_file, True)
+    return render(request, "dashboard/import_visits.html", locals())
 
 
 people_path = PersonPathSerializer.get_path()

@@ -12,7 +12,7 @@ from core.models import (
 )
 import pandas as pd
 
-from dashboard.import_data.utils.utils import HelperImport
+from .utils import HelperImport
 
 baset_path = os.path.join(settings.BASE_DIR, "core", "management", "commands", "files")
 
