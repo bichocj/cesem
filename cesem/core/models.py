@@ -15,9 +15,9 @@ class Person(models.Model):
         verbose_name_plural = "personas"
         ordering = ("name",)
 
-    dni = models.CharField("dni", max_length=8, null=True, blank=True)
+    dni = models.IntegerField("dni", null=True, blank=True)
     name = models.CharField("nombres", max_length=50)
-    last_name = models.CharField("apellidos", max_length=50, null=True, blank=True)
+    last_name = models.CharField("apellidos", max_length=50, blank=True, null=True)
     sex = models.IntegerField("sexo", choices=Sexs.choices, blank=True, null=True)
     title = models.IntegerField("titulo", choices=Titles.choices, blank=True, null=True)
 
@@ -185,8 +185,14 @@ class VisitAnimal(models.Model):
     diagnostic = models.ForeignKey(
         Diagnostic, on_delete=models.CASCADE, verbose_name="diagnostico"
     )
-    cattle = models.IntegerField("vacunos", default=0)
-    sheep = models.IntegerField("ovinos", default=0)
+    vaca = models.IntegerField("vaca", default=0)
+    vaquillona = models.IntegerField("vaquillona", default=0)
+    vaquilla = models.IntegerField("vaquilla", default=0)
+    terreno = models.IntegerField("terreno", default=0)
+    torete = models.IntegerField("torete", default=0)
+    toro = models.IntegerField("toro", default=0)
+    vacunos = models.IntegerField("vacunos", default=0)
+    ovinos = models.IntegerField("ovinos", default=0)
     alpacas = models.IntegerField("alpacas", default=0)
     llamas = models.IntegerField("llamas", default=0)
     canes = models.IntegerField("canes", default=0)
@@ -237,3 +243,9 @@ class VisitGrass(models.Model):
     class Meta:
         verbose_name = "visita pastos"
         verbose_name_plural = "visitas pastos"
+
+
+class FilesChecksum(models.Model):
+    created_at = models.DateTimeField(auto_created=True, auto_now=True)
+    checksum = models.CharField(max_length=100)
+    filename = models.TextField()

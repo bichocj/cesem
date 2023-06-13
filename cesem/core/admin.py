@@ -11,6 +11,7 @@ from core.models import (
     SicknessObservation,
     Zone,
     Sector,
+    FilesChecksum,
 )
 
 
@@ -29,17 +30,20 @@ admin.site.register(Drug)
 admin.site.register(SicknessObservation)
 admin.site.register(Zone)
 admin.site.register(Sector)
+admin.site.register(VisitGrass)
+
+
+@admin.register(FilesChecksum)
+class FilesChecksumAdmin(admin.ModelAdmin):
+    readonly_fields = ("created_at",)
 
 
 class VisitDetailInline(admin.TabularInline):
     model = VisitAnimalDetails
 
 
+@admin.register(VisitAnimal)
 class VisitAdmin(admin.ModelAdmin):
     inlines = [
         VisitDetailInline,
     ]
-
-
-admin.site.register(VisitAnimal, VisitAdmin)
-admin.site.register(VisitGrass)

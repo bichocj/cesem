@@ -6,6 +6,16 @@
 
 {% block body %}
 
+{% if message_error %}
+<div class="alert alert-danger" role="alert">
+  <strong>No se proceso el archivo</strong>, se encontre el siguiente error: {{message_error}}
+</div>
+{% endif %}
+{% if message_success %}
+<div class="alert alert-success" role="alert">
+  <strong>Se proceso el archivo</strong>, {{message_success}}
+</div>
+{% endif %}
 <h2>Ingreso de visitas de {{file_type}}</h2>
 
 <form action="." method="post" enctype="multipart/form-data" class="form-inline">

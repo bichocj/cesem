@@ -1,7 +1,17 @@
-from core.models import Person, Zone, Activity, Community, Sector, ProductionUnit
+import hashlib
+from core.models import (
+    Person,
+    Zone,
+    Activity,
+    Community,
+    Sector,
+    ProductionUnit,
+    FilesChecksum,
+)
 
 
 class HelperImport:
+    columns_names = []
     people_names = {}
     zones_names = {}
     activities_names = {}
@@ -150,3 +160,25 @@ class HelperImport:
                 production_unit.save()
 
         return production_unit
+
+    def validate_file(self, df, filename):
+        checksum = hashlib.sha256(df.to_json().encode()).hexdigest()
+        try:
+            FilesChecksum.objects.get(checksum=checksum)
+            message = "Parece que este archivo ya fue subido anteriormente"
+            raise Exception(message)
+        except FilesChecksum.DoesNotExist:
+            FilesChecksum.objects.create(checksum=checksum, filename=filename)
+
+    def validate_columns(self, df):
+        columns_xls = df.columns.ravel()
+        columns_missing = []
+        for column_name in self.columns_names:
+            if column_name not in columns_xls:
+                columns_missing.append(column_name)
+
+        if len(columns_missing) > 0:
+            message = "El archivo subido no tiene las siguientes columnas: {}".format(
+                ",".join(columns_missing)
+            )
+            raise Exception(message)

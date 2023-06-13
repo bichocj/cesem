@@ -34,11 +34,15 @@ def home_view(request):
 def upload_file(request, file_type):
     if "POST" == request.method:
         excel_file = request.FILES["excel_file"]
-        if file_type == "animal":
-            importer = ImportAnimals()
-        elif file_type == "pasto":
-            importer = ImportGrass()
-        importer.execute(excel_file, True)
+        try:
+            if file_type == "animales":
+                importer = ImportAnimals()
+            elif file_type == "pastos":
+                importer = ImportGrass()
+            rows = importer.execute(excel_file, True)
+            message_success = "Se registraron {} filas".format(str(rows))
+        except Exception as e:
+            message_error = str(e)
     return render(request, "dashboard/import_visits.html", locals())
 
 

@@ -32,6 +32,54 @@ class ImportAnimals(HelperImport):
         for s in sickness_observations:
             self.sickness_observation_names[s.name] = s
 
+        self.columns_names = [
+            "Nº",
+            "MES",
+            "FECHA",
+            "ZONA",
+            "COMUNIDAD ",
+            "PDE-2019",
+            "SECTOR/IRRIGACION DE LA UP ",
+            "TIPOLOGIA DE UP",
+            "UP ES PILOTO?",
+            "NOMBRE RESPONSABLE UP",
+            "Nº DNI",
+            "SEXO RUP",
+            "NOMBRE DEL INTEGRANTE DE LA UP",
+            "Nº DNI.1",
+            "SEXO IUP",
+            "SECTOR/IRRIGACION DEL BENEFICIARIO",
+            "NOMBRE DE ESPECIALISTA",
+            "RESPONSABLE DE ACTIVIDAD",
+            "ACTIVIDAD REALIZADA",
+            "SECCION 1",
+            "ENFERMEDAD/TRANSTORNO/OBSERVACION",
+            "DIAGNOSTICO",
+            "VACA",
+            "VAQUILLONA",
+            "VAQUILLA",
+            "TERNERO",
+            "TORETE",
+            "TORO",
+            "VACUNOS",
+            "OVINOS",
+            "ALPACAS",
+            "LLAMAS",
+            "CANES",
+            "1 FARMACOS /SALES",
+            "CANTIDAD",
+            "U.M.",
+            "2 FARMACOS /SALES",
+            "CANTIDAD.1",
+            "U.M..1",
+            "3 FARMACOS /SALES",
+            "CANTIDAD.2",
+            "U.M..2",
+            "4 FARMACOS /SALES",
+            "CANTIDAD.3",
+            "U.M..3",
+        ]
+
     def get_diagnostic(self, name, creates_if_none):
         diagnostic = None
         if name in self.diagnostic_names:
@@ -78,10 +126,12 @@ class ImportAnimals(HelperImport):
             return val
 
     def execute(self, file, creates_if_none=True):
-        # path = os.path.join(baset_path, "bd_xyz.xls")
-        # columns format ['Nº', 'MES', 'FECHA', 'ZONA', 'COMUNIDAD ', 'PDE-2019', 'SECTOR/IRRIGACION DE LA UP ', 'TIPOLOGIA DE UP', 'UP  ES PILOTO?', 'NOMBRE RESPONSABLE UP', 'Nº DNI', 'SEXO RUP', 'NOMBRE DEL INTEGRANTE DE LA UP', 'Nº DNI.1', 'SEXO IUP', 'SECTOR/IRRIGACION DEL BENEFICIARIO', 'NOMBRE DE ESPECIALISTA', 'RESPONSABLE DE ACTIVIDAD', 'ACTIVIDAD REALIZADA', 'SECCION 1', 'ENFERMEDAD/TRANSTORNO/OBSERVACION', 'DIAGNOSTICO', 'VACA', 'VAQUILLONA', 'VAQUILLA', 'TERNERO', 'TORETE', 'TORO', 'VACUNOS', 'OVINOS', 'ALPACAS', 'LLAMAS', 'CANES', '1 FARMACOS /SALES', 'CANTIDAD', 'U.M.', '2 FARMACOS /SALES', 'CANTIDAD.1', 'U.M..1', '3 FARMACOS /SALES', 'CANTIDAD.2', 'U.M..2', '4 FARMACOS /SALES', 'CANTIDAD.3', 'U.M..3']
-        # the order and names should be the same in xls file
         df = pd.read_excel(file)
+        self.validate_file(df, filename=file._name)
+        print("start validate")
+        self.validate_columns(df)
+        print("validated")
+
         data = df.to_dict()
         rows_count = len(data["Nº"].keys())
         visits = []
@@ -98,6 +148,11 @@ class ImportAnimals(HelperImport):
             data_is_pilot = self.nan_if_nat(data["UP ES PILOTO?"][i]) == "SI"
             data_up_responsable_name = self.nan_if_nat(data["NOMBRE RESPONSABLE UP"][i])
             data_up_responsable_dni = self.nan_if_nat(data["Nº DNI"][i])
+            try:
+                data_up_responsable_dni = int(data_up_responsable_dni)
+            except:
+                pass
+
             data_up_responsable_sex = self.nan_if_nat(data["SEXO RUP"][i])
             data_up_member_name = self.nan_if_nat(
                 data["NOMBRE DEL INTEGRANTE DE LA UP"][i]
@@ -115,14 +170,21 @@ class ImportAnimals(HelperImport):
                 data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
             )
             data_diagnostic = self.nan_if_nat(data["DIAGNOSTICO"][i])
-            # data['VACA'][i]
-            # data['VAQUILLONA'][i]
-            # data['VAQUILLA'][i]
-            # data['TERNERO'][i]
-            # data['TORETE'][i]
-            # data['TORO'][i]
-            data_cattle = self.zero_if_nan(data["VACUNOS"][i])
-            data_sheep = self.zero_if_nan(data["OVINOS"][i])
+            data_vaca = data["VACA"][i]
+            data_vaquillona = self.zero_if_nan(data["VAQUILLONA"][i])
+            data_vaquilla = self.zero_if_nan(data["VAQUILLA"][i])
+            data_terreno = self.zero_if_nan(data["TERNERO"][i])
+            data_torete = self.zero_if_nan(data["TORETE"][i])
+            data_toro = self.zero_if_nan(data["TORO"][i])
+            data_vacunos = (
+                data_vaca
+                + data_vaquillona
+                + data_vaquilla
+                + data_terreno
+                + data_torete
+                + data_toro
+            )
+            data_ovinos = self.zero_if_nan(data["OVINOS"][i])
             data_alpacas = self.zero_if_nan(data["ALPACAS"][i])
             data_llamas = self.zero_if_nan(data["LLAMAS"][i])
             data_canes = self.zero_if_nan(data["CANES"][i])
@@ -147,12 +209,6 @@ class ImportAnimals(HelperImport):
                     data_sickness_observation, creates_if_none
                 )
                 diagnostic = self.get_diagnostic(data_diagnostic, creates_if_none)
-                cattle = data_cattle
-                sheep = data_sheep
-                alpacas = data_alpacas
-                llamas = data_llamas
-                canes = data_canes
-
                 production_unit = self.get_production_unit(
                     data_zone,
                     data_community,
@@ -177,11 +233,17 @@ class ImportAnimals(HelperImport):
                         activity=activity,
                         sickness_observation=sickness_observation,
                         diagnostic=diagnostic,
-                        cattle=cattle,
-                        sheep=sheep,
-                        alpacas=alpacas,
-                        llamas=llamas,
-                        canes=canes,
+                        ovinos=data_ovinos,
+                        alpacas=data_alpacas,
+                        llamas=data_llamas,
+                        canes=data_canes,
+                        vaca=data_vaca,
+                        vaquillona=data_vaquillona,
+                        vaquilla=data_vaquilla,
+                        terreno=data_terreno,
+                        torete=data_torete,
+                        toro=data_toro,
+                        vacunos=data_vacunos,
                     )
                 )
                 print("Registrando visita de animales Nº: ", i + 1)
@@ -211,3 +273,4 @@ class ImportAnimals(HelperImport):
                 exit()
 
         VisitAnimal.objects.bulk_create(visits)
+        return len(visits)
