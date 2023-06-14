@@ -3,53 +3,7 @@
 {% load dashboard_extras %}
 <br />
 {% block title %}CESEM | administrador{% endblock %} 
-
-{% block style %}
-<style>
-table {
-  background-color: white;
-}
-th 
-{
-  vertical-align: bottom;
-  text-align: center;
-}
-
-th span 
-{
-  -ms-writing-mode: tb-rl;
-  -webkit-writing-mode: vertical-rl;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  white-space: nowrap;
-}
-</style>
-
-{% endblock %}
 {% block body %}
-
+Holu!
 <h2>{{ message }}</h2>
-
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th colspan="2">Actividad</th>
-      {% for w in weeks_number %}
-      <th><span>{{w|get_start_date_of_week:2022|date:"d M"}}</span></th>
-      {% endfor %}
-    </tr>
-  </thead>
-  <tbody>
-    {% for a in activities %}
-    <tr>
-      <td>{{a.position}}</td>
-      <td style="white-space: nowrap;">{{a.name}}</td>
-      {% for w in weeks_number %}
-      <td class="warning">{% get_activity_data_value a w activities_data %}</td>
-      {% endfor %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
 {% endblock %}

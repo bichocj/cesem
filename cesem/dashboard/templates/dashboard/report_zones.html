@@ -1,0 +1,63 @@
+{% extends 'dashboard/layout.html' %}
+<br />
+{% load dashboard_extras %}
+<br />
+{% block title %}CESEM | administrador{% endblock %} 
+
+{% block style %}
+<style>
+.activity {
+  background-color: #92d050;
+}
+.sub-activity {
+  background-color: #a8ff7d;
+}
+table {
+  background-color: white;
+}
+th 
+{
+  vertical-align: bottom;
+  text-align: center;
+}
+
+th span 
+{
+  -ms-writing-mode: tb-rl;
+  -webkit-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+</style>
+
+{% endblock %}
+{% block body %}
+
+<h2>Reporte por zonas</h2>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th colspan="2">Actividad</th>
+      <th>UM</th>
+      {% for z in zones %}
+      <th>{{z.name}}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in activities %}
+    <tr class="{% get_activity_class a%}">
+      <td>{{a.position}}</td>
+      <td style="white-space: nowrap;">{{a.name}}</td>
+      <td>{{a.um}}</td>
+      {% for z in zones %}
+      <td>{% get_activity_data_value a z.id activities_data %}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

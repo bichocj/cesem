@@ -1,3 +1,4 @@
+import pandas as pd
 import hashlib
 from core.models import (
     Person,
@@ -45,6 +46,32 @@ class HelperImport:
             default=False,
             help="it creates activites, diagnostics and sickness if doesnt exists",
         )
+
+    def zero_if_nan(self, val, to_int=False):
+        try:
+            if str(float(val)).lower() == "nan":
+                return 0
+        except:
+            return 0
+
+        if to_int:
+            try:
+                return int(val)
+            except:
+                return 0
+        return val
+
+    def nan_if_nat(self, val):
+        if type(val) is pd._libs.tslibs.nattype.NaTType:
+            return "nan"
+        else:
+            return val
+
+    def none_if_nat(self, val):
+        if type(val) is pd._libs.tslibs.nattype.NaTType:
+            return None
+        else:
+            return val
 
     def get_person(self, name, dni=None, sex=None):
         sex_data = None
@@ -161,14 +188,18 @@ class HelperImport:
 
         return production_unit
 
-    def validate_file(self, df, filename):
+    def validate_file(self, df):
         checksum = hashlib.sha256(df.to_json().encode()).hexdigest()
         try:
             FilesChecksum.objects.get(checksum=checksum)
             message = "Parece que este archivo ya fue subido anteriormente"
             raise Exception(message)
         except FilesChecksum.DoesNotExist:
-            FilesChecksum.objects.create(checksum=checksum, filename=filename)
+            pass
+
+    def create_checksum(self, df, filename):
+        checksum = hashlib.sha256(df.to_json().encode()).hexdigest()
+        FilesChecksum.objects.create(checksum=checksum, filename=filename)
 
     def validate_columns(self, df):
         columns_xls = df.columns.ravel()
@@ -182,3 +213,19 @@ class HelperImport:
                 ",".join(columns_missing)
             )
             raise Exception(message)
+
+    def execute(self, file, creates_if_none=True):
+        # Here validate the file checksum and columns
+        df = pd.read_excel(file)
+        self.validate_file(df)
+        self.validate_columns(df)
+
+        # Here run the implemented _inner_execute func in child class
+        return_value = self._inner_execute(file, creates_if_none)
+
+        # After save all data let's create a checksum to avoid process a file that already uploaded before
+        self.create_checksum(df, filename=file._name)
+        return return_value
+
+    def _inner_execute(self, file, creates_if_none):
+        return True

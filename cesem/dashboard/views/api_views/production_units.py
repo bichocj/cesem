@@ -4,7 +4,7 @@ from .utils import BasePathSerializer
 
 
 class ProductionUnitPathSerializer(BasePathSerializer):
-    zona = serializers.StringRelatedField(many=False, source="zone")
+    zona_nombre = serializers.StringRelatedField(many=False, source="zone")
     comunidad = serializers.StringRelatedField(many=False, source="community")
     sector = serializers.StringRelatedField(many=False)
     responsable = serializers.StringRelatedField(
@@ -21,7 +21,8 @@ class ProductionUnitPathSerializer(BasePathSerializer):
     class Meta:
         model = ProductionUnit
         fields = (
-            "zona",
+            "zona_nombre",
+            "zone",
             "comunidad",
             "sector",
             "responsable",
@@ -30,6 +31,9 @@ class ProductionUnitPathSerializer(BasePathSerializer):
             "es_pilot",
             "url",
         )
+        extra_kwargs = {
+            "zone": {"write_only": True},
+        }
 
 
 class VisitAnimalPathSerializer(BasePathSerializer):
@@ -86,7 +90,7 @@ class VisitGrassPathSerializer(BasePathSerializer):
 
 
 class ProductionUnitDetailsPathSerializer(BasePathSerializer):
-    zona = serializers.StringRelatedField(many=False, source="zone")
+    zona_nombre = serializers.StringRelatedField(many=False, source="zone")
     comunidad = serializers.StringRelatedField(many=False, source="community")
     sector = serializers.StringRelatedField(many=False)
     responsable = serializers.StringRelatedField(
@@ -117,7 +121,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         fields = (
             "responsable",
             "miembro",
-            "zona",
+            "zona_nombre",
+            "zone",
             "comunidad",
             "sector",
             "tipologia",
@@ -126,6 +131,9 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "visitas_animales",
             "visitas_pastos",
         )
+        extra_kwargs = {
+            "zone": {"write_only": True},
+        }
 
 
 class ProductionUnitViewSet(viewsets.ModelViewSet):

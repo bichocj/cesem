@@ -74,9 +74,15 @@
         </strong>
         <ul class="nav nav-sidebar">
           <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
-              href="{% url 'dashboard:reports_animals'%}">
-              Reporte de Animales
+            <a class="bd-links-link d-inline-block rounded {{'reports/weekly'|active_if_path_match:request}}"
+              href="{% url 'dashboard:reports_weekly'%}">
+              Reporte Semanal
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'reports/zones'|active_if_path_match:request}}"
+              href="{% url 'dashboard:reports_zones'%}">
+              Reporte Por Zona
             </a>
           </li>
           <li class="nav-item">
@@ -107,7 +113,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'zone'|active_if_path_match:request}}" href="/api/zones/">
+            <a class="bd-links-link d-inline-block rounded {{'api/zone'|active_if_path_match:request}}" href="/api/zones/">
               Zonas </a>
           </li>
           <li class="nav-item">

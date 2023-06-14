@@ -8,6 +8,7 @@ from core.models import (
     SicknessObservation,
     Zone,
     VisitAnimal,
+    VisitAnimalDetails,
     Sector,
 )
 import pandas as pd
@@ -21,6 +22,7 @@ class ImportAnimals(HelperImport):
     help = "import xls data"
     diagnostic_names = {}
     sickness_observation_names = {}
+    drugs_names = {}
 
     def __init__(self):
         super().__init__()
@@ -31,6 +33,10 @@ class ImportAnimals(HelperImport):
         sickness_observations = SicknessObservation.objects.all()
         for s in sickness_observations:
             self.sickness_observation_names[s.name] = s
+
+        drugs = Drug.objects.all()
+        for s in drugs:
+            self.drugs_names[s.name] = s
 
         self.columns_names = [
             "Nº",
@@ -104,37 +110,24 @@ class ImportAnimals(HelperImport):
                 raise SicknessObservation.DoesNotExist()
         return sickness_observation
 
-    def zero_if_nan(self, val):
-        try:
-            if str(float(val)).lower() == "nan":
-                return 0
-        except:
-            return 0
-        # if math.isnan(val):
-        return val
-
-    def nan_if_nat(self, val):
-        if type(val) is pd._libs.tslibs.nattype.NaTType:
-            return "nan"
+    def get_drug(self, name, um, creates_if_none):
+        drug = None
+        if name in self.drugs_names:
+            drug = self.drugs_names[name]
         else:
-            return val
+            if creates_if_none:
+                drug = Drug.objects.create(name=name, um=um)
+                self.drugs_names[name] = drug
+            else:
+                raise Drug.DoesNotExist()
+        return drug
 
-    def none_if_nat(self, val):
-        if type(val) is pd._libs.tslibs.nattype.NaTType:
-            return None
-        else:
-            return val
-
-    def execute(self, file, creates_if_none=True):
+    def _inner_execute(self, file, creates_if_none=True):
         df = pd.read_excel(file)
-        self.validate_file(df, filename=file._name)
-        print("start validate")
-        self.validate_columns(df)
-        print("validated")
-
         data = df.to_dict()
         rows_count = len(data["Nº"].keys())
         visits = []
+        visits_details = []
 
         for i in range(rows_count):
             # data['Nº'][i]
@@ -147,17 +140,12 @@ class ImportAnimals(HelperImport):
             data_tipology = self.nan_if_nat(data["TIPOLOGIA DE UP"][i])
             data_is_pilot = self.nan_if_nat(data["UP ES PILOTO?"][i]) == "SI"
             data_up_responsable_name = self.nan_if_nat(data["NOMBRE RESPONSABLE UP"][i])
-            data_up_responsable_dni = self.nan_if_nat(data["Nº DNI"][i])
-            try:
-                data_up_responsable_dni = int(data_up_responsable_dni)
-            except:
-                pass
-
+            data_up_responsable_dni = self.zero_if_nan(data["Nº DNI"][i], to_int=True)
             data_up_responsable_sex = self.nan_if_nat(data["SEXO RUP"][i])
             data_up_member_name = self.nan_if_nat(
                 data["NOMBRE DEL INTEGRANTE DE LA UP"][i]
             )
-            data_up_member_dni = self.nan_if_nat(data["Nº DNI.1"][i])
+            data_up_member_dni = self.zero_if_nan(data["Nº DNI.1"][i], to_int=True)
             data_up_member_sex = self.nan_if_nat(data["SEXO IUP"][i])
             # data['SECTOR/IRRIGACION DEL BENEFICIARIO'][i]
             data_employ_specialist = self.nan_if_nat(data["NOMBRE DE ESPECIALISTA"][i])
@@ -165,7 +153,6 @@ class ImportAnimals(HelperImport):
                 data["RESPONSABLE DE ACTIVIDAD"][i]
             )
             data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
-            # data['SECCION 1'][i]
             data_sickness_observation = self.nan_if_nat(
                 data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
             )
@@ -184,22 +171,25 @@ class ImportAnimals(HelperImport):
                 + data_torete
                 + data_toro
             )
-            data_ovinos = self.zero_if_nan(data["OVINOS"][i])
-            data_alpacas = self.zero_if_nan(data["ALPACAS"][i])
-            data_llamas = self.zero_if_nan(data["LLAMAS"][i])
-            data_canes = self.zero_if_nan(data["CANES"][i])
-            # data['1 FARMACOS /SALES'][i]
-            # data['CANTIDAD'][i]
-            # data['U.M.'][i]
-            # data['2 FARMACOS /SALES'][i]
-            # data['CANTIDAD.1'][i]
-            # data['U.M..1'][i]
-            # data['3 FARMACOS /SALES'][i]
-            # data['CANTIDAD.2'][i]
-            # data['U.M..2'][i]
-            # data['4 FARMACOS /SALES'][i]
-            # data['CANTIDAD.3'][i]
-            # data['U.M..3'][i]
+            data_ovinos = self.zero_if_nan(data["OVINOS"][i], to_int=True)
+            data_alpacas = self.zero_if_nan(data["ALPACAS"][i], to_int=True)
+            data_llamas = self.zero_if_nan(data["LLAMAS"][i], to_int=True)
+            data_canes = self.zero_if_nan(data["CANES"][i], to_int=True)
+            data_medicine_name_1 = data["1 FARMACOS /SALES"][i]
+            data_um_name_1 = data["U.M."][i]
+            data_quantity_1 = self.zero_if_nan(data["CANTIDAD"][i], to_int=True)
+
+            data_medicine_name_2 = data["2 FARMACOS /SALES"][i]
+            data_um_name_2 = data["U.M..1"][i]
+            data_quantity_2 = self.zero_if_nan(data["CANTIDAD.1"][i], to_int=True)
+
+            data_medicine_name_3 = data["3 FARMACOS /SALES"][i]
+            data_um_name_3 = data["U.M..2"][i]
+            data_quantity_3 = self.zero_if_nan(data["CANTIDAD.2"][i], to_int=True)
+
+            data_medicine_name_4 = data["4 FARMACOS /SALES"][i]
+            data_um_name_4 = data["U.M..3"][i]
+            data_quantity_4 = self.zero_if_nan(data["CANTIDAD.3"][i], to_int=True)
 
             try:
                 employ_specialist = self.get_person(data_employ_specialist)
@@ -224,28 +214,27 @@ class ImportAnimals(HelperImport):
                     creates_if_none=creates_if_none,
                 )
 
-                visits.append(
-                    VisitAnimal(
-                        visited_at=data_visited_at,
-                        production_unit=production_unit,
-                        employ_specialist=employ_specialist,
-                        employ_responsable=employ_responsable,
-                        activity=activity,
-                        sickness_observation=sickness_observation,
-                        diagnostic=diagnostic,
-                        ovinos=data_ovinos,
-                        alpacas=data_alpacas,
-                        llamas=data_llamas,
-                        canes=data_canes,
-                        vaca=data_vaca,
-                        vaquillona=data_vaquillona,
-                        vaquilla=data_vaquilla,
-                        terreno=data_terreno,
-                        torete=data_torete,
-                        toro=data_toro,
-                        vacunos=data_vacunos,
-                    )
+                visit_animal = VisitAnimal(
+                    visited_at=data_visited_at,
+                    production_unit=production_unit,
+                    employ_specialist=employ_specialist,
+                    employ_responsable=employ_responsable,
+                    activity=activity,
+                    sickness_observation=sickness_observation,
+                    diagnostic=diagnostic,
+                    ovinos=data_ovinos,
+                    alpacas=data_alpacas,
+                    llamas=data_llamas,
+                    canes=data_canes,
+                    vaca=data_vaca,
+                    vaquillona=data_vaquillona,
+                    vaquilla=data_vaquilla,
+                    terreno=data_terreno,
+                    torete=data_torete,
+                    toro=data_toro,
+                    vacunos=data_vacunos,
                 )
+                visits.append(visit_animal)
                 print("Registrando visita de animales Nº: ", i + 1)
 
             except Zone.DoesNotExist:
@@ -271,6 +260,44 @@ class ImportAnimals(HelperImport):
                     data_sickness_observation,
                 )
                 exit()
+            if data_quantity_1 > 0:
+                drug = self.get_drug(
+                    data_medicine_name_1, data_um_name_1, creates_if_none
+                )
+                visits_details.append(
+                    VisitAnimalDetails(
+                        visit=visit_animal, drug=drug, quantity=data_quantity_1
+                    )
+                )
+            if data_quantity_2 > 0:
+                drug = self.get_drug(
+                    data_medicine_name_2, data_um_name_2, creates_if_none
+                )
+                visits_details.append(
+                    VisitAnimalDetails(
+                        visit=visit_animal, drug=drug, quantity=data_quantity_2
+                    )
+                )
+            if data_quantity_3 > 0:
+                drug = self.get_drug(
+                    data_medicine_name_3, data_um_name_3, creates_if_none
+                )
+                visits_details.append(
+                    VisitAnimalDetails(
+                        visit=visit_animal, drug=drug, quantity=data_quantity_3
+                    )
+                )
+            if data_quantity_4 > 0:
+                drug = self.get_drug(
+                    data_medicine_name_4, data_um_name_4, creates_if_none
+                )
+                visits_details.append(
+                    VisitAnimalDetails(
+                        visit=visit_animal, drug=drug, quantity=data_quantity_4
+                    )
+                )
 
         VisitAnimal.objects.bulk_create(visits)
+        VisitAnimalDetails.objects.bulk_create(visits_details)
+
         return len(visits)

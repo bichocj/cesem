@@ -105,6 +105,7 @@ class Diagnostic(models.Model):
     class Meta:
         verbose_name = "diagnostico"
         verbose_name_plural = "diagnosticos"
+        ordering = ("name",)
 
     def __str__(self) -> str:
         return self.name
@@ -116,9 +117,8 @@ class Drug(models.Model):
         gr = 1, ("gr.")
 
     name = models.CharField("nombre", max_length=50)
-    um = models.IntegerField(
-        "unidad de medida", choices=UnitMeasurement.choices, default=0
-    )
+    um = models.CharField("unidad de medida", max_length=100)
+    # , choices=UnitMeasurement.choices, default=0
 
     class Meta:
         verbose_name = "farmaco"

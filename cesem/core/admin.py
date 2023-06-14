@@ -36,10 +36,14 @@ admin.site.register(VisitGrass)
 @admin.register(FilesChecksum)
 class FilesChecksumAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
+    list_display = ("created_at", "filename")
 
 
 class VisitDetailInline(admin.TabularInline):
     model = VisitAnimalDetails
+
+
+admin.site.register(VisitAnimalDetails)
 
 
 @admin.register(VisitAnimal)

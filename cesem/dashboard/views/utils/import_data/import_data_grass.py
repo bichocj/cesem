@@ -25,23 +25,10 @@ class ImportGrass(HelperImport):
 
     def __init__(self):
         super().__init__()
+        # TODO add self.columns_names = [ "Nº", "MES", "FECHA", ...] here in order validate the columns coming in xls file
 
-    def nan_if_nat(self, val):
-        if type(val) is pd._libs.tslibs.nattype.NaTType:
-            return "nan"
-        else:
-            return val
-
-    def none_if_nat(self, val):
-        if type(val) is pd._libs.tslibs.nattype.NaTType:
-            return None
-        else:
-            return val
-
+    # TODO replace execute for _inner_execute in order validate and create checksum
     def execute(self, file, creates_if_none=True):
-        # path = os.path.join(baset_path, file)
-        # columns format ['Nº', 'MES', 'FECHA', 'ZONA', 'COMUNIDAD ', 'PDE-2019', 'SECTOR/IRRIGACION DE LA UP ', 'TIPOLOGIA DE UP', 'UP  ES PILOTO?', 'NOMBRE RESPONSABLE UP', 'Nº DNI', 'SEXO RUP', 'NOMBRE DEL INTEGRANTE DE LA UP', 'Nº DNI.1', 'SEXO IUP', 'SECTOR/IRRIGACION DEL BENEFICIARIO', 'NOMBRE DE ESPECIALISTA', 'RESPONSABLE DE ACTIVIDAD', 'ACTIVIDAD REALIZADA', 'SECCION 1', 'ENFERMEDAD/TRANSTORNO/OBSERVACION', 'DIAGNOSTICO', 'VACA', 'VAQUILLONA', 'VAQUILLA', 'TERNERO', 'TORETE', 'TORO', 'VACUNOS', 'OVINOS', 'ALPACAS', 'LLAMAS', 'CANES', '1 FARMACOS /SALES', 'CANTIDAD', 'U.M.', '2 FARMACOS /SALES', 'CANTIDAD.1', 'U.M..1', '3 FARMACOS /SALES', 'CANTIDAD.2', 'U.M..2', '4 FARMACOS /SALES', 'CANTIDAD.3', 'U.M..3']
-        # the order and names should be the same in xls file
         df = pd.read_excel(file)
         data = df.to_dict()
         rows_count = len(data["N°"].keys())

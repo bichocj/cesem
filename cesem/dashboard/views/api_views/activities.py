@@ -1,9 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, serializers
 from core.models import Activity
 from .utils import BasePathSerializer
 
 
 class ActivityPathSerializer(BasePathSerializer):
+    relacionado = serializers.StringRelatedField(many=False, source="parent.position")
+
     @staticmethod
     def get_path():
         return "activities"
@@ -16,11 +18,12 @@ class ActivityPathSerializer(BasePathSerializer):
             "short_name",
             "um",
             "parent",
+            "relacionado",
             "url",
         )
         extra_kwargs = {
-            "parent": {"write_only": True},
-            "um": {"write_only": True},
+            # "parent": {"write_only": True},
+            # "um": {"write_only": True},
         }
 
 

@@ -36,15 +36,41 @@ def get_model_name(value):
 
 
 @register.simple_tag
-def get_activity_data_value(activity, week_number, activities_data):
+def get_activity_class(activity):
+    letters = list(activity.position)
+    points = filter(lambda letter: letter == ".", letters)
+    points = list(points)
+    points = len(points)
+    if points == 0:
+        return "activity"
+    if points == 1:
+        return "sub-activity"
+    return ""
+
+
+@register.simple_tag
+def get_activity_data_value(activity, index_name, activities_data):
     try:
-        int(activity.position)
+        int(activity.position)  # is Principal actitivy
         return ""
     except:
         activity_id = activity.id
         if activity_id in activities_data:
-            if week_number in activities_data[activity_id]:
-                return activities_data[activity_id][week_number]
+            if index_name in activities_data[activity_id]:
+                return activities_data[activity_id][index_name]
+        return 0
+
+
+@register.simple_tag
+def get_activity_data_zone_value(activity, zone, activities_data):
+    try:
+        int(activity.position)  # is Principal actitivy
+        return ""
+    except:
+        activity_id = activity.id
+        if activity_id in activities_data:
+            if zone.id in activities_data[activity_id]:
+                return activities_data[activity_id][zone.id]
         return 0
 
 
