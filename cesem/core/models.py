@@ -238,7 +238,34 @@ class VisitGrass(models.Model):
     activity = models.ForeignKey(
         Activity, on_delete=models.CASCADE, verbose_name="actividad"
     )
-    quantity = models.IntegerField("cantidad", default=0)
+    planting_intention_hectares = models.IntegerField("has. inten. siembra", default=0)
+    avena_vicia_planted_hectares = models.IntegerField(
+        "has. siembra avena/vicia", default=0
+    )
+    alfalfa_dactylis_planted_hectares = models.IntegerField(
+        "has. siembra alfalfa dactylis", default=0
+    )
+    raygrass_trebol_planted_hectares = models.IntegerField(
+        "has. siembra raygrass trebol", default=0
+    )
+    harvest_evaluation_kg = models.IntegerField(
+        "eval.cosecha kg mv/ha ", default=0
+    )  # parece actividad, ver si es decimal o no
+    technical_assistance_has = models.IntegerField(
+        "asistencia técnica", default=0
+    )  # parece actividad, es en hectareas?
+    direct_grazing = models.IntegerField(
+        "pastoreo directo %", default=0
+    )  # ver si es decimal
+    hay = models.IntegerField("heno %", default=0)  # ver si es decimal
+    ensilage = models.IntegerField("ensilado %", default=0)  # ver si es decimal
+    bale = models.IntegerField("pacas %", default=0)  # ver si es decimal
+    perennial_grazing = models.IntegerField(
+        "pastoreo perenne %", default=0
+    )  # ver si es decimal
+    perennial_yield = models.IntegerField(
+        "rendimiento perenne kg", default=0
+    )  # ver si es decimal
 
     class Meta:
         verbose_name = "visita pastos"
