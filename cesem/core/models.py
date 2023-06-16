@@ -248,24 +248,21 @@ class VisitGrass(models.Model):
     raygrass_trebol_planted_hectares = models.IntegerField(
         "has. siembra raygrass trebol", default=0
     )
-    harvest_evaluation_kg = models.IntegerField(
-        "eval.cosecha kg mv/ha ", default=0
-    )  # parece actividad, ver si es decimal o no
-    technical_assistance_has = models.IntegerField(
-        "asistencia técnica", default=0
-    )  # parece actividad, es en hectareas?
-    direct_grazing = models.IntegerField(
-        "pastoreo directo %", default=0
-    )  # ver si es decimal
-    hay = models.IntegerField("heno %", default=0)  # ver si es decimal
-    ensilage = models.IntegerField("ensilado %", default=0)  # ver si es decimal
-    bale = models.IntegerField("pacas %", default=0)  # ver si es decimal
-    perennial_grazing = models.IntegerField(
-        "pastoreo perenne %", default=0
-    )  # ver si es decimal
-    perennial_yield = models.IntegerField(
-        "rendimiento perenne kg", default=0
-    )  # ver si es decimal
+    direct_grazing = models.IntegerField("pastoreo directo %", default=0)
+    hay = models.DecimalField("heno %", max_digits=10, decimal_places=4, default=0)
+    ensilage = models.DecimalField(
+        "ensilado %", max_digits=10, decimal_places=4, default=0
+    )
+    bale = models.DecimalField("pacas %", max_digits=10, decimal_places=4, default=0)
+    perennial_grazing = models.DecimalField(
+        "pastoreo perenne %", max_digits=10, decimal_places=4, default=0
+    )
+    perennial_yield = models.DecimalField(
+        "rendimiento perenne kg", max_digits=10, decimal_places=4, default=0
+    )
+    quantity = models.DecimalField(
+        "cantidad", max_digits=10, decimal_places=4, default=0
+    )
 
     class Meta:
         verbose_name = "visita pastos"
