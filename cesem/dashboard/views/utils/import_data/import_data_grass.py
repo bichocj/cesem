@@ -167,6 +167,7 @@ class ImportGrass(HelperImport):
                         perennial_yield=data_perennial_yield,
                     )
                 )
+
                 # check if new visits need to be created because of more activities
                 if data_harvest_evaluation and data_harvest_evaluation != "nan":
                     visits.append(
@@ -192,7 +193,7 @@ class ImportGrass(HelperImport):
                         )
                     )
 
-                if data_technical_training or data_technical_training != "nan":
+                if data_technical_training and data_technical_training != "nan":
                     visits.append(
                         VisitGrass(
                             visited_at=data_visited_at,
