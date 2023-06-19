@@ -83,12 +83,14 @@ class ImportGrass(HelperImport):
             data_community = self.nan_if_nat(data["COMUNIDAD "][i])
             data_sector = self.nan_if_nat(data["SECTOR/IRRIGACION"][i])
             data_up_responsable_name = self.nan_if_nat(data["NOMBRE RESPONSABLE UP"][i])
-            data_up_responsable_dni = self.nan_if_nat(data["Nº DNI"][i])
+            data_up_responsable_dni = self.zero_if_nan(
+                self.nan_if_nat(data["Nº DNI"][i])
+            )
             data_up_responsable_sex = self.nan_if_nat(data["SEXO RUP"][i])
             data_up_member_name = self.nan_if_nat(
                 data["NOMBRE DEL INTEGRANTE DE LA UP"][i]
             )
-            data_up_member_dni = self.nan_if_nat(data["Nº DNI.1"][i])
+            data_up_member_dni = self.zero_if_nan(self.nan_if_nat(data["Nº DNI.1"][i]))
             data_up_member_sex = self.nan_if_nat(data["SEXO IUP"][i])
             data_anual_utm_coordinates = self.nan_if_nat(
                 data["COORDENADAS UTM Anuales"][i]
@@ -166,7 +168,7 @@ class ImportGrass(HelperImport):
                     )
                 )
                 # check if new visits need to be created because of more activities
-                if not data_harvest_evaluation or data_harvest_evaluation == "nan":
+                if data_harvest_evaluation and data_harvest_evaluation != "nan":
                     visits.append(
                         VisitGrass(
                             visited_at=data_visited_at,
@@ -178,7 +180,7 @@ class ImportGrass(HelperImport):
                         )
                     )
 
-                if not data_technical_assistance or data_technical_assistance == "nan":
+                if data_technical_assistance and data_technical_assistance != "nan":
                     visits.append(
                         VisitGrass(
                             visited_at=data_visited_at,
@@ -190,7 +192,7 @@ class ImportGrass(HelperImport):
                         )
                     )
 
-                if not data_technical_training or data_technical_training == "nan":
+                if data_technical_training or data_technical_training != "nan":
                     visits.append(
                         VisitGrass(
                             visited_at=data_visited_at,
