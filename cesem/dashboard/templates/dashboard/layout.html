@@ -75,13 +75,19 @@
         <ul class="nav nav-sidebar">
           <li class="nav-item">
             <a class="bd-links-link d-inline-block rounded {{'reports/weekly'|active_if_path_match:request}}"
-              href="{% url 'dashboard:reports_weekly'%}">
+              href="{% url 'dashboard:report_weekly'%}">
               Reporte Semanal
             </a>
           </li>
           <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'reports/monthly'|active_if_path_match:request}}"
+              href="{% url 'dashboard:report_monthly'%}">
+              Reporte Mensual
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="bd-links-link d-inline-block rounded {{'reports/zones'|active_if_path_match:request}}"
-              href="{% url 'dashboard:reports_zones'%}">
+              href="{% url 'dashboard:report_zones'%}">
               Reporte Por Zona
             </a>
           </li>

@@ -6,8 +6,9 @@ from .views.report_views import animal_view
 app_name = "dashboard"
 
 urls_reports = [
-    path(r"weekly/", view=animal_view.report_weekly, name="reports_weekly"),
-    path(r"zones/", view=animal_view.report_zones, name="reports_zones"),
+    path(r"monthly/", view=animal_view.report_monthly, name="report_monthly"),
+    path(r"weekly/", view=animal_view.report_weekly, name="report_weekly"),
+    path(r"zones/", view=animal_view.report_zones, name="report_zones"),
 ]
 
 urlpatterns = [

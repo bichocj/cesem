@@ -1,3 +1,4 @@
+import locale
 from datetime import datetime
 from django import template
 from django.template import loader
@@ -78,6 +79,16 @@ def get_activity_data_zone_value(activity, zone, activities_data):
 def get_start_date_of_week(week_number, year):
     start_of_week = datetime.strptime(f"{year}-W{week_number-1}-1", "%Y-W%W-%w").date()
     return start_of_week
+
+
+@register.filter
+def get_month(month_number):
+    now = datetime.now()
+    now = now.replace(day=1)
+    now = now.replace(month=month_number)
+    locale.setlocale(locale.LC_TIME, "es_ES")
+    print(month_number, now.strftime("%m"))
+    return now.strftime("%B").title()
 
 
 @register.filter

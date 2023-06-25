@@ -1,6 +1,6 @@
 from core.models import Activity, VisitAnimal, Zone
 from django.db.models import F, Sum
-from django.db.models.functions import ExtractWeek, ExtractYear
+from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear
 from django.shortcuts import render
 
 year = 2022
@@ -10,10 +10,10 @@ def report_weekly(request):
     activities = Activity.objects.all().order_by("position")
 
     data = (
-        VisitAnimal.objects.annotate(year=ExtractYear("visited_at"))
+        VisitAnimal.objects.filter(visited_at__year=year)
         .annotate(week=ExtractWeek("visited_at"))
         .values(
-            "activity",
+            "activity__id",
             "week",
         )
         .annotate(
@@ -21,7 +21,6 @@ def report_weekly(request):
                 F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
             )
         )
-        .filter(visited_at__year=year)
         .order_by("week")
     )
 
@@ -29,7 +28,7 @@ def report_weekly(request):
     weeks_number = {}
 
     for s in data:
-        activity_key = s.get("activity")
+        activity_key = s.get("activity__id")
         week_key = s.get("week")
         value = s.get("sum_animals")
 
@@ -57,6 +56,60 @@ def report_weekly(request):
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_weekly.html", locals())
+
+
+def report_monthly(request):
+    activities = Activity.objects.all().order_by("position")
+
+    data = (
+        VisitAnimal.objects.filter(visited_at__year=year)
+        .annotate(month=ExtractMonth("visited_at"))
+        .values(
+            "activity__id",
+            "month",
+        )
+        .annotate(
+            sum_animals=Sum(
+                F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
+            )
+        )
+        .order_by("activity__id", "month")
+    )
+
+    print(data.query)
+
+    activities_data = {}
+    month_number = {}
+
+    for s in data:
+        activity_key = s.get("activity__id")
+        month_key = s.get("month")
+        value = s.get("sum_animals")
+
+        if activity_key not in activities_data:
+            activities_data[activity_key] = {}
+        activities_data[activity_key][month_key] = value
+
+        month_number[month_key] = ""
+
+    sub_activity_data = {}
+    for a in activities:
+        if is_sub_activity(a):
+            sub_activity = a
+            for activity_key in activities_data:
+                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
+                    if sub_activity.id not in sub_activity_data:
+                        sub_activity_data[sub_activity.id] = {}
+                    for month_key in activities_data[activity_key]:
+                        if month_key not in sub_activity_data[sub_activity.id]:
+                            sub_activity_data[sub_activity.id][month_key] = 0
+                        sub_activity_data[sub_activity.id][
+                            month_key
+                        ] += activities_data[activity_key][month_key]
+
+    activities_data.update(sub_activity_data)
+
+    return render(request, "dashboard/report_monthly.html", locals())
 
 
 def report_zones(request):
