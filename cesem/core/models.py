@@ -223,6 +223,9 @@ class VisitGrass(models.Model):
     utm_coordenate = models.CharField(
         "coordenadas UTM anuales", max_length=30, null=True, blank=True
     )
+    producer_classification = models.CharField(
+        "tipificación de productores", max_length=30, null=True, blank=True
+    )
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
@@ -237,28 +240,6 @@ class VisitGrass(models.Model):
     )
     activity = models.ForeignKey(
         Activity, on_delete=models.CASCADE, verbose_name="actividad"
-    )
-    planting_intention_hectares = models.IntegerField("has. inten. siembra", default=0)
-    avena_vicia_planted_hectares = models.IntegerField(
-        "has. siembra avena/vicia", default=0
-    )
-    alfalfa_dactylis_planted_hectares = models.IntegerField(
-        "has. siembra alfalfa dactylis", default=0
-    )
-    raygrass_trebol_planted_hectares = models.IntegerField(
-        "has. siembra raygrass trebol", default=0
-    )
-    direct_grazing = models.IntegerField("pastoreo directo %", default=0)
-    hay = models.DecimalField("heno %", max_digits=10, decimal_places=4, default=0)
-    ensilage = models.DecimalField(
-        "ensilado %", max_digits=10, decimal_places=4, default=0
-    )
-    bale = models.DecimalField("pacas %", max_digits=10, decimal_places=4, default=0)
-    perennial_grazing = models.DecimalField(
-        "pastoreo perenne %", max_digits=10, decimal_places=4, default=0
-    )
-    perennial_yield = models.DecimalField(
-        "rendimiento perenne kg", max_digits=10, decimal_places=4, default=0
     )
     quantity = models.DecimalField(
         "cantidad", max_digits=10, decimal_places=4, default=0
