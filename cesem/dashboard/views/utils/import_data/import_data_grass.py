@@ -17,6 +17,38 @@ from .utils import HelperImport
 
 baset_path = os.path.join(settings.BASE_DIR, "core", "management", "commands", "files")
 
+# anual_yield
+# direct_grazing
+# hay
+# ensilage
+# bale
+# perennial_grazing
+# Sperennial_yield
+
+mapping_activity_quantity = {
+    "PASTOS ASISTENCIA TECNICA EN MANEJO DE PASTOS": "technical_assistance",
+    "PASTOS EVALUACION DE COSECHA PASTOS ANUALES": "",
+    "PASTOS EVALUACION DE COSECHA PASTOS ANUALES CEGADO MOTOGUADAÑA": "",
+    "PASTOS EVALUACION DE COSECHA PASTOS PERENNES RENDIMIENTO": "",
+    "PASTOS EVALUACION DE INTENSION DE SIEMBRA ANUALES": "planting_intention_hectares",
+    "PASTOS EVALUACION DE INTENSION DE SIEMBRA PERENNES": "",
+    "PASTOS INST. PAST ANUALES ARADO": "plow_hours",
+    "PASTOS INST. PAST ANUALES RASTRA": "dredge_hours",
+    "PASTOS INST. PAST. PERENNES ALFALFA Y DACTYLIS": "alfalfa_dactylis_planted_hectares",
+    "PASTOS INST. PAST. PERENNES ANALISIS DE SUELO": "ground_analysis",  # no hay para anuales
+    "PASTOS INST. PAST. PERENNES ARADO": "",  #
+    "PASTOS INST. PAST. PERENNES DISTRIBUION SEMILLA": "",
+    "PASTOS INST. PAST. PERENNES RASTRA": "",
+    "PASTOS INST. PAST. PERENNES RYEGRASS Y TREBOL": "raygrass_trebol_planted_hectares",
+    "PASTOS INST. PAST. ANUALES AVENA Y VICIA": "avena_vicia_planted_hectares",
+    "PASTOS INST. PAST. ANUALES ENTREGA FERTILIZANTE": "fertilizer",  # solo para anuales
+    "PASTOS INTS. PAST. ANUALES DISTRIBUCION SEMILLA": "oat_kg",  # vicia_kg
+    "PASTOS DISTRIBUCION PERENNES ALFALFA": "alfalfa_kg",  # dactylis_kg No presente en matriz
+    "PASTOS DISTRIBUCION PERENNES DACTYLIS": "dactylis_kg",
+    "PASTOS DISTRIBUCION PERENNES RYEGRASS Y TREBOL": "ryegrass_kg",  # trebol_b_kg No presente en matriz
+    "PASTOS CURSO TALLER EN INSTALACION DE PASTOS PERENNES": "technical_training",
+}
+
 
 class ImportGrass(HelperImport):
     help = "import xls data"
@@ -32,35 +64,37 @@ class ImportGrass(HelperImport):
             "ZONA",
             "COMUNIDAD ",
             "SECTOR/IRRIGACION",
+            # NOMBRE RESPONSABLE INICIAL, nuevo campo en xls
+            # NOMBRE RESPONSABLE OFICIAL, nuevo campo en xls, es el mismo que NOMBRE RESPONSABLE UP?
             "NOMBRE RESPONSABLE UP",
             "Nº DNI",
             "SEXO RUP",
-            "NOMBRE DEL INTEGRANTE DE LA UP",
-            "Nº DNI.1",
-            "SEXO IUP",
+            "NOMBRE DEL INTEGRANTE DE LA UP",  # no presente en xls
+            "Nº DNI.1",  # no presente en xls
+            "SEXO IUP",  # no presente en xls
             "COORDENADAS UTM Anuales",
-            # "LA UP ESTA BASE DE DATOS?",
-            # "UP DE MONITOREO",
-            # "UP  ES PILOTO?",
-            # "TIPIFICACION\nde productores (A-B-C)",
+            # "LA UP ESTA BASE DE DATOS?", se va a quitar
+            # "UP DE MONITOREO", se va a quitar
+            # "UP  ES PILOTO?", se va a quitar
+            "TIPIFICACION\nde productores (A-B-C)",
             "NOMBRE RESPONSABLE",
             "RESPONSABLE DE ACTIVIDAD",
             "ACTIVIDAD REALIZADA",
-            "HAS, INTENS, \nSIEMBRA",
-            # "ANAL.\nSUELO",
-            # "HORAS \nARADO",
-            # "HORAS \nRASTRA",
-            # "KG AVENA",
-            # "KG VICIA",
-            # "KG. ALFALFA",
-            # "KG. DACTYLIS",
-            # "KG RAYGRASS",
-            # "KG TREBOL B",
-            # "FERTILIZANTE (Bolsas x 50 kg) ",
+            "HAS. INTENS. \nSIEMBRA",
+            "ANAL.\nSUELO",
+            "HORAS \nARADO",
+            "HORAS \nRASTRA",
+            "KG AVENA",
+            "KG VICIA",
+            "KG. ALFALFA",
+            "KG. DACTYLIS",
+            "KG RAYGRASS",
+            "KG TREBOL B",
+            "FERTILIZANTE (Bolsas x 50 kg) ",
             "HAS. SIEMBRA \nAVENA/VICIA",
             "HAS. SIEMBRA\n ALFALFA DACTYLIS",
             "HAS. SIEMBRA \nRAYGRASS TREBOL",
-            "EVAL.COSECH. \nKG MV/HA",
+            "RENDIMIENTO ANUALES KG MV/HA",  # EVAL.COSECH. \nKG MV/HA
             "ASISTENCIA \nTECNICA",
             "PASTOREO DIRECTO (%)",
             "HENO (%)",
@@ -95,6 +129,9 @@ class ImportGrass(HelperImport):
             data_anual_utm_coordinates = self.nan_if_nat(
                 data["COORDENADAS UTM Anuales"][i]
             )
+            data_producer_classification = self.nan_if_nat(
+                data["TIPIFICACION de productores (A-B-C)"][i]
+            )
             data_employ_responsable = self.nan_if_nat(data["NOMBRE RESPONSABLE"][i])
             data_employ_specialist = self.nan_if_nat(
                 data["RESPONSABLE DE ACTIVIDAD"][i]
@@ -102,8 +139,18 @@ class ImportGrass(HelperImport):
             data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
             #
             data_planting_intention_hectares = self.zero_if_nan(
-                data["HAS, INTENS, \nSIEMBRA"][i]
+                data["HAS. INTENS. \nSIEMBRA"][i]
             )
+            data_ground_analysis = self.zero_if_nan(data["ANAL. SUELO"][i])
+            data_plow_hours = self.zero_if_nan(data["HORAS ARADO"][i])
+            data_dredge_hours = self.zero_if_nan(data["HORAS RASTRA"][i])
+            data_oat_kg = self.zero_if_nan(data["KG AVENA"][i])
+            data_vicia_kg = self.zero_if_nan(data["KG VICIA"][i])
+            data_alfalfa_kg = self.zero_if_nan(data["KG ALFALFA"][i])
+            data_dactylis_kg = self.zero_if_nan(data["KG DACTYLIS"][i])
+            data_ryegrass_kg = self.zero_if_nan(data["KG RYEGRASS"][i])
+            data_trebol_b_kg = self.zero_if_nan(data["KG TREBOL B"][i])
+            data_fertilizer = self.zero_if_nan(data["FERTILIZANTE (Bolsas x 50 kg)"][i])
             data_avena_vicia_planted_hectares = self.zero_if_nan(
                 data["HAS. SIEMBRA \nAVENA/VICIA"][i]
             )
@@ -119,16 +166,39 @@ class ImportGrass(HelperImport):
             data_bale = self.zero_if_nan(data["PACAS (%)"][i])
             data_perennial_grazing = self.zero_if_nan(data["PASTOREO %\nPERENNE"][i])
             data_perennial_yield = self.zero_if_nan(data["RENDIMIENTO\nPERENNE"][i])
-            # activities
-            data_harvest_evaluation = self.zero_if_nan(
-                data["EVAL.COSECH. \nKG MV/HA"][i]
-            )
+            data_anual_yield = self.zero_if_nan(data["RENDIMIENTO ANUALES KG MV/HA"][i])
             data_technical_assistance = self.zero_if_nan(
                 data["ASISTENCIA \nTECNICA"][i]
             )
             data_technical_training = self.zero_if_nan(
-                data["CAPACITACION INTALACION PERENNES"][i]
+                data["CAPACITACION INSTALACION PERENNES"][i]
             )
+
+            mapping_activity_detail = {
+                "planting_intention_hectares": data_planting_intention_hectares,
+                "ground_analysis": data_ground_analysis,
+                "plow_hours": data_plow_hours,
+                "dredge_hours": data_dredge_hours,
+                "oat_kg": data_oat_kg,
+                "vicia_kg": data_vicia_kg,
+                "alfalfa_kg": data_alfalfa_kg,
+                "dactylis_kg": data_dactylis_kg,
+                "ryegrass_kg": data_ryegrass_kg,
+                "trebol_b_kg": data_trebol_b_kg,
+                "fertilizer": data_fertilizer,
+                "avena_vicia_planted_hectares": data_avena_vicia_planted_hectares,
+                "alfalfa_dactylis_planted_hectares": data_alfalfa_dactylis_planted_hectares,
+                "raygrass_trebol_planted_hectares": data_raygrass_trebol_planted_hectares,
+                "technical_assistance": data_technical_assistance,
+                "anual_yield": data_anual_yield,
+                "direct_grazing": data_direct_grazing,
+                "hay": data_hay,
+                "ensilage": data_ensilage,
+                "bale": data_bale,
+                "perennial_grazing": data_perennial_grazing,
+                "perennial_yield": data_perennial_yield,
+                "technical_training": data_technical_training,
+            }
 
             try:
                 employ_responsable = self.get_person(data_employ_responsable)
@@ -151,61 +221,16 @@ class ImportGrass(HelperImport):
                     VisitGrass(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
+                        utm_coordenate=data_anual_utm_coordinates,
+                        producer_classification=data_producer_classification,
                         employ_specialist=employ_specialist,
                         employ_responsable=employ_responsable,
                         activity=activity,
-                        utm_coordenate=data_anual_utm_coordinates,
-                        planting_intention_hectares=data_planting_intention_hectares,
-                        avena_vicia_planted_hectares=data_avena_vicia_planted_hectares,
-                        alfalfa_dactylis_planted_hectares=data_alfalfa_dactylis_planted_hectares,
-                        raygrass_trebol_planted_hectares=data_raygrass_trebol_planted_hectares,
-                        direct_grazing=data_direct_grazing,
-                        hay=data_hay,
-                        ensilage=data_ensilage,
-                        bale=data_bale,
-                        perennial_grazing=data_perennial_grazing,
-                        perennial_yield=data_perennial_yield,
+                        quantity=mapping_activity_detail.get(
+                            mapping_activity_quantity.get(activity)
+                        ),
                     )
                 )
-
-                # check if new visits need to be created because of more activities
-                if data_harvest_evaluation and data_harvest_evaluation != "nan":
-                    visits.append(
-                        VisitGrass(
-                            visited_at=data_visited_at,
-                            production_unit=production_unit,
-                            employ_specialist=employ_specialist,
-                            employ_responsable=employ_responsable,
-                            activity=self.get_activity("EVAL. COSECH. KG MV/HA", True),
-                            quantity=float(data_harvest_evaluation),
-                        )
-                    )
-
-                if data_technical_assistance and data_technical_assistance != "nan":
-                    visits.append(
-                        VisitGrass(
-                            visited_at=data_visited_at,
-                            production_unit=production_unit,
-                            employ_specialist=employ_specialist,
-                            employ_responsable=employ_responsable,
-                            activity=self.get_activity("ASISTENCIA TECNICA", True),
-                            quantity=float(data_technical_assistance),
-                        )
-                    )
-
-                if data_technical_training and data_technical_training != "nan":
-                    visits.append(
-                        VisitGrass(
-                            visited_at=data_visited_at,
-                            production_unit=production_unit,
-                            employ_specialist=employ_specialist,
-                            employ_responsable=employ_responsable,
-                            activity=self.get_activity(
-                                "CAPACITACION INSTALACION PERENNES", True
-                            ),
-                            quantity=float(data_technical_training),
-                        )
-                    )
 
                 print("Registrando visita de pastos Nº: ", i + 1)
 
