@@ -242,7 +242,46 @@ class VisitGrass(models.Model):
         Activity, on_delete=models.CASCADE, verbose_name="actividad"
     )
     quantity = models.DecimalField(
-        "cantidad", max_digits=10, decimal_places=4, default=0
+        "cantidad", max_digits=10, decimal_places=4, default=0, null=True, blank=True
+    )
+    # datos extra, se utilizan solo para las actividades de RENDIMIENTO ANUAL y RENDIMIENTO PERENNE
+    direct_grazing = models.DecimalField(
+        "pastoreo directo (%)",
+        max_digits=10,
+        decimal_places=4,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    hay = models.DecimalField(
+        "heno (%)", max_digits=10, decimal_places=4, default=0, null=True, blank=True
+    )
+    ensilage = models.DecimalField(
+        "ensilado (%)",
+        max_digits=10,
+        decimal_places=4,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    bale = models.DecimalField(
+        "pacas (%)", max_digits=10, decimal_places=4, default=0, null=True, blank=True
+    )
+    perennial_grazing = models.DecimalField(
+        "pastoreo % perenne",
+        max_digits=10,
+        decimal_places=4,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    perennial_ensilage = models.DecimalField(
+        "ensilado % perenne",
+        max_digits=10,
+        decimal_places=4,
+        default=0,
+        null=True,
+        blank=True,
     )
 
     class Meta:

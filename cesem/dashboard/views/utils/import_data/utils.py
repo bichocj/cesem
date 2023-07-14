@@ -218,7 +218,7 @@ class HelperImport:
         # Here validate the file checksum and columns
         df = pd.read_excel(file)
         self.validate_file(df)
-        self.validate_columns(df)
+        # self.validate_columns(df)
 
         # Here run the implemented _inner_execute func in child class
         return_value = self._inner_execute(file, creates_if_none)
