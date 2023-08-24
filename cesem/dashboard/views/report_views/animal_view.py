@@ -87,8 +87,6 @@ def report_weekly(request):
         )
         .order_by("week")
     )
-    print("data", data)
-    print("grass data", grass_data)
     data = list(chain(data, grass_data))
 
     activities_data = {}
@@ -201,7 +199,7 @@ def report_zones(request):
             "production_unit__zone",
         )
         .annotate(
-            sum_animals=Sum(
+            quantity=Sum(
                 F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
             )
         )
@@ -209,16 +207,71 @@ def report_zones(request):
         .order_by("production_unit__zone")
     )
 
+    grass_data = (
+        VisitGrass.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__zone",
+        )
+        .annotate(
+            quantity=Round(
+                Sum(
+                    F("planting_intention_hectares")
+                    + F("ground_analysis")
+                    + F("plow_hours")
+                    + F("dredge_hours")
+                    + F("oat_kg")
+                    + F("vicia_kg")
+                    + F("alfalfa_kg")
+                    + F("dactylis_kg")
+                    + F("ryegrass_kg")
+                    + F("trebol_b_kg")
+                    + F("fertilizer")
+                    + F("avena_planted_hectares")
+                    + F("avena_vicia_planted_hectares")
+                    + F("alfalfa_dactylis_planted_hectares")
+                    + F("ryegrass_trebol_planted_hectares")
+                    + F("anual_yield")
+                    + F("technical_assistance")
+                    + F("perennial_yield")
+                    + F("technical_training_perennial")
+                    + F("technical_training_anual")
+                    + F("technical_training_conservation")
+                )
+            )
+        )
+        .filter(visited_at__year=year)
+        .order_by("production_unit__zone")
+    )
+    data = list(chain(data, grass_data))
+
     activities_data = {}
 
     for s in data:
         activity_key = s.get("activity")
-        week_key = s.get("production_unit__zone")
-        value = s.get("sum_animals")
+        zone_key = s.get("production_unit__zone")
+        value = s.get("quantity")
 
         if activity_key not in activities_data:
             activities_data[activity_key] = {}
-        activities_data[activity_key][week_key] = value
+        activities_data[activity_key][zone_key] = value
+
+    sub_activity_data = {}
+    for a in activities:
+        if is_sub_activity(a):
+            sub_activity = a
+            for activity_key in activities_data:
+                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
+                    if sub_activity.id not in sub_activity_data:
+                        sub_activity_data[sub_activity.id] = {}
+                    for zone_key in activities_data[activity_key]:
+                        if zone_key not in sub_activity_data[sub_activity.id]:
+                            sub_activity_data[sub_activity.id][zone_key] = 0
+                        sub_activity_data[sub_activity.id][zone_key] += activities_data[
+                            activity_key
+                        ][zone_key]
+
+    activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_zones.html", locals())
 
@@ -239,7 +292,6 @@ def activity_is_in_sub_activity(activities, activity_key, sub_activity):
 
 
 def fill_previous_week(weeks_number, week_key):
-    print("entro aqui", week_key)
     previous_week_key = week_key - 1
     if previous_week_key in weeks_number or week_key == 0:
         return 0
