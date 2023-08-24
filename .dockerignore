@@ -1,0 +1,316 @@
+# flyctl launch added from .env\a\.gitignore
+# created by virtualenv automatically
+.env\a\**\*
+
+# flyctl launch added from .gitignore
+**\venv
+
+# flyctl launch added from cesem\.gitignore
+# Created by https://www.toptal.com/developers/gitignore/api/python,django,windows,linux
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,django,windows,linux
+
+### Django ###
+cesem\**\*.log
+cesem\**\*.pot
+cesem\**\*.pyc
+cesem\**\__pycache__
+cesem\**\local_settings.py
+cesem\**\db.sqlite3
+cesem\**\db.sqlite3-journal
+cesem\**\media
+
+# If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
+# in your Git repository. Update and uncomment the following line accordingly.
+# <django-project-name>/staticfiles/
+
+### Django.Python Stack ###
+# Byte-compiled / optimized / DLL files
+cesem\**\*.py[cod]
+cesem\**\*$py.class
+
+# C extensions
+cesem\**\*.so
+
+# Distribution / packaging
+cesem\**\.Python
+cesem\**\build
+cesem\**\develop-eggs
+cesem\**\dist
+cesem\**\downloads
+cesem\**\eggs
+cesem\**\.eggs
+cesem\**\lib
+cesem\**\lib64
+cesem\**\parts
+cesem\**\sdist
+cesem\**\var
+cesem\**\wheels
+cesem\**\share\python-wheels
+cesem\**\*.egg-info
+cesem\**\.installed.cfg
+cesem\**\*.egg
+cesem\**\MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+cesem\**\*.manifest
+cesem\**\*.spec
+
+# Installer logs
+cesem\**\pip-log.txt
+cesem\**\pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+cesem\**\htmlcov
+cesem\**\.tox
+cesem\**\.nox
+cesem\**\.coverage
+cesem\**\.coverage.*
+cesem\**\.cache
+cesem\**\nosetests.xml
+cesem\**\coverage.xml
+cesem\**\*.cover
+cesem\**\*.py,cover
+cesem\**\.hypothesis
+cesem\**\.pytest_cache
+cesem\**\cover
+
+# Translations
+cesem\**\*.mo
+
+# Django stuff:
+
+# Flask stuff:
+cesem\**\instance
+cesem\**\.webassets-cache
+
+# Scrapy stuff:
+cesem\**\.scrapy
+
+# Sphinx documentation
+cesem\**\docs\_build
+
+# PyBuilder
+cesem\**\.pybuilder
+cesem\**\target
+
+# Jupyter Notebook
+cesem\**\.ipynb_checkpoints
+
+# IPython
+cesem\**\profile_default
+cesem\**\ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# poetry
+#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+#poetry.lock
+
+# pdm
+#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
+#pdm.lock
+#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
+#   in version control.
+#   https://pdm.fming.dev/#use-with-ide
+cesem\**\.pdm.toml
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+cesem\**\__pypackages__
+
+# Celery stuff
+cesem\**\celerybeat-schedule
+cesem\**\celerybeat.pid
+
+# SageMath parsed files
+cesem\**\*.sage.py
+
+# Environments
+cesem\**\.env
+cesem\**\.venv
+cesem\**\env
+cesem\**\venv
+cesem\**\ENV
+cesem\**\env.bak
+cesem\**\venv.bak
+
+# Spyder project settings
+cesem\**\.spyderproject
+cesem\**\.spyproject
+
+# Rope project settings
+cesem\**\.ropeproject
+
+# mkdocs documentation
+cesem\site
+
+# mypy
+cesem\**\.mypy_cache
+cesem\**\.dmypy.json
+cesem\**\dmypy.json
+
+# Pyre type checker
+cesem\**\.pyre
+
+# pytype static type analyzer
+cesem\**\.pytype
+
+# Cython debug symbols
+cesem\**\cython_debug
+
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
+
+### Linux ###
+cesem\**\*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+cesem\**\.fuse_hidden*
+
+# KDE directory preferences
+cesem\**\.directory
+
+# Linux trash folder which might appear on any partition or disk
+cesem\**\.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+cesem\**\.nfs*
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+
+# C extensions
+
+# Distribution / packaging
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+
+# Installer logs
+
+# Unit test / coverage reports
+
+# Translations
+
+# Django stuff:
+
+# Flask stuff:
+
+# Scrapy stuff:
+
+# Sphinx documentation
+
+# PyBuilder
+
+# Jupyter Notebook
+
+# IPython
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+
+# poetry
+#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+
+# pdm
+#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
+#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
+#   in version control.
+#   https://pdm.fming.dev/#use-with-ide
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+
+# Celery stuff
+
+# SageMath parsed files
+
+# Environments
+
+# Spyder project settings
+
+# Rope project settings
+
+# mkdocs documentation
+
+# mypy
+
+# Pyre type checker
+
+# pytype static type analyzer
+
+# Cython debug symbols
+
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+
+### Python Patch ###
+# Poetry local configuration file - https://python-poetry.org/docs/configuration/#local-configuration
+cesem\**\poetry.toml
+
+# ruff
+cesem\**\.ruff_cache
+
+# LSP config files
+cesem\**\pyrightconfig.json
+
+### Windows ###
+# Windows thumbnail cache files
+cesem\**\Thumbs.db
+cesem\**\Thumbs.db:encryptable
+cesem\**\ehthumbs.db
+cesem\**\ehthumbs_vista.db
+
+# Dump file
+cesem\**\*.stackdump
+
+# Folder config file
+cesem\**\[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+cesem\**\$RECYCLE.BIN
+
+# Windows Installer files
+cesem\**\*.cab
+cesem\**\*.msi
+cesem\**\*.msix
+cesem\**\*.msm
+cesem\**\*.msp
+
+# Windows shortcuts
+cesem\**\*.lnk
+
+# End of https://www.toptal.com/developers/gitignore/api/python,django,windows,linux
+fly.toml

@@ -189,7 +189,6 @@ if DEBUG:
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://cesem-bichocj.b4a.run",
-    "https://broken-thunder-4458.fly.dev",
-    "https://bold-snowflake-842.fly.dev",
+    os.environ.get("CSRF_TRUSTED_ORIGINS", default="http://some.com"),
+    'https://cesem-stg.fly.dev',
 ]
