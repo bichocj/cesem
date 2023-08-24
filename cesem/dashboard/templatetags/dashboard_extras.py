@@ -77,7 +77,7 @@ def get_activity_data_zone_value(activity, zone, activities_data):
 
 @register.filter
 def get_start_date_of_week(week_number, year):
-    start_of_week = datetime.strptime(f"{year}-W{week_number-1}-1", "%Y-W%W-%w").date()
+    start_of_week = datetime.strptime(f"{year}-W{week_number}-1", "%Y-W%W-%w").date()
     return start_of_week
 
 

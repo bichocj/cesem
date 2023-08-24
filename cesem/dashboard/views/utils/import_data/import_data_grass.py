@@ -17,6 +17,8 @@ from .utils import HelperImport
 
 baset_path = os.path.join(settings.BASE_DIR, "core", "management", "commands", "files")
 
+"""
+Used in previous logic
 mapping_activity_quantity = {
     "instalación de parcelas de avena forrajera asociado con vicia": "avena_vicia_planted_hectares",
     "entrega de semilla de avena tayco": "oat_kg",
@@ -38,6 +40,7 @@ mapping_activity_quantity = {
     "evaluación de cosecha de pastos cultivados anuales (monitoreo)": "anual_yield",
     "evaluación de cosecha de pastos cultivados perennes (monitoreo)": "perennial_yield",
 }
+"""
 
 
 class ImportGrass(HelperImport):
@@ -81,10 +84,11 @@ class ImportGrass(HelperImport):
             "KG RYEGRASS",
             "KG TREBOL",
             "FERTILIZANTE (BOLSAS X 50 KG)",
+            "HAS. SIEMBRA AVENA",
             "HAS. SIEMBRA AVENA/VICIA",
             "HAS. SIEMBRA ALFALFA DACTYLIS",
             "HAS. SIEMBRA RYEGRASS TREBOL",
-            "RENDIMIENTO ANUALES KG MV/HA",  # EVAL.COSECH. \nKG MV/HA
+            "RENDIMIENTO ANUALES KG MV/HA",  # EVAL. COSECH. KG MV/HA
             "ASISTENCIA TECNICA",
             "PASTOREO DIRECTO (%)",
             "HENO (%)",
@@ -146,6 +150,9 @@ class ImportGrass(HelperImport):
             data_ryegrass_kg = self.zero_if_nan(data["KG RYEGRASS"][i])
             data_trebol_b_kg = self.zero_if_nan(data["KG TREBOL"][i])
             data_fertilizer = self.zero_if_nan(data["FERTILIZANTE (BOLSAS X 50 KG)"][i])
+            data_avena_planted_hectares = self.zero_if_nan(
+                data["HAS. SIEMBRA AVENA"][i]
+            )
             data_avena_vicia_planted_hectares = self.zero_if_nan(
                 data["HAS. SIEMBRA AVENA/VICIA"][i]
             )
@@ -173,7 +180,8 @@ class ImportGrass(HelperImport):
             data_technical_training_conservation = self.zero_if_nan(
                 data["CAPACITACION MANEJO Y CONSERVACION"][i]
             )
-
+            """
+            Used in previous logic
             mapping_activity_detail = {
                 "planting_intention_hectares": data_planting_intention_hectares,
                 "ground_analysis": data_ground_analysis,  # falta asignar a una actividad
@@ -202,6 +210,7 @@ class ImportGrass(HelperImport):
                 "technical_training_anual": data_technical_training_anual,
                 "technical_training_conservation": data_technical_training_conservation,
             }
+            """
 
             try:
                 employ_responsable = self.get_person(data_employ_responsable)
@@ -221,6 +230,8 @@ class ImportGrass(HelperImport):
                     data_up_member_sex,
                     creates_if_none=True,
                 )
+                """
+                Used in previous logic
                 quantity_value = 0
                 activity_field_for_quantity = mapping_activity_quantity.get(
                     data_activity.lower()
@@ -231,7 +242,7 @@ class ImportGrass(HelperImport):
                     )
                 else:
                     quantity_value = sum(activity_field_for_quantity)
-
+                """
                 visits.append(
                     VisitGrass(
                         visited_at=data_visited_at,
@@ -241,16 +252,37 @@ class ImportGrass(HelperImport):
                         employ_specialist=employ_specialist,
                         employ_responsable=employ_responsable,
                         activity=activity,
-                        quantity=quantity_value,
+                        planting_intention_hectares=data_planting_intention_hectares,
+                        ground_analysis=data_ground_analysis,
+                        plow_hours=data_plow_hours,
+                        dredge_hours=data_dredge_hours,
+                        oat_kg=data_oat_kg,
+                        vicia_kg=data_vicia_kg,
+                        alfalfa_kg=data_alfalfa_kg,
+                        dactylis_kg=data_dactylis_kg,
+                        ryegrass_kg=data_ryegrass_kg,
+                        trebol_b_kg=data_trebol_b_kg,
+                        fertilizer=data_fertilizer,
+                        avena_planted_hectares=data_avena_planted_hectares,
+                        avena_vicia_planted_hectares=data_avena_vicia_planted_hectares,
+                        alfalfa_dactylis_planted_hectares=data_alfalfa_dactylis_planted_hectares,
+                        ryegrass_trebol_planted_hectares=data_ryegrass_trebol_planted_hectares,
+                        anual_yield=data_anual_yield,
+                        technical_assistance=data_technical_assistance,
+                        direct_grazing=data_direct_grazing,
                         hay=data_hay,
                         ensilage=data_ensilage,
                         bale=data_bale,
                         perennial_grazing=data_perennial_grazing,
                         perennial_ensilage=data_perennial_ensilage,
+                        perennial_yield=data_perennial_yield,
+                        technical_training_perennial=data_technical_training_perennial,
+                        technical_training_anual=data_technical_training_anual,
+                        technical_training_conservation=data_technical_training_conservation,
                     )
                 )
 
-                print("Registrando visita de pastos Nº: ", i + 1)
+                print("Procesando visita de pastos Nº: ", i + 1)
 
             except Zone.DoesNotExist:
                 print("row", str(i + 1), "not found zone:", data_zone)

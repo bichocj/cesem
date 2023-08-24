@@ -35,21 +35,21 @@ class VisitGrassPathSerializer(BasePathSerializer):
             "cesem_especialista",
             "cesem_responsable",
             "actividad",
-            "planting_intention_hectares",
-            "avena_vicia_planted_hectares",
-            "alfalfa_dactylis_planted_hectares",
-            "raygrass_trebol_planted_hectares",
-            "direct_grazing",
-            "hay",
-            "ensilage",
-            "bale",
-            "perennial_grazing",
-            "perennial_yield",
+            # "planting_intention_hectares",
+            # "avena_vicia_planted_hectares",
+            # "alfalfa_dactylis_planted_hectares",
+            # "ryegrass_trebol_planted_hectares",
+            # "direct_grazing",
+            # "hay",
+            # "ensilage",
+            # "bale",
+            # "perennial_grazing",
+            # "perennial_yield",
             "url",
         ]
 
 
-class VisitGrassQuantityPathSerializer(BasePathSerializer):
+class VisitGrassDetailPathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
@@ -79,8 +79,33 @@ class VisitGrassQuantityPathSerializer(BasePathSerializer):
             "cesem_especialista",
             "cesem_responsable",
             "actividad",
-            "quantity",
-            "url",
+            "planting_intention_hectares",
+            "ground_analysis",
+            "plow_hours",
+            "dredge_hours",
+            "oat_kg",
+            "vicia_kg",
+            "alfalfa_kg",
+            "dactylis_kg",
+            "ryegrass_kg",
+            "trebol_b_kg",
+            "fertilizer",
+            "avena_planted_hectares",
+            "avena_vicia_planted_hectares",
+            "alfalfa_dactylis_planted_hectares",
+            "ryegrass_trebol_planted_hectares",
+            "anual_yield",
+            "technical_assistance",
+            "direct_grazing",
+            "hay",
+            "ensilage",
+            "bale",
+            "perennial_grazing",
+            "perennial_ensilage",
+            "perennial_yield",
+            "technical_training_perennial",
+            "technical_training_anual",
+            "technical_training_conservation",
         ]
 
 
@@ -95,7 +120,7 @@ class VisitGrassViewSet(viewsets.ModelViewSet):
         .all()
     )
     serializer_class = VisitGrassPathSerializer
-    serializer_quantity_class = VisitGrassQuantityPathSerializer
+    serializer_detail_class = VisitGrassDetailPathSerializer
 
     filterset_fields = {
         "production_unit__zone__name": ["contains"],
@@ -107,6 +132,5 @@ class VisitGrassViewSet(viewsets.ModelViewSet):
     }
 
     def retrieve(self, request, *args, **kwargs):
-        if self.get_object().quantity > 0:
-            self.serializer_class = self.serializer_quantity_class
+        self.serializer_class = self.serializer_detail_class
         return super().retrieve(request, *args, **kwargs)

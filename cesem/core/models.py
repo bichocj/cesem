@@ -241,36 +241,128 @@ class VisitGrass(models.Model):
     activity = models.ForeignKey(
         Activity, on_delete=models.CASCADE, verbose_name="actividad"
     )
-    quantity = models.DecimalField(
-        "cantidad", max_digits=10, decimal_places=4, default=0, null=True, blank=True
+    planting_intention_hectares = models.DecimalField(
+        "has. intens. de siembra",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
     )
-    # datos extra, se utilizan solo para las actividades de RENDIMIENTO ANUAL y RENDIMIENTO PERENNE
+    ground_analysis = models.DecimalField(
+        "anal. suelo", max_digits=10, decimal_places=2, default=0, null=True, blank=True
+    )
+    plow_hours = models.DecimalField(
+        "horas arado", max_digits=10, decimal_places=2, default=0, null=True, blank=True
+    )
+    dredge_hours = models.DecimalField(
+        "horas rastra",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    oat_kg = models.DecimalField(
+        "kg avena", max_digits=10, decimal_places=2, default=0, null=True, blank=True
+    )
+    vicia_kg = models.DecimalField(
+        "kg vicia", max_digits=10, decimal_places=2, default=0, null=True, blank=True
+    )
+    alfalfa_kg = models.DecimalField(
+        "kg alfalfa", max_digits=10, decimal_places=2, default=0, null=True, blank=True
+    )
+    dactylis_kg = models.DecimalField(
+        "kg dactylis", max_digits=10, decimal_places=2, default=0, null=True, blank=True
+    )
+    ryegrass_kg = models.DecimalField(
+        "kg ryegrass", max_digits=10, decimal_places=2, default=0, null=True, blank=True
+    )
+    trebol_b_kg = models.DecimalField(
+        "kg trebol", max_digits=10, decimal_places=2, default=0, null=True, blank=True
+    )
+    fertilizer = models.DecimalField(
+        "fertilizante",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    avena_planted_hectares = models.DecimalField(
+        "has. siembra avena",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    avena_vicia_planted_hectares = models.DecimalField(
+        "has. siembra avena/vicia",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    alfalfa_dactylis_planted_hectares = models.DecimalField(
+        "has. siembra alfalfa dactylis",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    ryegrass_trebol_planted_hectares = models.DecimalField(
+        "has. siembra ryegrass trebol",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    anual_yield = models.DecimalField(
+        "rendimiento anuales kg mv/ha",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    technical_assistance = models.DecimalField(
+        "asistencia técnica",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
     direct_grazing = models.DecimalField(
         "pastoreo directo (%)",
         max_digits=10,
-        decimal_places=4,
+        decimal_places=2,
         default=0,
         null=True,
         blank=True,
     )
     hay = models.DecimalField(
-        "heno (%)", max_digits=10, decimal_places=4, default=0, null=True, blank=True
+        "heno (%)", max_digits=10, decimal_places=2, default=0, null=True, blank=True
     )
     ensilage = models.DecimalField(
         "ensilado (%)",
         max_digits=10,
-        decimal_places=4,
+        decimal_places=2,
         default=0,
         null=True,
         blank=True,
     )
     bale = models.DecimalField(
-        "pacas (%)", max_digits=10, decimal_places=4, default=0, null=True, blank=True
+        "pacas (%)", max_digits=10, decimal_places=2, default=0, null=True, blank=True
     )
     perennial_grazing = models.DecimalField(
         "pastoreo % perenne",
         max_digits=10,
-        decimal_places=4,
+        decimal_places=2,
         default=0,
         null=True,
         blank=True,
@@ -278,7 +370,39 @@ class VisitGrass(models.Model):
     perennial_ensilage = models.DecimalField(
         "ensilado % perenne",
         max_digits=10,
-        decimal_places=4,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    perennial_yield = models.DecimalField(
+        "rendimiento perenne",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    technical_training_perennial = models.DecimalField(
+        "capacitación instalación perennes",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    technical_training_anual = models.DecimalField(
+        "capacitación instalación anuales",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        null=True,
+        blank=True,
+    )
+    technical_training_conservation = models.DecimalField(
+        "capacitación manejo y conservación",
+        max_digits=10,
+        decimal_places=2,
         default=0,
         null=True,
         blank=True,

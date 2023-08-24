@@ -1,11 +1,10 @@
-from core.models import Activity, VisitAnimal, Zone, VisitGrass
-from django.db.models import F, Sum, Case, When, Value, CharField
-from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, Round
+from core.models import Activity, VisitGrass, Zone
+from django.db.models import F, Sum
+from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, Lower
 from django.shortcuts import render
-from itertools import chain
 
 year = 2022
-"""
+
 mapping_activity_quantity = {
     "instalación de parcelas de avena forrajera asociado con vicia": "avena_vicia_planted_hectares",
     "instalación de parcelas de avena forrajera": "avena_planted_hectares",
@@ -28,94 +27,35 @@ mapping_activity_quantity = {
     "evaluación de cosecha de pastos cultivados anuales (monitoreo)": "anual_yield",
     "evaluación de cosecha de pastos cultivados perennes (monitoreo)": "perennial_yield",
 }
-"""
 
 
 def report_weekly(request):
     activities = Activity.objects.all().order_by("position")
 
     data = (
-        VisitAnimal.objects.filter(visited_at__year=year)
-        .annotate(week=ExtractWeek("visited_at"))
-        .values(
-            "id",
-            "activity__id",
-            "week",
-        )
-        .annotate(
-            quantity=Sum(
-                F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
-            )
-        )
-        .order_by("week")
-    )
-
-    grass_data = (
         VisitGrass.objects.filter(visited_at__year=year)
         .annotate(week=ExtractWeek("visited_at"))
         .values(
-            "id",
             "activity__id",
             "week",
         )
-        .annotate(
-            quantity=Round(
-                Sum(
-                    F("planting_intention_hectares")
-                    + F("ground_analysis")
-                    + F("plow_hours")
-                    + F("dredge_hours")
-                    + F("oat_kg")
-                    + F("vicia_kg")
-                    + F("alfalfa_kg")
-                    + F("dactylis_kg")
-                    + F("ryegrass_kg")
-                    + F("trebol_b_kg")
-                    + F("fertilizer")
-                    + F("avena_planted_hectares")
-                    + F("avena_vicia_planted_hectares")
-                    + F("alfalfa_dactylis_planted_hectares")
-                    + F("ryegrass_trebol_planted_hectares")
-                    + F("anual_yield")
-                    + F("technical_assistance")
-                    + F("perennial_yield")
-                    + F("technical_training_perennial")
-                    + F("technical_training_anual")
-                    + F("technical_training_conservation")
-                )
-            )
-        )
+        .annotate(quantity=mapping_activity_quantity.get(Lower("activity__name")))
         .order_by("week")
     )
-    print("data", data)
-    print("grass data", grass_data)
-    data = list(chain(data, grass_data))
 
     activities_data = {}
     weeks_number = {}
 
-    first_week = None
     for s in data:
         activity_key = s.get("activity__id")
         week_key = s.get("week")
         value = s.get("quantity")
-        if not first_week:
-            first_week = week_key
 
         if activity_key not in activities_data:
             activities_data[activity_key] = {}
+        activities_data[activity_key][week_key] = value
 
-        if week_key in activities_data[activity_key]:
-            activities_data[activity_key][week_key] += value
-        else:
-            activities_data[activity_key][week_key] = value
-
-        if week_key != first_week and weeks_number.get(week_key) != "":
-            fill_previous_week(weeks_number, week_key)
-
-        weeks_number[
-            week_key
-        ] = ""  # todas las semanas existentes en la data de animales + pastos, sin repetirse, mas las semanas faltantes
+        weeks_number[week_key] = ""
 
     sub_activity_data = {}
     for a in activities:
@@ -137,6 +77,7 @@ def report_weekly(request):
     return render(request, "dashboard/report_weekly.html", locals())
 
 
+"""
 def report_monthly(request):
     activities = Activity.objects.all().order_by("position")
 
@@ -221,6 +162,7 @@ def report_zones(request):
         activities_data[activity_key][week_key] = value
 
     return render(request, "dashboard/report_zones.html", locals())
+"""
 
 
 def is_sub_activity(activity):
@@ -236,12 +178,3 @@ def activity_is_in_sub_activity(activities, activity_key, sub_activity):
         if a.id == activity_key:
             return a.parent == sub_activity
     return False
-
-
-def fill_previous_week(weeks_number, week_key):
-    print("entro aqui", week_key)
-    previous_week_key = week_key - 1
-    if previous_week_key in weeks_number or week_key == 0:
-        return 0
-    weeks_number[previous_week_key] = ""
-    return fill_previous_week(weeks_number, previous_week_key)
