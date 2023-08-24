@@ -9,6 +9,7 @@ urls_reports = [
     path(r"monthly/", view=animal_view.report_monthly, name="report_monthly"),
     path(r"weekly/", view=animal_view.report_weekly, name="report_weekly"),
     path(r"zones/", view=animal_view.report_zones, name="report_zones"),
+    path(r"community/", view=animal_view.report_community, name="report_community"),
 ]
 
 urlpatterns = [

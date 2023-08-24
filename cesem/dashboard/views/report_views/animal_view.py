@@ -1,4 +1,4 @@
-from core.models import Activity, VisitAnimal, Zone, VisitGrass
+from core.models import Activity, VisitAnimal, Zone, VisitGrass, Community
 from django.db.models import F, Sum, Case, When, Value, CharField
 from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, Round
 from django.shortcuts import render
@@ -274,6 +274,92 @@ def report_zones(request):
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_zones.html", locals())
+
+
+def report_community(request):
+    activities = Activity.objects.all().order_by("position")
+    communities = Community.objects.all().order_by("name")
+    data = (
+        VisitAnimal.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__community",
+        )
+        .annotate(
+            quantity=Sum(
+                F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
+            )
+        )
+        .filter(visited_at__year=year)
+        .order_by("production_unit__community")
+    )
+
+    grass_data = (
+        VisitGrass.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__community",
+        )
+        .annotate(
+            quantity=Round(
+                Sum(
+                    F("planting_intention_hectares")
+                    + F("ground_analysis")
+                    + F("plow_hours")
+                    + F("dredge_hours")
+                    + F("oat_kg")
+                    + F("vicia_kg")
+                    + F("alfalfa_kg")
+                    + F("dactylis_kg")
+                    + F("ryegrass_kg")
+                    + F("trebol_b_kg")
+                    + F("fertilizer")
+                    + F("avena_planted_hectares")
+                    + F("avena_vicia_planted_hectares")
+                    + F("alfalfa_dactylis_planted_hectares")
+                    + F("ryegrass_trebol_planted_hectares")
+                    + F("anual_yield")
+                    + F("technical_assistance")
+                    + F("perennial_yield")
+                    + F("technical_training_perennial")
+                    + F("technical_training_anual")
+                    + F("technical_training_conservation")
+                )
+            )
+        )
+        .filter(visited_at__year=year)
+        .order_by("production_unit__community")
+    )
+    data = list(chain(data, grass_data))
+    activities_data = {}
+
+    for s in data:
+        activity_key = s.get("activity")
+        community_key = s.get("production_unit__community")
+        value = s.get("quantity")
+
+        if activity_key not in activities_data:
+            activities_data[activity_key] = {}
+        activities_data[activity_key][community_key] = value
+    
+    sub_activity_data = {}
+    for a in activities:
+        if is_sub_activity(a):
+            sub_activity = a
+            for activity_key in activities_data:
+                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
+                    if sub_activity.id not in sub_activity_data:
+                        sub_activity_data[sub_activity.id] = {}
+                    for community_key in activities_data[activity_key]:
+                        if community_key not in sub_activity_data[sub_activity.id]:
+                            sub_activity_data[sub_activity.id][community_key] = 0
+                        sub_activity_data[sub_activity.id][community_key] += activities_data[
+                            activity_key
+                        ][community_key]
+
+    activities_data.update(sub_activity_data)
+
+    return render(request, "dashboard/report_communities.html", locals())
 
 
 def is_sub_activity(activity):
