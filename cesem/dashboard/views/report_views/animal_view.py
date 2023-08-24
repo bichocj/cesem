@@ -29,6 +29,31 @@ mapping_activity_quantity = {
     "evaluación de cosecha de pastos cultivados perennes (monitoreo)": "perennial_yield",
 }
 """
+grass_quantity_var = Round(
+    Sum(
+        F("planting_intention_hectares")
+        + F("ground_analysis")
+        + F("plow_hours")
+        + F("dredge_hours")
+        + F("oat_kg")
+        + F("vicia_kg")
+        + F("alfalfa_kg")
+        + F("dactylis_kg")
+        + F("ryegrass_kg")
+        + F("trebol_b_kg")
+        + F("fertilizer")
+        + F("avena_planted_hectares")
+        + F("avena_vicia_planted_hectares")
+        + F("alfalfa_dactylis_planted_hectares")
+        + F("ryegrass_trebol_planted_hectares")
+        + F("anual_yield")
+        + F("technical_assistance")
+        + F("perennial_yield")
+        + F("technical_training_perennial")
+        + F("technical_training_anual")
+        + F("technical_training_conservation")
+    )
+)
 
 
 def report_weekly(request):
@@ -58,33 +83,7 @@ def report_weekly(request):
             "activity__id",
             "week",
         )
-        .annotate(
-            quantity=Round(
-                Sum(
-                    F("planting_intention_hectares")
-                    + F("ground_analysis")
-                    + F("plow_hours")
-                    + F("dredge_hours")
-                    + F("oat_kg")
-                    + F("vicia_kg")
-                    + F("alfalfa_kg")
-                    + F("dactylis_kg")
-                    + F("ryegrass_kg")
-                    + F("trebol_b_kg")
-                    + F("fertilizer")
-                    + F("avena_planted_hectares")
-                    + F("avena_vicia_planted_hectares")
-                    + F("alfalfa_dactylis_planted_hectares")
-                    + F("ryegrass_trebol_planted_hectares")
-                    + F("anual_yield")
-                    + F("technical_assistance")
-                    + F("perennial_yield")
-                    + F("technical_training_perennial")
-                    + F("technical_training_anual")
-                    + F("technical_training_conservation")
-                )
-            )
-        )
+        .annotate(quantity=grass_quantity_var)
         .order_by("week")
     )
     data = list(chain(data, grass_data))
@@ -115,21 +114,7 @@ def report_weekly(request):
             week_key
         ] = ""  # todas las semanas existentes en la data de animales + pastos, sin repetirse, mas las semanas faltantes
 
-    sub_activity_data = {}
-    for a in activities:
-        if is_sub_activity(a):
-            sub_activity = a
-            for activity_key in activities_data:
-                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
-                    if sub_activity.id not in sub_activity_data:
-                        sub_activity_data[sub_activity.id] = {}
-                    for week_key in activities_data[activity_key]:
-                        if week_key not in sub_activity_data[sub_activity.id]:
-                            sub_activity_data[sub_activity.id][week_key] = 0
-                        sub_activity_data[sub_activity.id][week_key] += activities_data[
-                            activity_key
-                        ][week_key]
-
+    sub_activity_data = get_data_of_sub_activity(activities, activities_data, week_key)
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_weekly.html", locals())
@@ -146,14 +131,25 @@ def report_monthly(request):
             "month",
         )
         .annotate(
-            sum_animals=Sum(
+            quantity=Sum(
                 F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
             )
         )
         .order_by("activity__id", "month")
     )
 
-    print(data.query)
+    grass_data = (
+        VisitGrass.objects.filter(visited_at__year=year)
+        .annotate(month=ExtractMonth("visited_at"))
+        .values(
+            "activity__id",
+            "month",
+        )
+        .annotate(quantity=grass_quantity_var)
+        .order_by("activity__id", "month")
+    )
+
+    data = list(chain(data, grass_data))
 
     activities_data = {}
     month_number = {}
@@ -161,7 +157,7 @@ def report_monthly(request):
     for s in data:
         activity_key = s.get("activity__id")
         month_key = s.get("month")
-        value = s.get("sum_animals")
+        value = s.get("quantity")
 
         if activity_key not in activities_data:
             activities_data[activity_key] = {}
@@ -169,21 +165,7 @@ def report_monthly(request):
 
         month_number[month_key] = ""
 
-    sub_activity_data = {}
-    for a in activities:
-        if is_sub_activity(a):
-            sub_activity = a
-            for activity_key in activities_data:
-                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
-                    if sub_activity.id not in sub_activity_data:
-                        sub_activity_data[sub_activity.id] = {}
-                    for month_key in activities_data[activity_key]:
-                        if month_key not in sub_activity_data[sub_activity.id]:
-                            sub_activity_data[sub_activity.id][month_key] = 0
-                        sub_activity_data[sub_activity.id][
-                            month_key
-                        ] += activities_data[activity_key][month_key]
-
+    sub_activity_data = get_data_of_sub_activity(activities, activities_data, month_key)
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_monthly.html", locals())
@@ -213,33 +195,7 @@ def report_zones(request):
             "activity",
             "production_unit__zone",
         )
-        .annotate(
-            quantity=Round(
-                Sum(
-                    F("planting_intention_hectares")
-                    + F("ground_analysis")
-                    + F("plow_hours")
-                    + F("dredge_hours")
-                    + F("oat_kg")
-                    + F("vicia_kg")
-                    + F("alfalfa_kg")
-                    + F("dactylis_kg")
-                    + F("ryegrass_kg")
-                    + F("trebol_b_kg")
-                    + F("fertilizer")
-                    + F("avena_planted_hectares")
-                    + F("avena_vicia_planted_hectares")
-                    + F("alfalfa_dactylis_planted_hectares")
-                    + F("ryegrass_trebol_planted_hectares")
-                    + F("anual_yield")
-                    + F("technical_assistance")
-                    + F("perennial_yield")
-                    + F("technical_training_perennial")
-                    + F("technical_training_anual")
-                    + F("technical_training_conservation")
-                )
-            )
-        )
+        .annotate(quantity=grass_quantity_var)
         .filter(visited_at__year=year)
         .order_by("production_unit__zone")
     )
@@ -256,21 +212,7 @@ def report_zones(request):
             activities_data[activity_key] = {}
         activities_data[activity_key][zone_key] = value
 
-    sub_activity_data = {}
-    for a in activities:
-        if is_sub_activity(a):
-            sub_activity = a
-            for activity_key in activities_data:
-                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
-                    if sub_activity.id not in sub_activity_data:
-                        sub_activity_data[sub_activity.id] = {}
-                    for zone_key in activities_data[activity_key]:
-                        if zone_key not in sub_activity_data[sub_activity.id]:
-                            sub_activity_data[sub_activity.id][zone_key] = 0
-                        sub_activity_data[sub_activity.id][zone_key] += activities_data[
-                            activity_key
-                        ][zone_key]
-
+    sub_activity_data = get_data_of_sub_activity(activities, activities_data, zone_key)
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_zones.html", locals())
@@ -300,33 +242,7 @@ def report_community(request):
             "activity",
             "production_unit__community",
         )
-        .annotate(
-            quantity=Round(
-                Sum(
-                    F("planting_intention_hectares")
-                    + F("ground_analysis")
-                    + F("plow_hours")
-                    + F("dredge_hours")
-                    + F("oat_kg")
-                    + F("vicia_kg")
-                    + F("alfalfa_kg")
-                    + F("dactylis_kg")
-                    + F("ryegrass_kg")
-                    + F("trebol_b_kg")
-                    + F("fertilizer")
-                    + F("avena_planted_hectares")
-                    + F("avena_vicia_planted_hectares")
-                    + F("alfalfa_dactylis_planted_hectares")
-                    + F("ryegrass_trebol_planted_hectares")
-                    + F("anual_yield")
-                    + F("technical_assistance")
-                    + F("perennial_yield")
-                    + F("technical_training_perennial")
-                    + F("technical_training_anual")
-                    + F("technical_training_conservation")
-                )
-            )
-        )
+        .annotate(quantity=grass_quantity_var)
         .filter(visited_at__year=year)
         .order_by("production_unit__community")
     )
@@ -341,22 +257,10 @@ def report_community(request):
         if activity_key not in activities_data:
             activities_data[activity_key] = {}
         activities_data[activity_key][community_key] = value
-    
-    sub_activity_data = {}
-    for a in activities:
-        if is_sub_activity(a):
-            sub_activity = a
-            for activity_key in activities_data:
-                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
-                    if sub_activity.id not in sub_activity_data:
-                        sub_activity_data[sub_activity.id] = {}
-                    for community_key in activities_data[activity_key]:
-                        if community_key not in sub_activity_data[sub_activity.id]:
-                            sub_activity_data[sub_activity.id][community_key] = 0
-                        sub_activity_data[sub_activity.id][community_key] += activities_data[
-                            activity_key
-                        ][community_key]
 
+    sub_activity_data = get_data_of_sub_activity(
+        activities, activities_data, community_key
+    )
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_communities.html", locals())
@@ -383,3 +287,22 @@ def fill_previous_week(weeks_number, week_key):
         return 0
     weeks_number[previous_week_key] = ""
     return fill_previous_week(weeks_number, previous_week_key)
+
+
+def get_data_of_sub_activity(activities, activities_data, related_key):
+    sub_activity_data = {}
+    for a in activities:
+        if is_sub_activity(a):
+            sub_activity = a
+            for activity_key in activities_data:
+                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
+                    if sub_activity.id not in sub_activity_data:
+                        sub_activity_data[sub_activity.id] = {}
+                    for related_key in activities_data[activity_key]:
+                        if related_key not in sub_activity_data[sub_activity.id]:
+                            sub_activity_data[sub_activity.id][related_key] = 0
+                        sub_activity_data[sub_activity.id][
+                            related_key
+                        ] += activities_data[activity_key][related_key]
+
+    return sub_activity_data
