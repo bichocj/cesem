@@ -1,4 +1,5 @@
 from rest_framework import viewsets, serializers
+from django.db.models import F, Sum
 from core.models import ProductionUnit, VisitAnimal, VisitGrass
 from .utils import BasePathSerializer
 
@@ -73,6 +74,7 @@ class VisitGrassPathSerializer(BasePathSerializer):
     especialista = serializers.StringRelatedField(source="employ_specialist")
     responsable = serializers.StringRelatedField(source="employ_responsable")
     actividad = serializers.StringRelatedField(source="activity")
+    # has = serializers.StringRelatedField(source="planting_intention_hectares")
 
     @staticmethod
     def get_path():
@@ -89,6 +91,48 @@ class VisitGrassPathSerializer(BasePathSerializer):
         ]
 
 
+class SumaPastosPathSerializer(serializers.Serializer):
+    has_intens_siembra = serializers.IntegerField()
+    anal_suelo = serializers.IntegerField()
+    horas_arado = serializers.IntegerField()
+    horas_rastra = serializers.IntegerField()
+    kg_avena = serializers.IntegerField()
+    kg_vicia = serializers.IntegerField()
+    kg_alfalfa = serializers.IntegerField()
+    kg_dacylis = serializers.IntegerField()
+    kg_ryegrass = serializers.IntegerField()
+    kg_trebol = serializers.IntegerField()
+    fertilizante = serializers.IntegerField()
+    has_siembra_avena = serializers.IntegerField()
+    has_siembra_avena_vicia = serializers.IntegerField()
+    has_siembra_alfalfa_dactylis = serializers.IntegerField()
+    has_siembra_ryegrass_trebol = serializers.IntegerField()
+    rendimiento_anual = serializers.IntegerField()
+    asistencia_tecnica = serializers.IntegerField()
+    capac_inst_perennes = serializers.IntegerField()
+    capac_inst_anual = serializers.IntegerField()
+    capac_manejo_conserv = serializers.IntegerField()
+
+
+class SumaAnimalesPathSerializer(serializers.Serializer):
+    """
+    vacas = serializers.IntegerField()
+    vaquillonas = serializers.IntegerField()
+    vaquillas = serializers.IntegerField()
+    terrenos = serializers.IntegerField()
+    toretes = serializers.IntegerField()
+    toros = serializers.IntegerField()
+    vacuno = serializers.IntegerField()
+    ovino = serializers.IntegerField()
+    alpaca = serializers.IntegerField()
+    llama = serializers.IntegerField()
+    can = serializers.IntegerField()
+    """
+
+    total_vaquillonas = serializers.IntegerField()
+    total_vacas = serializers.IntegerField()
+
+
 class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     zona_nombre = serializers.StringRelatedField(many=False, source="zone")
     comunidad = serializers.StringRelatedField(many=False, source="community")
@@ -99,6 +143,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     miembro = serializers.StringRelatedField(many=False, source="person_member")
     tipologia = serializers.StringRelatedField(many=False, source="tipology")
     es_pilot = serializers.StringRelatedField(many=False, source="is_pilot")
+    # suma_animales = serializers.SerializerMethodField()
+    suma_pastos = serializers.SerializerMethodField()
     visitas_animales = serializers.SerializerMethodField()
     visitas_pastos = serializers.SerializerMethodField()
 
@@ -116,6 +162,69 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         serializer = VisitGrassPathSerializer(instance=data, many=True)
         return serializer.data
 
+    def get_suma_pastos(self, obj):
+        data = (
+            VisitGrass.objects.filter(production_unit__id=obj.id)
+            .annotate(
+                has_intens_siembra=Sum(F("planting_intention_hectares")),
+                anal_suelo=Sum(F("ground_analysis")),
+                horas_arado=Sum(F("plow_hours")),
+                horas_rastra=Sum(F("dredge_hours")),
+                kg_avena=Sum(F("oat_kg")),
+                kg_vicia=Sum(F("vicia_kg")),
+                kg_alfalfa=Sum(F("alfalfa_kg")),
+                kg_dacylis=Sum(F("dactylis_kg")),
+                kg_ryegrass=Sum(F("ryegrass_kg")),
+                kg_trebol=Sum(F("trebol_b_kg")),
+                fertilizante=Sum(F("fertilizer")),
+                has_siembra_avena=Sum(F("avena_planted_hectares")),
+                has_siembra_avena_vicia=Sum(F("avena_vicia_planted_hectares")),
+                has_siembra_alfalfa_dactylis=Sum(
+                    F("alfalfa_dactylis_planted_hectares")
+                ),
+                has_siembra_ryegrass_trebol=Sum(F("ryegrass_trebol_planted_hectares")),
+                rendimiento_anual=Sum(F("anual_yield")),
+                asistencia_tecnica=Sum(F("technical_assistance")),
+                capac_inst_perennes=Sum(F("technical_training_perennial")),
+                capac_inst_anual=Sum(F("technical_training_anual")),
+                capac_manejo_conserv=Sum(F("technical_training_conservation")),
+            )
+            .values(
+                "has_intens_siembra",
+                "anal_suelo",
+                "horas_arado",
+                "horas_rastra",
+                "kg_avena",
+                "kg_vicia",
+                "kg_alfalfa",
+                "kg_dacylis",
+                "kg_ryegrass",
+                "kg_trebol",
+                "fertilizante",
+                "has_siembra_avena",
+                "has_siembra_avena_vicia",
+                "has_siembra_alfalfa_dactylis",
+                "has_siembra_ryegrass_trebol",
+                "rendimiento_anual",
+                "asistencia_tecnica",
+                "capac_inst_perennes",
+                "capac_inst_anual",
+                "capac_manejo_conserv",
+            )
+        )
+        serializer = SumaPastosPathSerializer(instance=data, many=True)
+        return serializer.data
+
+    """
+    def get_suma_animales(self, obj):
+        data = VisitAnimal.objects.filter(production_unit__id=obj.id).aggregate(
+            total_vacas=Sum("vaca"),
+            total_vaquillonas=Sum("vaquillona"),
+        ).values('total_vacas', 'total_vaquillonas')
+        serializer = SumaAnimalesPathSerializer(instance=data, many=True)
+        return serializer.data
+    """
+
     class Meta:
         model = ProductionUnit
         fields = (
@@ -128,6 +237,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "tipologia",
             "es_pilot",
             "url",
+            # "suma_animales",
+            "suma_pastos",
             "visitas_animales",
             "visitas_pastos",
         )
