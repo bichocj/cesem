@@ -82,7 +82,7 @@ def report_monthly(request):
     activities = Activity.objects.all().order_by("position")
 
     data = (
-        VisitAnimal.objects.filter(visited_at__year=year)
+        VisitAnimalHealth.objects.filter(visited_at__year=year)
         .annotate(month=ExtractMonth("visited_at"))
         .values(
             "activity__id",
@@ -136,7 +136,7 @@ def report_zones(request):
     activities = Activity.objects.all().order_by("position")
     zones = Zone.objects.all().order_by("name")
     data = (
-        VisitAnimal.objects.annotate(year=ExtractYear("visited_at"))
+        VisitAnimalHealth.objects.annotate(year=ExtractYear("visited_at"))
         .values(
             "activity",
             "production_unit__zone",

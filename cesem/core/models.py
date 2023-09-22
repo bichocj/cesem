@@ -146,8 +146,8 @@ class ProductionUnit(models.Model):
         related_name="person_member_animal",
         verbose_name="up. integrante",
     )
-    tipology = models.IntegerField(default=0)
-    is_pilot = models.BooleanField(default=False)
+    tipology = models.IntegerField("tipología de UP", default=0)
+    is_pilot = models.BooleanField("UP es piloto?", default=False)
 
     class Meta:
         verbose_name = "Unidad de Producción"
@@ -155,67 +155,9 @@ class ProductionUnit(models.Model):
         ordering = ("zone", "person_responsable")
 
 
-class VisitAnimal(models.Model):
-    visited_at = models.DateField(
-        "fecha de creación", blank=True, null=True
-    )  # Because current XLS doesn't have all dates
-    production_unit = models.ForeignKey(
-        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
-    )
-    employ_specialist = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="employ_specialist_animal",
-        verbose_name="personal especialista",
-    )
-    employ_responsable = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="employ_responsable_animal",
-        verbose_name="personal responsable",
-    )
-    activity = models.ForeignKey(
-        Activity, on_delete=models.CASCADE, verbose_name="actividad"
-    )
-    sickness_observation = models.ForeignKey(
-        SicknessObservation,
-        on_delete=models.CASCADE,
-        verbose_name="enfermedad/observación",
-    )
-    diagnostic = models.ForeignKey(
-        Diagnostic, on_delete=models.CASCADE, verbose_name="diagnostico"
-    )
-    vaca = models.IntegerField("vaca", default=0)
-    vaquillona = models.IntegerField("vaquillona", default=0)
-    vaquilla = models.IntegerField("vaquilla", default=0)
-    terreno = models.IntegerField("terreno", default=0)
-    torete = models.IntegerField("torete", default=0)
-    toro = models.IntegerField("toro", default=0)
-    vacunos = models.IntegerField("vacunos", default=0)
-    ovinos = models.IntegerField("ovinos", default=0)
-    alpacas = models.IntegerField("alpacas", default=0)
-    llamas = models.IntegerField("llamas", default=0)
-    canes = models.IntegerField("canes", default=0)
-
-    class Meta:
-        verbose_name = "visita animal"
-        verbose_name_plural = "visitas animales"
-        ordering = ("visited_at", "production_unit")
-
-
-class VisitAnimalDetails(models.Model):
-    visit = models.ForeignKey(VisitAnimal, on_delete=models.CASCADE)
-    drug = models.ForeignKey(Drug, on_delete=models.CASCADE, verbose_name="farmacos")
-    quantity = models.IntegerField("cantidad", default=0)
-
-    class Meta:
-        verbose_name = "visita animal - detalle"
-        verbose_name_plural = "visitas animales - detalles"
-
-
 class VisitGrass(models.Model):
     visited_at = models.DateField(
-        "fecha de creacion", blank=True, null=True
+        "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
@@ -411,6 +353,257 @@ class VisitGrass(models.Model):
     class Meta:
         verbose_name = "visita pastos"
         verbose_name_plural = "visitas pastos"
+
+
+class VisitAnimalHealth(models.Model):
+    visited_at = models.DateField(
+        "fecha de visita", blank=True, null=True
+    )  # Because current XLS doesn't have all dates
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    employ_specialist = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_specialist_animal",
+        verbose_name="personal especialista",
+    )
+    employ_responsable = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_responsable_animal",
+        verbose_name="personal responsable",
+    )
+    activity = models.ForeignKey(
+        Activity, on_delete=models.CASCADE, verbose_name="actividad"
+    )
+    sickness_observation = models.ForeignKey(
+        SicknessObservation,
+        on_delete=models.CASCADE,
+        verbose_name="enfermedad/observación",
+    )
+    diagnostic = models.ForeignKey(
+        Diagnostic, on_delete=models.CASCADE, verbose_name="diagnostico"
+    )
+    vaca = models.IntegerField("vaca", default=0)
+    vaquillona = models.IntegerField("vaquillona", default=0)
+    vaquilla = models.IntegerField("vaquilla", default=0)
+    terreno = models.IntegerField("terreno", default=0)
+    torete = models.IntegerField("torete", default=0)
+    toro = models.IntegerField("toro", default=0)
+    vacunos = models.IntegerField("vacunos", default=0)
+    ovinos = models.IntegerField("ovinos", default=0)
+    alpacas = models.IntegerField("alpacas", default=0)
+    llamas = models.IntegerField("llamas", default=0)
+    canes = models.IntegerField("canes", default=0)
+
+    class Meta:
+        verbose_name = "visita sanidad animal"
+        verbose_name_plural = "visitas sanidad animal"
+        ordering = ("visited_at", "production_unit")
+
+
+class VisitAnimalHealthDetails(models.Model):
+    visit = models.ForeignKey(VisitAnimalHealth, on_delete=models.CASCADE)
+    drug = models.ForeignKey(Drug, on_delete=models.CASCADE, verbose_name="farmacos")
+    quantity = models.IntegerField("cantidad", default=0)
+
+    class Meta:
+        verbose_name = "visita sanidad animal - detalle"
+        verbose_name_plural = "visitas sanidad animal - detalles"
+
+
+class VisitGeneticImprovementVacuno(models.Model):
+    visited_at = models.DateField(
+        "fecha de visita", blank=True, null=True
+    )  # Because current XLS doesn't have all dates
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    employ_specialist = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_specialist_vacuno",
+        verbose_name="personal especialista",
+    )
+    employ_responsable = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_responsable_vacuno",
+        verbose_name="personal responsable",
+    )
+    activity = models.ForeignKey(
+        Activity, on_delete=models.CASCADE, verbose_name="actividad"
+    )
+    bull_name = models.CharField("nombre de toro", max_length=30, null=True, blank=True)
+    bull_race = models.CharField("raza de toro", max_length=30, null=True, blank=True)
+    pajilla_type = models.CharField(
+        "tipo pajilla", max_length=30, null=True, blank=True
+    )
+    pajilla_origin = models.CharField(
+        "procedencia pajilla", max_length=30, null=True, blank=True
+    )
+    pajillas_number = models.IntegerField("nº de pajillas", default=0)
+    cow_name = models.CharField("nombre de vaca", max_length=30, null=True, blank=True)
+    cow_race = models.CharField("raza de vaca", max_length=30, null=True, blank=True)
+    service_number = models.CharField(
+        "nº de servicio", max_length=30, null=True, blank=True
+    )
+    pregnant = models.IntegerField("preñada", default=0)
+    empty = models.IntegerField("vacia", default=0)
+    birthday = models.CharField("f. nacimiento", max_length=30, null=True, blank=True)
+    earring_number = models.CharField(
+        "nº de arete", max_length=30, null=True, blank=True
+    )
+    baby_name = models.CharField("nombre de cria", max_length=30, null=True, blank=True)
+    male = models.CharField("macho", max_length=30, null=True, blank=True)
+    female = models.CharField("hembra", max_length=30, null=True, blank=True)
+    death = models.CharField("muerta", max_length=30, null=True, blank=True)
+    baby_bull_name = models.CharField(
+        "cria-nombre de toro", max_length=30, null=True, blank=True
+    )
+    baby_cow_name = models.CharField(
+        "cria-nombre de vaca", max_length=30, null=True, blank=True
+    )
+    male_attendance = models.IntegerField("asis varones capac manejo reproductivo", default=0)
+    female_attendance = models.IntegerField("asis mujeres capac manejo reproductivo", default=0)
+    technical_assistance_attendance = models.IntegerField("asis tec manejo ganado vacuno lechero", default=0)
+    vacunos_number = models.IntegerField("cant vacunos", default=0)
+
+    class Meta:
+        verbose_name = "visita MG vacuno"
+        verbose_name_plural = "visitas MG vacunos"
+
+
+class VisitGeneticImprovementOvino(models.Model):
+    visited_at = models.DateField(
+        "fecha de visita", blank=True, null=True
+    )  # Because current XLS doesn't have all dates
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    employ_specialist = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_specialist_ovino",
+        verbose_name="personal especialista",
+    )
+    employ_responsable = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_responsable_ovino",
+        verbose_name="personal responsable",
+    )
+    activity = models.ForeignKey(
+        Activity, on_delete=models.CASCADE, verbose_name="actividad"
+    )
+    selected_ovines = models.IntegerField("ovinos seleccionados", default=0)
+    synchronized_ovines = models.IntegerField("ovinos sincronizados", default=0)
+    inseminated_sheeps_corriedale = models.IntegerField(
+        "ovejas inseminadas corriedale", default=0
+    )
+    inseminated_sheeps_criollas = models.IntegerField(
+        "ovenas inseminadas criollas", default=0
+    )
+    pregnant = models.IntegerField("preñadas", default=0)
+    empty = models.IntegerField("vacías", default=0)
+    not_evaluated = models.IntegerField("no evaluadas", default=0)
+    baby_males = models.IntegerField("crias machos", default=0)
+    baby_females = models.IntegerField("crias hembras", default=0)
+    baby_deaths = models.IntegerField("crias muertas", default=0)
+    course_male_attendance = models.IntegerField("asis varones curso manejo ovinos", default=0)
+    course_female_attendance = models.IntegerField("asis mujeres curso manejo ovinos", default=0)
+    technical_assistance_attendance = models.IntegerField("asis tec producción ganado ovino corriedale", default=0)
+    ovinos_number = models.IntegerField("cant ovinos", default=0)
+
+    class Meta:
+        verbose_name = "visita MG ovino"
+        verbose_name_plural = "visitas MG ovinos"
+
+
+class VisitGeneticImprovementAlpaca(models.Model):
+    visited_at = models.DateField(
+        "fecha de visita", blank=True, null=True
+    )  # Because current XLS doesn't have all dates
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    employ_specialist = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_specialist_alpaca",
+        verbose_name="personal especialista",
+    )
+    employ_responsable = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_responsable_alpaca",
+        verbose_name="personal responsable",
+    )
+    activity = models.ForeignKey(
+        Activity, on_delete=models.CASCADE, verbose_name="actividad"
+    )
+    hato_number = models.IntegerField("nº de hato", default=0)
+    hato_babies_number = models.IntegerField("nº de crias en hato", default=0)
+    hato_mothers_number = models.IntegerField("nº de madres en hato", default=0)
+    hato_males_number = models.IntegerField("nº de machos en hato", default=0)
+    female_alpaca_earring_number = models.IntegerField(
+        "selec nº arete alpaca hembra", default=0
+    )
+    female_alpaca_race = models.CharField(
+        "selec raza alpaca hembra", max_length=30, null=True, blank=True
+    )
+    female_alpaca_color = models.CharField(
+        "selec color alpaca hembra", max_length=30, null=True, blank=True
+    )
+    female_alpaca_age = models.CharField(
+        "selec edad alpaca hembra", max_length=30, null=True, blank=True
+    )
+    female_alpaca_category = models.CharField(
+        "selec categoria alpaca hembra", max_length=30, null=True, blank=True
+    )
+    female_alpaca_total_score = models.IntegerField(
+        "selec puntaje total alpaca hembra", default=0
+    )
+    selected_alpacas_number = models.IntegerField(
+        "selec cant alpacas seleccionadas", default=0
+    )
+    empadre_date = models.DateField("fecha empadre", blank=True, null=True)
+    alpacas_empadradas = models.CharField(
+        "alpacas empadradas", max_length=30, null=True, blank=True
+    )
+    alpacas_empadradas_number = models.IntegerField(
+        "nº de alpacas empadradas", default=0
+    )
+    male_empadre_number = models.CharField(
+        "nº macho empadre", max_length=30, null=True, blank=True
+    )
+    second_service_date = models.DateField("fecha 2do servicio", blank=True, null=True)
+    second_service_male_number = models.CharField(
+        "nº macho 2do servicio", max_length=30, null=True, blank=True
+    )
+    pregnant = models.IntegerField("preñada", default=0)
+    empty = models.IntegerField("vacía", default=0)
+    baby_birthday = models.DateField("fecha nacimiento cria", blank=True, null=True)
+    baby_earring_number = models.CharField(
+        "nº de arete cria", max_length=30, null=True, blank=True
+    )
+    female_baby = models.IntegerField("cria hembra", default=0)
+    male_baby = models.IntegerField("cria macho", default=0)
+    mortality_baby = models.IntegerField("mortandad cria", default=0)
+    mother_of_baby = models.CharField(
+        "madre de cria", max_length=30, null=True, blank=True
+    )
+    father_of_baby = models.CharField(
+        "padre de cria", max_length=30, null=True, blank=True
+    )
+    training_male_attendance = models.IntegerField("asist varones capac", default=0)
+    training_female_attendance = models.IntegerField("asist mujeres capac", default=0)
+    technical_assistance_attendance = models.IntegerField("asist tec buenas prácticas manejo alpacas", default=0)
+
+    class Meta:
+        verbose_name = "visita MG alpaca"
+        verbose_name_plural = "visitas MG alpacas"
 
 
 class FilesChecksum(models.Model):

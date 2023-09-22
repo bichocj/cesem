@@ -1,11 +1,11 @@
-from core.models import VisitAnimal
+from core.models import VisitAnimalHealth
 from rest_framework import serializers, viewsets
 
 from .utils import BasePathSerializer
 from .zones import ZonePathSerializer
 
 
-class VisitAnimalPathSerializer(BasePathSerializer):
+class VisitAnimalHealthPathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
@@ -30,7 +30,7 @@ class VisitAnimalPathSerializer(BasePathSerializer):
         return "visits-animals"
 
     class Meta:
-        model = VisitAnimal
+        model = VisitAnimalHealth
         fields = [
             "visited_at",
             "zona",
@@ -50,9 +50,9 @@ class VisitAnimalPathSerializer(BasePathSerializer):
         ]
 
 
-class VisitAnimalViewSet(viewsets.ModelViewSet):
+class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
     queryset = (
-        VisitAnimal.objects.select_related("production_unit")
+        VisitAnimalHealth.objects.select_related("production_unit")
         .select_related("production_unit__zone")
         .select_related("production_unit__person_responsable")
         .select_related("production_unit__person_member")
@@ -62,7 +62,7 @@ class VisitAnimalViewSet(viewsets.ModelViewSet):
         .select_related("diagnostic")
         .all()
     )
-    serializer_class = VisitAnimalPathSerializer
+    serializer_class = VisitAnimalHealthPathSerializer
 
     filterset_fields = {
         "production_unit__zone__name": ["contains"],

@@ -1,6 +1,6 @@
 from rest_framework import viewsets, serializers
 from django.db.models import F, Sum
-from core.models import ProductionUnit, VisitAnimal, VisitGrass
+from core.models import ProductionUnit, VisitAnimalHealth, VisitGrass
 from .utils import BasePathSerializer
 
 
@@ -37,7 +37,7 @@ class ProductionUnitPathSerializer(BasePathSerializer):
         }
 
 
-class VisitAnimalPathSerializer(BasePathSerializer):
+class VisitAnimalHealthPathSerializer(BasePathSerializer):
     fecha_visita = serializers.StringRelatedField(many=False, source="visited_at")
     especialista = serializers.StringRelatedField(source="employ_specialist")
     responsable = serializers.StringRelatedField(source="employ_responsable")
@@ -52,7 +52,7 @@ class VisitAnimalPathSerializer(BasePathSerializer):
         return "visits-animals"
 
     class Meta:
-        model = VisitAnimal
+        model = VisitAnimalHealth
         fields = [
             "fecha_visita",
             "especialista",
@@ -153,8 +153,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         return "production_units"
 
     def get_visitas_animales(self, obj):
-        data = VisitAnimal.objects.filter(production_unit__id=obj.id)
-        serializer = VisitAnimalPathSerializer(instance=data, many=True)
+        data = VisitAnimalHealth.objects.filter(production_unit__id=obj.id)
+        serializer = VisitAnimalHealthPathSerializer(instance=data, many=True)
         return serializer.data
 
     def get_visitas_pastos(self, obj):
@@ -217,7 +217,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
 
     """
     def get_suma_animales(self, obj):
-        data = VisitAnimal.objects.filter(production_unit__id=obj.id).aggregate(
+        data = VisitAnimalHealth.objects.filter(production_unit__id=obj.id).aggregate(
             total_vacas=Sum("vaca"),
             total_vaquillonas=Sum("vaquillona"),
         ).values('total_vacas', 'total_vaquillonas')

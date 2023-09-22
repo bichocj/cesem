@@ -105,7 +105,7 @@ def active_if_path_match(keyword, request):
     #    if any(isinstance(item, (list, dict)) for item in value):
     #        template = loader.get_template("rest_framework/admin/list.html")
     #        context = {
-    # "view": VisitAnimalViewSet,
+    # "view": VisitAnimalHealthViewSet,
     #           "value": value,
     # "columns": ["visited_at", "cesem_especialista", "diagnostico"],
     #        }

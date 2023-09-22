@@ -1,4 +1,13 @@
-from core.models import Activity, VisitAnimal, Zone, VisitGrass, Community
+from core.models import (
+    Activity,
+    VisitAnimalHealth,
+    Zone,
+    VisitGrass,
+    Community,
+    VisitGeneticImprovementVacuno,
+    VisitGeneticImprovementOvino,
+    VisitGeneticImprovementAlpaca,
+)
 from django.db.models import F, Sum, Case, When, Value, CharField
 from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, Round
 from django.shortcuts import render
@@ -55,23 +64,71 @@ grass_quantity_var = Round(
     )
 )
 
+animal_health_quantity_var = Sum(
+    F("vacunos")
+    + F("ovinos")
+    + F("alpacas")
+    + F("llamas")
+    + F("canes")
+    + F("pajillas_number")
+    + F("pregnant")
+    + F("empty")
+)
+
+vacuno_quantity_var = Sum(
+    F("pajillas_number")
+    + F("male_attendance")
+    + F("female_attendance")
+    + F("technical_assistance_attendance")
+    + F("pregnant")
+    + F("empty")
+    + F("male")
+    + F("female")
+    + F("death")
+    + F("vacunos_number")
+)
+ovino_quantity_var = Sum(
+    F("inseminated_sheeps_corriedale")
+    + F("inseminated_sheeps_criollas")
+    + F("course_male_attendance")
+    + F("course_female_attendance")
+    + F("selected_ovines")
+    + F("technical_assistance_attendance")
+    + F("pregnant")
+    + F("empty")
+    + F("not_evaluated")
+    + F("synchronized_ovines")
+    + F("baby_males")
+    + F("baby_females")
+    + F("baby_deaths")
+    + F("ovinos_number")
+)
+alpaca_quantity_var = Sum(
+    F("alpacas_empadradas_number")
+    + F("training_male_attendance")
+    + F("training_female_attendance")
+    + F("technical_assistance_attendance")
+    + F("hato_number")
+    + F("selected_alpacas_number")
+    + F("pregnant")
+    + F("empty")
+    + F("male_baby")
+    + F("female_baby")
+)
+
 
 def report_weekly(request):
     activities = Activity.objects.all().order_by("position")
 
     data = (
-        VisitAnimal.objects.filter(visited_at__year=year)
+        VisitAnimalHealth.objects.filter(visited_at__year=year)
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
             "activity__id",
             "week",
         )
-        .annotate(
-            quantity=Sum(
-                F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
-            )
-        )
+        .annotate(quantity=animal_health_quantity_var)
         .order_by("week")
     )
 
@@ -86,7 +143,52 @@ def report_weekly(request):
         .annotate(quantity=grass_quantity_var)
         .order_by("week")
     )
-    data = list(chain(data, grass_data))
+
+    genetic_improvement_vacuno_data = (
+        VisitGeneticImprovementVacuno.objects.filter(visited_at__year=year)
+        .annotate(week=ExtractWeek("visited_at"))
+        .values(
+            "id",
+            "activity__id",
+            "week",
+        )
+        .annotate(quantity=vacuno_quantity_var)
+        .order_by("week")
+    )
+
+    genetic_improvement_ovino_data = (
+        VisitGeneticImprovementOvino.objects.filter(visited_at__year=year)
+        .annotate(week=ExtractWeek("visited_at"))
+        .values(
+            "id",
+            "activity__id",
+            "week",
+        )
+        .annotate(quantity=ovino_quantity_var)
+        .order_by("week")
+    )
+
+    genetic_improvement_alpaca_data = (
+        VisitGeneticImprovementAlpaca.objects.filter(visited_at__year=year)
+        .annotate(week=ExtractWeek("visited_at"))
+        .values(
+            "id",
+            "activity__id",
+            "week",
+        )
+        .annotate(quantity=alpaca_quantity_var)
+        .order_by("week")
+    )
+
+    data = list(
+        chain(
+            data,
+            grass_data,
+            genetic_improvement_vacuno_data,
+            genetic_improvement_ovino_data,
+            genetic_improvement_alpaca_data,
+        )
+    )
 
     activities_data = {}
     weeks_number = {}
@@ -124,17 +226,13 @@ def report_monthly(request):
     activities = Activity.objects.all().order_by("position")
 
     data = (
-        VisitAnimal.objects.filter(visited_at__year=year)
+        VisitAnimalHealth.objects.filter(visited_at__year=year)
         .annotate(month=ExtractMonth("visited_at"))
         .values(
             "activity__id",
             "month",
         )
-        .annotate(
-            quantity=Sum(
-                F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
-            )
-        )
+        .annotate(quantity=animal_health_quantity_var)
         .order_by("activity__id", "month")
     )
 
@@ -149,7 +247,48 @@ def report_monthly(request):
         .order_by("activity__id", "month")
     )
 
-    data = list(chain(data, grass_data))
+    genetic_improvement_vacuno_data = (
+        VisitGeneticImprovementVacuno.objects.filter(visited_at__year=year)
+        .annotate(month=ExtractMonth("visited_at"))
+        .values(
+            "activity__id",
+            "month",
+        )
+        .annotate(quantity=vacuno_quantity_var)
+        .order_by("activity__id", "month")
+    )
+
+    genetic_improvement_ovino_data = (
+        VisitGeneticImprovementOvino.objects.filter(visited_at__year=year)
+        .annotate(month=ExtractMonth("visited_at"))
+        .values(
+            "activity__id",
+            "month",
+        )
+        .annotate(quantity=ovino_quantity_var)
+        .order_by("activity__id", "month")
+    )
+
+    genetic_improvement_alpaca_data = (
+        VisitGeneticImprovementAlpaca.objects.filter(visited_at__year=year)
+        .annotate(month=ExtractMonth("visited_at"))
+        .values(
+            "activity__id",
+            "month",
+        )
+        .annotate(quantity=alpaca_quantity_var)
+        .order_by("activity__id", "month")
+    )
+
+    data = list(
+        chain(
+            data,
+            grass_data,
+            genetic_improvement_vacuno_data,
+            genetic_improvement_ovino_data,
+            genetic_improvement_alpaca_data,
+        )
+    )
 
     activities_data = {}
     month_number = {}
@@ -175,16 +314,12 @@ def report_zones(request):
     activities = Activity.objects.all().order_by("position")
     zones = Zone.objects.all().order_by("name")
     data = (
-        VisitAnimal.objects.annotate(year=ExtractYear("visited_at"))
+        VisitAnimalHealth.objects.annotate(year=ExtractYear("visited_at"))
         .values(
             "activity",
             "production_unit__zone",
         )
-        .annotate(
-            quantity=Sum(
-                F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
-            )
-        )
+        .annotate(quantity=animal_health_quantity_var)
         .filter(visited_at__year=year)
         .order_by("production_unit__zone")
     )
@@ -199,7 +334,49 @@ def report_zones(request):
         .filter(visited_at__year=year)
         .order_by("production_unit__zone")
     )
-    data = list(chain(data, grass_data))
+
+    genetic_improvement_vacuno_data = (
+        VisitGeneticImprovementVacuno.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__zone",
+        )
+        .annotate(quantity=vacuno_quantity_var)
+        .filter(visited_at__year=year)
+        .order_by("production_unit__zone")
+    )
+
+    genetic_improvement_ovino_data = (
+        VisitGeneticImprovementOvino.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__zone",
+        )
+        .annotate(quantity=ovino_quantity_var)
+        .filter(visited_at__year=year)
+        .order_by("production_unit__zone")
+    )
+
+    genetic_improvement_alpaca_data = (
+        alpaca_quantity_var.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__zone",
+        )
+        .annotate(quantity=alpaca_quantity_var)
+        .filter(visited_at__year=year)
+        .order_by("production_unit__zone")
+    )
+
+    data = list(
+        chain(
+            data,
+            grass_data,
+            genetic_improvement_vacuno_data,
+            genetic_improvement_ovino_data,
+            genetic_improvement_alpaca_data,
+        )
+    )
 
     activities_data = {}
 
@@ -222,16 +399,12 @@ def report_community(request):
     activities = Activity.objects.all().order_by("position")
     communities = Community.objects.all().order_by("name")
     data = (
-        VisitAnimal.objects.annotate(year=ExtractYear("visited_at"))
+        VisitAnimalHealth.objects.annotate(year=ExtractYear("visited_at"))
         .values(
             "activity",
             "production_unit__community",
         )
-        .annotate(
-            quantity=Sum(
-                F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
-            )
-        )
+        .annotate(quantity=animal_health_quantity_var)
         .filter(visited_at__year=year)
         .order_by("production_unit__community")
     )
@@ -246,7 +419,49 @@ def report_community(request):
         .filter(visited_at__year=year)
         .order_by("production_unit__community")
     )
-    data = list(chain(data, grass_data))
+
+    genetic_improvement_vacuno_data = (
+        VisitGeneticImprovementVacuno.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__community",
+        )
+        .annotate(quantity=vacuno_quantity_var)
+        .filter(visited_at__year=year)
+        .order_by("production_unit__community")
+    )
+
+    genetic_improvement_ovino_data = (
+        VisitGeneticImprovementOvino.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__community",
+        )
+        .annotate(quantity=ovino_quantity_var)
+        .filter(visited_at__year=year)
+        .order_by("production_unit__community")
+    )
+
+    genetic_improvement_alpaca_data = (
+        VisitGeneticImprovementAlpaca.objects.annotate(year=ExtractYear("visited_at"))
+        .values(
+            "activity",
+            "production_unit__community",
+        )
+        .annotate(quantity=alpaca_quantity_var)
+        .filter(visited_at__year=year)
+        .order_by("production_unit__community")
+    )
+
+    data = list(
+        chain(
+            data,
+            grass_data,
+            genetic_improvement_vacuno_data,
+            genetic_improvement_ovino_data,
+            genetic_improvement_alpaca_data,
+        )
+    )
     activities_data = {}
 
     for s in data:

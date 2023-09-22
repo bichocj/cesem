@@ -2,8 +2,8 @@ from django.contrib import admin
 from core.models import (
     Activity,
     Person,
-    VisitAnimal,
-    VisitAnimalDetails,
+    VisitAnimalHealth,
+    VisitAnimalHealthDetails,
     VisitGrass,
     Community,
     Diagnostic,
@@ -40,13 +40,13 @@ class FilesChecksumAdmin(admin.ModelAdmin):
 
 
 class VisitDetailInline(admin.TabularInline):
-    model = VisitAnimalDetails
+    model = VisitAnimalHealthDetails
 
 
-admin.site.register(VisitAnimalDetails)
+admin.site.register(VisitAnimalHealthDetails)
 
 
-@admin.register(VisitAnimal)
+@admin.register(VisitAnimalHealth)
 class VisitAdmin(admin.ModelAdmin):
     inlines = [
         VisitDetailInline,
