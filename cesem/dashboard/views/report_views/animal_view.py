@@ -65,14 +65,7 @@ grass_quantity_var = Round(
 )
 
 animal_health_quantity_var = Sum(
-    F("vacunos")
-    + F("ovinos")
-    + F("alpacas")
-    + F("llamas")
-    + F("canes")
-    + F("pajillas_number")
-    + F("pregnant")
-    + F("empty")
+    F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
 )
 
 vacuno_quantity_var = Sum(
@@ -87,6 +80,7 @@ vacuno_quantity_var = Sum(
     + F("death")
     + F("vacunos_number")
 )
+
 ovino_quantity_var = Sum(
     F("inseminated_sheeps_corriedale")
     + F("inseminated_sheeps_criollas")
@@ -216,7 +210,7 @@ def report_weekly(request):
             week_key
         ] = ""  # todas las semanas existentes en la data de animales + pastos, sin repetirse, mas las semanas faltantes
 
-    sub_activity_data = get_data_of_sub_activity(activities, activities_data, week_key)
+    sub_activity_data = get_data_of_sub_activity(activities, activities_data)
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_weekly.html", locals())
@@ -292,7 +286,6 @@ def report_monthly(request):
 
     activities_data = {}
     month_number = {}
-
     for s in data:
         activity_key = s.get("activity__id")
         month_key = s.get("month")
@@ -304,7 +297,7 @@ def report_monthly(request):
 
         month_number[month_key] = ""
 
-    sub_activity_data = get_data_of_sub_activity(activities, activities_data, month_key)
+    sub_activity_data = get_data_of_sub_activity(activities, activities_data)
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_monthly.html", locals())
@@ -358,7 +351,7 @@ def report_zones(request):
     )
 
     genetic_improvement_alpaca_data = (
-        alpaca_quantity_var.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGeneticImprovementAlpaca.objects.annotate(year=ExtractYear("visited_at"))
         .values(
             "activity",
             "production_unit__zone",
@@ -379,7 +372,6 @@ def report_zones(request):
     )
 
     activities_data = {}
-
     for s in data:
         activity_key = s.get("activity")
         zone_key = s.get("production_unit__zone")
@@ -389,7 +381,7 @@ def report_zones(request):
             activities_data[activity_key] = {}
         activities_data[activity_key][zone_key] = value
 
-    sub_activity_data = get_data_of_sub_activity(activities, activities_data, zone_key)
+    sub_activity_data = get_data_of_sub_activity(activities, activities_data)
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_zones.html", locals())
@@ -473,9 +465,7 @@ def report_community(request):
             activities_data[activity_key] = {}
         activities_data[activity_key][community_key] = value
 
-    sub_activity_data = get_data_of_sub_activity(
-        activities, activities_data, community_key
-    )
+    sub_activity_data = get_data_of_sub_activity(activities, activities_data)
     activities_data.update(sub_activity_data)
 
     return render(request, "dashboard/report_communities.html", locals())
@@ -504,7 +494,7 @@ def fill_previous_week(weeks_number, week_key):
     return fill_previous_week(weeks_number, previous_week_key)
 
 
-def get_data_of_sub_activity(activities, activities_data, related_key):
+def get_data_of_sub_activity(activities, activities_data):
     sub_activity_data = {}
     for a in activities:
         if is_sub_activity(a):

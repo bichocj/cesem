@@ -14,6 +14,19 @@ from .api_views.visits_animals import (
     VisitAnimalHealthViewSet,
     VisitAnimalHealthPathSerializer,
 )
+from .api_views.visits_vacuno import (
+    VisitGeneticImprovementVacunoViewSet,
+    VisitGeneticImprovementVacunoPathSerializer,
+)
+from .api_views.visits_ovino import (
+    VisitGeneticImprovementOvinoViewSet,
+    VisitGeneticImprovementOvinoPathSerializer,
+)
+from .api_views.visits_alpaca import (
+    VisitGeneticImprovementAlpacaViewSet,
+    VisitGeneticImprovementAlpacaPathSerializer,
+)
+
 from .api_views.visits_grass import VisitGrassViewSet, VisitGrassPathSerializer
 from .api_views.diagnostics import DiagnosticViewSet, DiagnosticPathSerializer
 from .api_views.sickness_observations import (
@@ -58,6 +71,9 @@ activities_path = ActivityPathSerializer.get_path()
 communities_path = CommunityPathSerializer.get_path()
 drugs_path = DrugPathSerializer.get_path()
 production_units_path = ProductionUnitPathSerializer.get_path()
+visit_vacuno_path = VisitGeneticImprovementVacunoPathSerializer.get_path()
+visit_ovino_path = VisitGeneticImprovementOvinoPathSerializer.get_path()
+visit_alpaca_path = VisitGeneticImprovementAlpacaPathSerializer.get_path()
 
 router = routers.DefaultRouter()
 router.register(
@@ -80,4 +96,19 @@ router.register(
 router.register(r"%s" % drugs_path, DrugViewSet, basename=drugs_path)
 router.register(
     r"%s" % production_units_path, ProductionUnitViewSet, basename=production_units_path
+)
+router.register(
+    r"%s" % visit_vacuno_path,
+    VisitGeneticImprovementVacunoViewSet,
+    basename=visit_vacuno_path,
+)
+router.register(
+    r"%s" % visit_ovino_path,
+    VisitGeneticImprovementOvinoViewSet,
+    basename=visit_ovino_path,
+)
+router.register(
+    r"%s" % visit_alpaca_path,
+    VisitGeneticImprovementAlpacaViewSet,
+    basename=visit_alpaca_path,
 )

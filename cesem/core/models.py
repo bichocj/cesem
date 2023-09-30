@@ -456,18 +456,24 @@ class VisitGeneticImprovementVacuno(models.Model):
         "nº de arete", max_length=30, null=True, blank=True
     )
     baby_name = models.CharField("nombre de cria", max_length=30, null=True, blank=True)
-    male = models.CharField("macho", max_length=30, null=True, blank=True)
-    female = models.CharField("hembra", max_length=30, null=True, blank=True)
-    death = models.CharField("muerta", max_length=30, null=True, blank=True)
+    male = models.IntegerField("macho", default=0)
+    female = models.IntegerField("hembra", default=0)
+    death = models.IntegerField("muerta", default=0)
     baby_bull_name = models.CharField(
         "cria-nombre de toro", max_length=30, null=True, blank=True
     )
     baby_cow_name = models.CharField(
         "cria-nombre de vaca", max_length=30, null=True, blank=True
     )
-    male_attendance = models.IntegerField("asis varones capac manejo reproductivo", default=0)
-    female_attendance = models.IntegerField("asis mujeres capac manejo reproductivo", default=0)
-    technical_assistance_attendance = models.IntegerField("asis tec manejo ganado vacuno lechero", default=0)
+    male_attendance = models.IntegerField(
+        "asis varones capac manejo reproductivo", default=0
+    )
+    female_attendance = models.IntegerField(
+        "asis mujeres capac manejo reproductivo", default=0
+    )
+    technical_assistance_attendance = models.IntegerField(
+        "asis tec manejo ganado vacuno lechero", default=0
+    )
     vacunos_number = models.IntegerField("cant vacunos", default=0)
 
     class Meta:
@@ -511,10 +517,17 @@ class VisitGeneticImprovementOvino(models.Model):
     baby_males = models.IntegerField("crias machos", default=0)
     baby_females = models.IntegerField("crias hembras", default=0)
     baby_deaths = models.IntegerField("crias muertas", default=0)
-    course_male_attendance = models.IntegerField("asis varones curso manejo ovinos", default=0)
-    course_female_attendance = models.IntegerField("asis mujeres curso manejo ovinos", default=0)
-    technical_assistance_attendance = models.IntegerField("asis tec producción ganado ovino corriedale", default=0)
+    course_male_attendance = models.IntegerField(
+        "asis varones curso manejo ovinos", default=0
+    )
+    course_female_attendance = models.IntegerField(
+        "asis mujeres curso manejo ovinos", default=0
+    )
+    technical_assistance_attendance = models.IntegerField(
+        "asis tec producción ganado ovino corriedale", default=0
+    )
     ovinos_number = models.IntegerField("cant ovinos", default=0)
+    rgc_number = models.CharField("nº RGC", max_length=30, null=True, blank=True)
 
     class Meta:
         verbose_name = "visita MG ovino"
@@ -599,7 +612,9 @@ class VisitGeneticImprovementAlpaca(models.Model):
     )
     training_male_attendance = models.IntegerField("asist varones capac", default=0)
     training_female_attendance = models.IntegerField("asist mujeres capac", default=0)
-    technical_assistance_attendance = models.IntegerField("asist tec buenas prácticas manejo alpacas", default=0)
+    technical_assistance_attendance = models.IntegerField(
+        "asist tec buenas prácticas manejo alpacas", default=0
+    )
 
     class Meta:
         verbose_name = "visita MG alpaca"

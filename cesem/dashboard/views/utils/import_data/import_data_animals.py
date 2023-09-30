@@ -12,7 +12,7 @@ from core.models import (
     Sector,
     VisitGeneticImprovementVacuno,
     VisitGeneticImprovementOvino,
-    VisitGeneticImprovementAlpaca
+    VisitGeneticImprovementAlpaca,
 )
 import pandas as pd
 
@@ -30,7 +30,7 @@ class ImportAnimals(HelperImport):
         "inseminación artificial en ganado vacuno de leche",
         "capacitación en manejo reproductivo de ganado vacuno lechero",
         "asistencia técnica en manejo de ganado vacuno lechero",
-        "evaluación y diagnostico de vacas preñadas",
+        "evaluación y diagnóstico de vacas preñadas",
         "registro de crías nacidas - vacuno",
         "evaluación de vacas con problemas reproductivos",
         "seguimiento de vacas con problemas reproductivos",
@@ -52,7 +52,7 @@ class ImportAnimals(HelperImport):
         "capacitación en selección de reproductores",
         "curso taller en manejo de alpacas",
         "asistencia técnica en buenas prácticas de manejo de alpacas",
-        "caracterización fenotipica de hatos alpaqueros",
+        "caracterización fenotípica de hatos alpaqueros",
         "evaluación y diagnóstico de alpacas preñadas",
         "evaluación de progenie de alpacas huacaya y suri",
     ]
@@ -175,7 +175,9 @@ class ImportAnimals(HelperImport):
             data_sector = self.nan_if_nat(data["SECTOR/IRRIGACION DE LA UP "][i])
             data_tipology = self.nan_if_nat(data["TIPOLOGIA DE UP"][i])
             data_is_pilot = self.nan_if_nat(data["UP ES PILOTO?"][i]) == "SI"
-            data_up_responsable_name = self.nan_if_nat(data["NOMBRE RESPONSABLE UP"][i])
+            data_up_responsable_name = self.nan_if_nat(
+                data["NOMBRE DEL RESPONSABLE UP"][i]
+            )
             data_up_responsable_dni = self.zero_if_nan(data["Nº DNI"][i], to_int=True)
             data_up_responsable_sex = self.nan_if_nat(data["SEXO RUP"][i])
             data_up_member_name = self.nan_if_nat(
@@ -186,7 +188,7 @@ class ImportAnimals(HelperImport):
             # data['SECTOR/IRRIGACION DEL BENEFICIARIO'][i]
             data_employ_specialist = self.nan_if_nat(data["NOMBRE DE ESPECIALISTA"][i])
             data_employ_responsable = self.nan_if_nat(
-                data["RESPONSABLE DE ACTIVIDAD"][i]
+                data["NOMBRE DE RESPONSABLE DE ACTIVIDAD"][i]
             )
             data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
 
@@ -194,19 +196,19 @@ class ImportAnimals(HelperImport):
             employ_responsable = self.get_person(data_employ_responsable)
             activity = self.get_activity(data_activity, creates_if_none=False)
             production_unit = self.get_production_unit(
-                    data_zone,
-                    data_community,
-                    data_sector,
-                    data_up_responsable_name,
-                    data_up_responsable_dni,
-                    data_up_responsable_sex,
-                    data_up_member_name,
-                    data_up_member_dni,
-                    data_up_member_sex,
-                    data_is_pilot=data_is_pilot,
-                    data_tipology=data_tipology,
-                    creates_if_none=creates_if_none,
-                )
+                data_zone,
+                data_community,
+                data_sector,
+                data_up_responsable_name,
+                data_up_responsable_dni,
+                data_up_responsable_sex,
+                data_up_member_name,
+                data_up_member_dni,
+                data_up_member_sex,
+                data_is_pilot=data_is_pilot,
+                data_tipology=data_tipology,
+                creates_if_none=creates_if_none,
+            )
 
             if data_activity.lower() in self.vacuno_activities:
                 # DATA OF "MEJORAMIENTO GENETICO"
@@ -237,9 +239,15 @@ class ImportAnimals(HelperImport):
                 data_baby_cow_name = data["CRIA-NOMBRE DE VACA"][
                     i
                 ]  # solicitar cambio de nombre, nombre original: nombre de vaca
-                data_male_attendance = self.zero_if_nan(data["ASIS VARONES CAPAC MANEJO REPRODUCTIVO"][i])
-                data_female_attendance = self.zero_if_nan(data["ASIS MUJERES CAPAC MANEJO REPRODUCTIVO"][i])
-                data_technical_assistance_attendance=self.zero_if_nan(data["ASIS TEC MANEJO GANADO VACUNO"][i])
+                data_male_attendance = self.zero_if_nan(
+                    data["ASIS VARONES CAPAC MANEJO REPRODUCTIVO"][i]
+                )
+                data_female_attendance = self.zero_if_nan(
+                    data["ASIS MUJERES CAPAC MANEJO REPRODUCTIVO"][i]
+                )
+                data_technical_assistance_attendance = self.zero_if_nan(
+                    data["ASIS TEC MANEJO GANADO VACUNO"][i]
+                )
                 data_vacunos_number = self.zero_if_nan(data["VACUNOS"][i])
 
                 try:
@@ -270,10 +278,14 @@ class ImportAnimals(HelperImport):
                         male_attendance=data_male_attendance,
                         female_attendance=data_female_attendance,
                         technical_assistance_attendance=data_technical_assistance_attendance,
-                        vacunos_number=data_vacunos_number
+                        vacunos_number=data_vacunos_number,
                     )
                     visits_vacunos.append(visit_vacuno)
-                    print("Registrando visita de animales Nº:"+  {i + 1} + ", TIPO: MG vacunos")
+                    print(
+                        "Registrando visita de animales Nº:"
+                        + {i + 1}
+                        + ", TIPO: MG vacunos"
+                    )
                 except Zone.DoesNotExist:
                     print("row", str(i + 1), "not found zone:", data_zone)
                     exit()
@@ -287,21 +299,33 @@ class ImportAnimals(HelperImport):
                     print("row", str(i + 1), "not found activity:", data_activity)
                     exit()
 
-
             elif data_activity.lower() in self.ovino_activities:
-                data_course_male_attendance = self.zero_if_nan(data["ASIS VARONES CURSO MANEJO OVINOS"][i])
-                data_course_female_attendance = self.zero_if_nan(data["ASIS MUJERES CURSO MANEJO OVINOS"][i])
-                data_technical_assistance_attendance = self.zero_if_nan(data["ASIS TEC PRODUCCION GANADO OVINO CORRIEDALE"][i])
-                data_selected_ovines= self.zero_if_nan(data["OVINOS SELECCIONADOS"][i])
-                data_synchronized_ovines = self.zero_if_nan(data["OVINOS SINCRONIZADOS"][i])
-                data_inseminated_sheeps_corriedale = self.zero_if_nan(data["OVEJAS INSEMINADOS CORRIEDALE"][i])
-                data_inseminated_sheeps_criollas = self.zero_if_nan(data["OVEJAS INSEMINADOS CRIOLLAS"][i])
+                data_course_male_attendance = self.zero_if_nan(
+                    data["ASIS VARONES CURSO MANEJO OVINOS"][i]
+                )
+                data_course_female_attendance = self.zero_if_nan(
+                    data["ASIS MUJERES CURSO MANEJO OVINOS"][i]
+                )
+                data_technical_assistance_attendance = self.zero_if_nan(
+                    data["ASIS TEC PRODUCCION GANADO OVINO CORRIEDALE"][i]
+                )
+                data_selected_ovines = self.zero_if_nan(data["OVINOS SELECCIONADOS"][i])
+                data_synchronized_ovines = self.zero_if_nan(
+                    data["OVINOS SINCRONIZADOS"][i]
+                )
+                data_inseminated_sheeps_corriedale = self.zero_if_nan(
+                    data["OVEJAS INSEMINADAS CORRIEDALE"][i]
+                )
+                data_inseminated_sheeps_criollas = self.zero_if_nan(
+                    data["OVEJAS INSEMINADAS CRIOLLAS"][i]
+                )
                 data_pregnant_ovino = self.zero_if_nan(data["PREÑADA"][i])
-                data_empty_ovino = self.zero_if_nan(data["VACÍA"][i])
+                data_empty_ovino = self.zero_if_nan(data["VACIA"][i])
                 data_not_evaluated = self.zero_if_nan(data["NO EVALUADA"][i])
                 data_baby_males = self.zero_if_nan(data["CRIA MACHO"][i])
                 data_baby_females = self.zero_if_nan(data["CRIA HEMBRA"][i])
                 data_baby_deaths = self.zero_if_nan(data["CRIA MUERTA"][i])
+                data_rgc_number = data["Nº RGC"][i]
                 data_ovinos_number = self.zero_if_nan(data["OVINOS"][i])
 
                 try:
@@ -324,10 +348,15 @@ class ImportAnimals(HelperImport):
                         baby_males=data_baby_males,
                         baby_females=data_baby_females,
                         baby_deaths=data_baby_deaths,
-                        ovinos_number=data_ovinos_number
+                        ovinos_number=data_ovinos_number,
+                        rgc_number=data_rgc_number
                     )
                     visits_ovinos.append(visit_ovino)
-                    print("Registrando visita de animales Nº:"+  {i + 1} + ", TIPO: MG ovino")
+                    print(
+                        "Registrando visita de animales Nº:"
+                        + {i + 1}
+                        + ", TIPO: MG ovino"
+                    )
                 except Zone.DoesNotExist:
                     print("row", str(i + 1), "not found zone:", data_zone)
                     exit()
@@ -346,13 +375,19 @@ class ImportAnimals(HelperImport):
                 data_hato_babies_number = data["Nº DE CRIAS EN HATO"][i]
                 data_hato_mothers_number = data["Nº DE MADRES EN HATO"][i]
                 data_hato_males_number = data["Nº DE MACHOS EN HATO"][i]
-                data_female_alpaca_earring_number = data["SELEC Nº ARETE ALPACA HEMBRA"][i]
+                data_female_alpaca_earring_number = data[
+                    "SELEC Nº ARETE ALPACA HEMBRA"
+                ][i]
                 data_female_alpaca_race = data["SELEC RAZA ALPACA HEMBRA"][i]
                 data_female_alpaca_color = data["SELEC COLOR ALPACA HEMBRA"][i]
                 data_female_alpaca_age = data["SELEC EDAD ALPACA HEMBRA"][i]
                 data_female_alpaca_category = data["SELEC CATEGORIA ALPACA HEMBRA"][i]
-                data_female_alpaca_total_score = data["SELEC PUNTAJE TOTAL ALPACA HEMBRA"][i]
-                data_selected_alpacas_number = data["SELEC CANT ALPACAS SELECCIONADAS"][i]
+                data_female_alpaca_total_score = data[
+                    "SELEC PUNTAJE TOTAL ALPACA HEMBRA"
+                ][i]
+                data_selected_alpacas_number = data["SELEC CANT ALPACAS SELECCIONADAS"][
+                    i
+                ]
                 data_empadre_date = data["FECHA EMPADRE"][i]
                 data_alpacas_empadradas = data["ALPACAS EMPADRADAS"][i]
                 data_alpacas_empadradas_number = data["Nº DE ALPACAS EMPADRADAS"][i]
@@ -368,9 +403,11 @@ class ImportAnimals(HelperImport):
                 data_mortality_baby = data["MORTANDAD CRIA"][i]
                 data_mother_of_baby = data["MADRE DE CRIA"][i]
                 data_father_of_baby = data["PADRE DE CRIA"][i]
-                data_training_male_attendance = data["ASIST VARONES CAPAC"][i]
-                data_training_female_attendance = data["ASIST MUJERES CAPAC"][i]
-                data_technical_assistance_attendance = data["ASIST TEC BUENAS PRACTICAS MANEJO ALPACAS"][i]
+                data_training_male_attendance = data["ASIS VARONES CAPAC"][i]
+                data_training_female_attendance = data["ASIS MUJERES CAPAC"][i]
+                data_technical_assistance_attendance = data[
+                    "ASIS TEC BUENAS PRACTICAS MANEJO ALPACAS"
+                ][i]
 
                 try:
                     visit_alpaca = VisitGeneticImprovementAlpaca(
@@ -407,11 +444,14 @@ class ImportAnimals(HelperImport):
                         father_of_baby=data_father_of_baby,
                         training_male_attendance=data_training_male_attendance,
                         training_female_attendance=data_training_female_attendance,
-                        technical_assistance_attendance=data_technical_assistance_attendance
-                        
+                        technical_assistance_attendance=data_technical_assistance_attendance,
                     )
                     visits_alpacas.append(visit_alpaca)
-                    print("Registrando visita de animales Nº:"+  {i + 1} + ", TIPO: MG alpaca")
+                    print(
+                        "Registrando visita de animales Nº:"
+                        + {i + 1}
+                        + ", TIPO: MG alpaca"
+                    )
                 except Zone.DoesNotExist:
                     print("row", str(i + 1), "not found zone:", data_zone)
                     exit()
@@ -448,19 +488,19 @@ class ImportAnimals(HelperImport):
                 data_alpacas = self.zero_if_nan(data["ALPACAS"][i], to_int=True)
                 data_llamas = self.zero_if_nan(data["LLAMAS"][i], to_int=True)
                 data_canes = self.zero_if_nan(data["CANES"][i], to_int=True)
-                data_medicine_name_1 = data["1 FARMACOS /SALES"][i]
+                data_medicine_name_1 = data["1 FARMACOS/SALES"][i]
                 data_um_name_1 = data["U.M."][i]
                 data_quantity_1 = self.zero_if_nan(data["CANTIDAD"][i], to_int=True)
 
-                data_medicine_name_2 = data["2 FARMACOS /SALES"][i]
+                data_medicine_name_2 = data["2 FARMACOS/SALES"][i]
                 data_um_name_2 = data["U.M..1"][i]
                 data_quantity_2 = self.zero_if_nan(data["CANTIDAD.1"][i], to_int=True)
 
-                data_medicine_name_3 = data["3 FARMACOS /SALES"][i]
+                data_medicine_name_3 = data["3 FARMACOS/SALES"][i]
                 data_um_name_3 = data["U.M..2"][i]
                 data_quantity_3 = self.zero_if_nan(data["CANTIDAD.2"][i], to_int=True)
 
-                data_medicine_name_4 = data["4 FARMACOS /SALES"][i]
+                data_medicine_name_4 = data["4 FARMACOS/SALES"][i]
                 data_um_name_4 = data["U.M..3"][i]
                 data_quantity_4 = self.zero_if_nan(data["CANTIDAD.3"][i], to_int=True)
 
@@ -491,7 +531,11 @@ class ImportAnimals(HelperImport):
                         vacunos=data_vacunos,
                     )
                     visits_animals.append(visit_animal)
-                    print("Registrando visita de animales Nº:"+  {i + 1} + ", sanidad animal")
+                    print(
+                        "Registrando visita de animales Nº:"
+                        + {i + 1}
+                        + ", sanidad animal"
+                    )
                 except Zone.DoesNotExist:
                     print("row", str(i + 1), "not found zone:", data_zone)
                     exit()
