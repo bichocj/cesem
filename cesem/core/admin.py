@@ -12,6 +12,9 @@ from core.models import (
     Zone,
     Sector,
     FilesChecksum,
+    VisitGeneticImprovementVacuno,
+    VisitGeneticImprovementAlpaca,
+    VisitGeneticImprovementOvino,
 )
 
 
@@ -51,3 +54,8 @@ class VisitAdmin(admin.ModelAdmin):
     inlines = [
         VisitDetailInline,
     ]
+
+
+admin.site.register(VisitGeneticImprovementVacuno)
+admin.site.register(VisitGeneticImprovementOvino)
+admin.site.register(VisitGeneticImprovementAlpaca)

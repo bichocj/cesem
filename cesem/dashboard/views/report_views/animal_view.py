@@ -13,7 +13,7 @@ from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, R
 from django.shortcuts import render
 from itertools import chain
 
-year = 2022
+year = 2023
 """
 mapping_activity_quantity = {
     "instalación de parcelas de avena forrajera asociado con vicia": "avena_vicia_planted_hectares",

@@ -73,6 +73,10 @@ class HelperImport:
         else:
             return val
 
+    def none_if_nan(self, val):
+        if val == "nan":
+            return None
+
     def get_person(self, name, dni=None, sex=None):
         sex_data = None
         name = str(name)

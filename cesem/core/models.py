@@ -69,7 +69,7 @@ class Activity(models.Model):
         verbose_name_plural = "actividades"
         ordering = ("position",)
 
-    position = models.CharField("posición", max_length=6)
+    position = models.CharField("posición", max_length=10)
     name = models.CharField("nombre", max_length=100)
     short_name = models.CharField("nombre corto", default="", max_length=100)
     parent = models.ForeignKey(
@@ -560,8 +560,8 @@ class VisitGeneticImprovementAlpaca(models.Model):
     hato_babies_number = models.IntegerField("nº de crias en hato", default=0)
     hato_mothers_number = models.IntegerField("nº de madres en hato", default=0)
     hato_males_number = models.IntegerField("nº de machos en hato", default=0)
-    female_alpaca_earring_number = models.IntegerField(
-        "selec nº arete alpaca hembra", default=0
+    female_alpaca_earring_number = models.CharField(
+        "selec nº arete alpaca hembra", max_length=30, null=True, blank=True
     )
     female_alpaca_race = models.CharField(
         "selec raza alpaca hembra", max_length=30, null=True, blank=True
