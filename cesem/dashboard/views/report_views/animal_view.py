@@ -322,6 +322,9 @@ def report_monthly(request):
 
 
 def report_zones(request):
+    currentdate = datetime.date.today()
+    year = request.GET.get("year", currentdate.year)
+    
     activities = Activity.objects.all().order_by("position")
     zones = Zone.objects.all().order_by("name")
     data = (
@@ -406,6 +409,9 @@ def report_zones(request):
 
 
 def report_community(request):
+    currentdate = datetime.date.today()
+    year = request.GET.get("year", currentdate.year)
+    
     activities = Activity.objects.all().order_by("position")
     communities = Community.objects.all().order_by("name")
     data = (
