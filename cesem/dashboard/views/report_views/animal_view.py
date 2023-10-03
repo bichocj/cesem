@@ -1,3 +1,4 @@
+import datetime
 from core.models import (
     Activity,
     VisitAnimalHealth,
@@ -13,7 +14,6 @@ from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, R
 from django.shortcuts import render
 from itertools import chain
 
-year = 2023
 """
 mapping_activity_quantity = {
     "instalación de parcelas de avena forrajera asociado con vicia": "avena_vicia_planted_hectares",
@@ -112,10 +112,17 @@ alpaca_quantity_var = Sum(
 
 
 def report_weekly(request):
-    activities = Activity.objects.all().order_by("position")
+    currentdate = datetime.date.today()
+    default_from = "{}-01-01".format(currentdate.year)
+    default_to = currentdate.strftime("%Y-%m-%d")
 
-    data = (
-        VisitAnimalHealth.objects.filter(visited_at__year=year)
+    year = request.GET.get("year", currentdate.year)
+    from_datepicker = request.GET.get("from_datepicker", default_from)
+    to_datepicker = request.GET.get("to_datepicker", default_to)
+
+    activities = Activity.objects.all().order_by("position")
+    animals_data = (
+        VisitAnimalHealth.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -127,7 +134,7 @@ def report_weekly(request):
     )
 
     grass_data = (
-        VisitGrass.objects.filter(visited_at__year=year)
+        VisitGrass.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -139,7 +146,7 @@ def report_weekly(request):
     )
 
     genetic_improvement_vacuno_data = (
-        VisitGeneticImprovementVacuno.objects.filter(visited_at__year=year)
+        VisitGeneticImprovementVacuno.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -151,7 +158,7 @@ def report_weekly(request):
     )
 
     genetic_improvement_ovino_data = (
-        VisitGeneticImprovementOvino.objects.filter(visited_at__year=year)
+        VisitGeneticImprovementOvino.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -163,7 +170,7 @@ def report_weekly(request):
     )
 
     genetic_improvement_alpaca_data = (
-        VisitGeneticImprovementAlpaca.objects.filter(visited_at__year=year)
+        VisitGeneticImprovementAlpaca.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -176,24 +183,26 @@ def report_weekly(request):
 
     data = list(
         chain(
-            data,
+            animals_data,
             grass_data,
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
         )
     )
-
+    
     activities_data = {}
     weeks_number = {}
 
-    first_week = None
+    min_week, max_week, first_week = None, None, None
     for s in data:
         activity_key = s.get("activity__id")
         week_key = s.get("week")
         value = s.get("quantity")
         if not first_week:
-            first_week = week_key
+            first_week = True
+            min_week = week_key
+            max_week = week_key
 
         if activity_key not in activities_data:
             activities_data[activity_key] = {}
@@ -203,16 +212,16 @@ def report_weekly(request):
         else:
             activities_data[activity_key][week_key] = value
 
-        if week_key != first_week and weeks_number.get(week_key) != "":
-            fill_previous_week(weeks_number, week_key)
+        if week_key > max_week:
+            max_week = week_key
 
+    for week_key in range(min_week, max_week + 1):
         weeks_number[
             week_key
         ] = ""  # todas las semanas existentes en la data de animales + pastos, sin repetirse, mas las semanas faltantes
 
     sub_activity_data = get_data_of_sub_activity(activities, activities_data)
     activities_data.update(sub_activity_data)
-
     return render(request, "dashboard/report_weekly.html", locals())
 
 
@@ -484,14 +493,6 @@ def activity_is_in_sub_activity(activities, activity_key, sub_activity):
         if a.id == activity_key:
             return a.parent == sub_activity
     return False
-
-
-def fill_previous_week(weeks_number, week_key):
-    previous_week_key = week_key - 1
-    if previous_week_key in weeks_number or week_key == 0:
-        return 0
-    weeks_number[previous_week_key] = ""
-    return fill_previous_week(weeks_number, previous_week_key)
 
 
 def get_data_of_sub_activity(activities, activities_data):

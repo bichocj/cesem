@@ -5,44 +5,37 @@
 {% block title %}CESEM | administrador{% endblock %} 
 
 {% block style %}
-<style>
-.activity {
-  background-color: #92d050;
-}
-.sub-activity {
-  background-color: #a8ff7d;
-}
-table {
-  background-color: white;
-}
-th 
-{
-  vertical-align: bottom;
-  text-align: center;
-}
-
-th span 
-{
-  -ms-writing-mode: tb-rl;
-  -webkit-writing-mode: vertical-rl;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  white-space: nowrap;
-}
-</style>
 
 {% endblock %}
 {% block body %}
 
-<h2>Reporte Semanal</h2>
+<div class="d-flex justify-content-between align-items-center">
+  <h2>Reporte Semanal</h2>
+  <form action=".">
+    <div class="d-flex">
+      <div>
+        Desde: 
+        <input type="text" class="form-control" id="from-datepicker" name="from_datepicker" size="30" value="{{from_datepicker}}">
+      </div>
+      <div class="ms-4">
+        Hasta: 
+        <input type="text" class="form-control" id="to-datepicker" name="to_datepicker" size="30" value="{{to_datepicker}}">
+      </div>
+      <div>
+        <br/>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+      </div>
+    </div>
+  </form>
+</div>
 
-<table class="table table-bordered">
+<table class="table table-bordered" id="table-report">
   <thead>
     <tr>
       <th colspan="2">Actividad</th>
       <th>UM</th>
       {% for w in weeks_number %}
-      <th><span>{{w|get_start_date_of_week:2022|date:"d M"}}</span></th>
+      <th><span>{{w|get_start_date_of_week:year|date:"d M"}}</span></th>
       {% endfor %}
     </tr>
   </thead>
@@ -60,4 +53,18 @@ th span
   </tbody>
 </table>
 
+{% endblock %}
+{% block script %}
+<script>
+  $( function() {
+    $('#from-datepicker,#to-datepicker').datetimepicker({
+      locale: 'es',
+      "allowInputToggle": false,
+      "showClose": false,
+      "showClear": false,
+      "showTodayButton": false,
+      "format": "YYYY-MM-DD",
+    });
+  });
+</script>
 {% endblock %}

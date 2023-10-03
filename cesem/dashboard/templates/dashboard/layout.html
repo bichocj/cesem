@@ -25,13 +25,13 @@
   <!-- Custom styles for this template -->
   <link href="https://getbootstrap.com/docs/3.4/examples/dashboard/dashboard.css" rel="stylesheet" />
 
-  <link rel="stylesheet" type="text/css" href="{% static " rest_framework/css/bootstrap-tweaks.css" %}" />
-  <link rel="stylesheet" type="text/css" href="{% static " rest_framework/css/prettify.css" %}" />
-  <link rel="stylesheet" type="text/css" href="{% static " rest_framework/css/default.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/bootstrap-tweaks.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/prettify.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/default.css' %}" />
 
   {% block style %} {% endblock %}
   <link href="{% static 'dashboard/css/custom.css' %}" rel="stylesheet" />
-
+  <link href="https://monim67.github.io/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" type="text/css" media="all" rel="stylesheet" />
   <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
   <!--[if lt IE 9
       ]><script src="../../assets/js/ie8-responsive-file-warning.js"></script
@@ -182,13 +182,13 @@
         </strong>
         <ul class="nav nav-sidebar">
           <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
+            <a class="bd-links-link d-inline-block rounded {{'import-xls/animals'|active_if_path_match:request}}"
               href="{% url 'dashboard:upload_file' 'animales' %}">
               Animales
             </a>
           </li>
           <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
+            <a class="bd-links-link d-inline-block rounded {{'import-xls/pastos'|active_if_path_match:request}}"
               href="{% url 'dashboard:upload_file' 'pastos' %}">
               Pastos </a>
           </li>
@@ -203,14 +203,16 @@
   <!-- Bootstrap core JavaScript
     ================================================== -->
   <!-- Placed at the end of the document so the pages load faster -->
-  {% block script %}
+  
   <script src="{% static 'rest_framework/js/jquery-3.5.1.min.js' %}"></script>
   <script src="{% static 'rest_framework/js/bootstrap.min.js' %}"></script>
-
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
+  <script type="text/javascript" src="https://monim67.github.io/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
   <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
   <!-- <script src="../../assets/js/vendor/holder.min.js"></script> -->
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
+  {% block script %}
   {% endblock %}
 </body>
 
