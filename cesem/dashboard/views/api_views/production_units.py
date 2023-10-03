@@ -115,22 +115,17 @@ class SumaPastosPathSerializer(serializers.Serializer):
 
 
 class SumaAnimalesPathSerializer(serializers.Serializer):
-    """
-    vacas = serializers.IntegerField()
-    vaquillonas = serializers.IntegerField()
-    vaquillas = serializers.IntegerField()
-    terrenos = serializers.IntegerField()
-    toretes = serializers.IntegerField()
-    toros = serializers.IntegerField()
-    vacuno = serializers.IntegerField()
-    ovino = serializers.IntegerField()
-    alpaca = serializers.IntegerField()
-    llama = serializers.IntegerField()
-    can = serializers.IntegerField()
-    """
-
-    total_vaquillonas = serializers.IntegerField()
     total_vacas = serializers.IntegerField()
+    total_vaquillonas = serializers.IntegerField()
+    total_vaquillas = serializers.IntegerField()
+    total_terrenos = serializers.IntegerField()
+    total_toretes = serializers.IntegerField()
+    total_toros = serializers.IntegerField()
+    total_vacunos = serializers.IntegerField()
+    total_ovinos = serializers.IntegerField()
+    total_alpacas = serializers.IntegerField()
+    total_llamas = serializers.IntegerField()
+    total_canes = serializers.IntegerField()
 
 
 class ProductionUnitDetailsPathSerializer(BasePathSerializer):
@@ -143,7 +138,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     miembro = serializers.StringRelatedField(many=False, source="person_member")
     tipologia = serializers.StringRelatedField(many=False, source="tipology")
     es_pilot = serializers.StringRelatedField(many=False, source="is_pilot")
-    # suma_animales = serializers.SerializerMethodField()
+    suma_animales = serializers.SerializerMethodField()
     suma_pastos = serializers.SerializerMethodField()
     visitas_animales = serializers.SerializerMethodField()
     visitas_pastos = serializers.SerializerMethodField()
@@ -215,15 +210,22 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         serializer = SumaPastosPathSerializer(instance=data, many=True)
         return serializer.data
 
-    """
     def get_suma_animales(self, obj):
         data = VisitAnimalHealth.objects.filter(production_unit__id=obj.id).aggregate(
             total_vacas=Sum("vaca"),
             total_vaquillonas=Sum("vaquillona"),
-        ).values('total_vacas', 'total_vaquillonas')
-        serializer = SumaAnimalesPathSerializer(instance=data, many=True)
+            total_vaquillas=Sum("vaquilla"),
+            total_terrenos=Sum("terreno"),
+            total_toretes=Sum("torete"),
+            total_toros=Sum("toro"),
+            total_vacunos=Sum("vacunos"),
+            total_ovinos=Sum("ovinos"),
+            total_alpacas=Sum("alpacas"),
+            total_llamas=Sum("llamas"),
+            total_canes=Sum("canes"),
+        )
+        serializer = SumaAnimalesPathSerializer(instance=data, many=False)
         return serializer.data
-    """
 
     class Meta:
         model = ProductionUnit
@@ -237,7 +239,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "tipologia",
             "es_pilot",
             "url",
-            # "suma_animales",
+            "suma_animales",
             "suma_pastos",
             "visitas_animales",
             "visitas_pastos",
