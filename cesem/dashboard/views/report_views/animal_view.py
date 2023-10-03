@@ -226,10 +226,19 @@ def report_weekly(request):
 
 
 def report_monthly(request):
+    
+    currentdate = datetime.date.today()
+    default_from = "{}-01-01".format(currentdate.year)
+    default_to = currentdate.strftime("%Y-%m-%d")
+    
+    year = request.GET.get("year", currentdate.year)
+    from_datepicker = request.GET.get("from_datepicker", default_from)
+    to_datepicker = request.GET.get("to_datepicker", default_to)
+
     activities = Activity.objects.all().order_by("position")
 
     data = (
-        VisitAnimalHealth.objects.filter(visited_at__year=year)
+        VisitAnimalHealth.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(month=ExtractMonth("visited_at"))
         .values(
             "activity__id",
@@ -240,7 +249,7 @@ def report_monthly(request):
     )
 
     grass_data = (
-        VisitGrass.objects.filter(visited_at__year=year)
+        VisitGrass.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(month=ExtractMonth("visited_at"))
         .values(
             "activity__id",
@@ -251,7 +260,7 @@ def report_monthly(request):
     )
 
     genetic_improvement_vacuno_data = (
-        VisitGeneticImprovementVacuno.objects.filter(visited_at__year=year)
+        VisitGeneticImprovementVacuno.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(month=ExtractMonth("visited_at"))
         .values(
             "activity__id",
@@ -262,7 +271,7 @@ def report_monthly(request):
     )
 
     genetic_improvement_ovino_data = (
-        VisitGeneticImprovementOvino.objects.filter(visited_at__year=year)
+        VisitGeneticImprovementOvino.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(month=ExtractMonth("visited_at"))
         .values(
             "activity__id",
@@ -273,7 +282,7 @@ def report_monthly(request):
     )
 
     genetic_improvement_alpaca_data = (
-        VisitGeneticImprovementAlpaca.objects.filter(visited_at__year=year)
+        VisitGeneticImprovementAlpaca.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
         .annotate(month=ExtractMonth("visited_at"))
         .values(
             "activity__id",

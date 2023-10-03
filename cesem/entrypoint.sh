@@ -11,6 +11,7 @@ python manage.py migrate
 # Load migrations
 echo "-------------------------Apply loaddata migrations"
 python manage.py loaddata users.json
+python manage.py loaddata activities.json
 
 # Start server
 # echo "-------------------------Starting server"
