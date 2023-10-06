@@ -272,18 +272,19 @@ class ImportAnimals(HelperImport):
                         + str(i + 1)
                         + ", TIPO: MG vacunos"
                     )
+
                 except Zone.DoesNotExist:
-                    print("row", str(i + 1), "not found zone:", data_zone)
-                    exit()
+                    msg = "fila " + str(i + 1) + " zona no encontrada:" + data_zone
+                    raise ValueError(msg)
                 except Community.DoesNotExist:
-                    print("row", str(i + 1), "not found community:", data_community)
-                    exit()
+                    msg = "fila " + str(i + 1) + " comunidad no encontrada:" + data_community
+                    raise ValueError(msg)
                 except Sector.DoesNotExist:
-                    print("row", str(i + 1), "not found sector:", data_sector)
-                    exit()
+                    msg = "fila " + str(i + 1) + " sector no encontrado:" + data_sector
+                    raise ValueError(msg)
                 except Activity.DoesNotExist:
-                    print("row", str(i + 1), "not found activity:", data_activity)
-                    exit()
+                    msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                    raise ValueError(msg)                                                    
 
             elif data_activity.lower() in self.ovino_activities:
                 data_course_male_attendance = self.zero_if_nan(
@@ -344,17 +345,17 @@ class ImportAnimals(HelperImport):
                         + ", TIPO: MG ovino"
                     )
                 except Zone.DoesNotExist:
-                    print("row", str(i + 1), "not found zone:", data_zone)
-                    exit()
+                    msg = "fila " + str(i + 1) + " zona no encontrada: " + data_zone
+                    raise ValueError(msg)
                 except Community.DoesNotExist:
-                    print("row", str(i + 1), "not found community:", data_community)
-                    exit()
+                    msg = "fila " + str(i + 1) + " comunidad no encontrada: " + data_community
+                    raise ValueError(msg)
                 except Sector.DoesNotExist:
-                    print("row", str(i + 1), "not found sector:", data_sector)
-                    exit()
+                    msg = "fila " + str(i + 1) + " sector no encontrado: " + data_sector
+                    raise ValueError(msg)
                 except Activity.DoesNotExist:
-                    print("row", str(i + 1), "not found activity:", data_activity)
-                    exit()
+                    msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                    raise ValueError(msg)
 
             elif data_activity.lower() in self.alpaca_activities:
                 print(data)
@@ -461,18 +462,18 @@ class ImportAnimals(HelperImport):
                         + ", TIPO: MG alpaca"
                     )
                 except Zone.DoesNotExist:
-                    print("row", str(i + 1), "not found zone:", data_zone)
-                    exit()
+                    msg = "fila " + str(i + 1) + " zona no encontrada: " + data_zone
+                    raise ValueError(msg)
                 except Community.DoesNotExist:
-                    print("row", str(i + 1), "not found community:", data_community)
-                    exit()
+                    msg = "fila " + str(i + 1) + " comunidad no encontrada: " + data_community
+                    raise ValueError(msg)
                 except Sector.DoesNotExist:
-                    print("row", str(i + 1), "not found sector:", data_sector)
-                    exit()
+                    msg = "fila " + str(i + 1) + " sector no encontrado: " + data_sector
+                    raise ValueError(msg)
                 except Activity.DoesNotExist:
-                    print("row", str(i + 1), "not found activity:", data_activity)
-                    exit()
-
+                    msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                    raise ValueError(msg)
+                                
             else:
                 data_sickness_observation = self.nan_if_nat(
                     data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
@@ -544,29 +545,25 @@ class ImportAnimals(HelperImport):
                         + str(i + 1)
                         + ", sanidad animal"
                     )
+                
                 except Zone.DoesNotExist:
-                    print("row", str(i + 1), "not found zone:", data_zone)
-                    exit()
+                    msg = "fila " + str(i + 1) + " zona no encontrada: " + data_zone
+                    raise ValueError(msg)
                 except Community.DoesNotExist:
-                    print("row", str(i + 1), "not found community:", data_community)
-                    exit()
+                    msg = "fila " + str(i + 1) + " comunidad no encontrada: " + data_community
+                    raise ValueError(msg)
                 except Sector.DoesNotExist:
-                    print("row", str(i + 1), "not found sector:", data_sector)
-                    exit()
+                    msg = "fila " + str(i + 1) + " sector no encontrado: " + data_sector
+                    raise ValueError(msg)
                 except Activity.DoesNotExist:
-                    print("row", str(i + 1), "not found activity:", data_activity)
-                    exit()
+                    msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                    raise ValueError(msg)
                 except Diagnostic.DoesNotExist:
-                    print("row", str(i + 1), "not found diagnostic:", data_diagnostic)
-                    exit()
+                    msg = "fila "+ str(i + 1) + " diagnostico no encontrado: "+ data_diagnostic
+                    raise ValueError(msg)
                 except SicknessObservation.DoesNotExist:
-                    print(
-                        "row",
-                        str(i + 1),
-                        "not found sickness/observation:",
-                        data_sickness_observation,
-                    )
-                    exit()
+                    msg = "fila " + str(i + 1) + "enfermadad/observacion no encontrada: " + data_sickness_observation
+                    raise ValueError(msg)
                 if data_quantity_1 > 0:
                     drug = self.get_drug(
                         data_medicine_name_1, data_um_name_1, creates_if_none

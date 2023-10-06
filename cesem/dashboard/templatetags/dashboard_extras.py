@@ -141,7 +141,7 @@ def format_custom_value(value):
         columns = []
         if len(data) > 0:
             for key, val in data[0].items():
-                if key is not "url":
+                if key != "url":
                     columns.append(key)
             context = {"results": value, "columns": columns}
         else:

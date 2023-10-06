@@ -194,7 +194,7 @@ def report_weekly(request):
     activities_data = {}
     weeks_number = {}
 
-    min_week, max_week, first_week = None, None, None
+    min_week, max_week, first_week = 0, 0, 0
     for s in data:
         activity_key = s.get("activity__id")
         week_key = s.get("week")

@@ -42,7 +42,7 @@ from .api_views.production_units import (
 
 @login_required
 def home_view(request):
-    message = "Hello"
+    #message = "Hello"
     return render(request, "dashboard/home.html", locals())
 
 
