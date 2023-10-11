@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for cesem-app on 2023-09-28T23:19:29-05:00
+# fly.toml app configuration file generated for cesem-app on 2023-10-06T10:26:47-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = "cesem-app"
-primary_region = "ewr"
+primary_region = "iad"
 kill_signal = "SIGINT"
 kill_timeout = "5s"
 

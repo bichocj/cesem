@@ -182,15 +182,20 @@
         </strong>
         <ul class="nav nav-sidebar">
           <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'import-xls/animals'|active_if_path_match:request}}"
+            <a class="bd-links-link d-inline-block rounded {{'import-xls/animales/'|active_if_path_match:request}}"
               href="{% url 'dashboard:upload_file' 'animales' %}">
               Animales
             </a>
           </li>
           <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'import-xls/pastos'|active_if_path_match:request}}"
+            <a class="bd-links-link d-inline-block rounded {{'import-xls/pastos/'|active_if_path_match:request}}"
               href="{% url 'dashboard:upload_file' 'pastos' %}">
               Pastos </a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'files-checksum'|active_if_path_match:request}}"
+              href="{% url 'dashboard:files-checksum-list' %}">
+              Historial </a>
           </li>
         </ul>
       </div>
@@ -214,6 +219,13 @@
   <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
   {% block script %}
   {% endblock %}
+  <script>
+    $(function() {
+      if(location.pathname.includes('/api/files-checksum/')) {
+        $('#delete_btn_label').text('Eliminar y eliminar visitas importadas')
+      }
+    })
+  </script>
 </body>
 
 </html>

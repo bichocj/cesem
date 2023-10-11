@@ -128,7 +128,7 @@ class ImportAnimals(HelperImport):
                 raise Drug.DoesNotExist()
         return drug
 
-    def _inner_execute(self, file, creates_if_none=True):
+    def _inner_execute(self, file, creates_if_none=True, checksum=''):
         df = pd.read_excel(file)
         data = df.to_dict()
         rows_count = len(data["N°"].keys())
@@ -140,7 +140,7 @@ class ImportAnimals(HelperImport):
 
         for i in range(rows_count):
             # data['N°'][i]
-            # data['MES'][i]
+            # data['MES'][i] ################
             data_visited_at = self.none_if_nat(data["FECHA"][i])
             data_zone = self.nan_if_nat(data["ZONA"][i])
             data_community = self.nan_if_nat(data["COMUNIDAD"][i])
@@ -184,59 +184,60 @@ class ImportAnimals(HelperImport):
             )
 
             if data_activity.lower() in self.vacuno_activities:
-                # DATA OF "MEJORAMIENTO GENETICO"
-                data_bull_name = data["NOMBRE DE TORO"][i]
-                data_bull_race = data["RAZA DE TORO"][
-                    i
-                ]  # solicitar cambio de nombre, nombre original:raza
-                data_pajilla_type = data["TIPO PAJILLA"][i]
-                data_pajilla_origin = data["PROCEDENCIA PAJILLA"][i]
-                data_pajillas_number = self.zero_if_nan(data["N° DE PAJILLAS"][i])
-
-                data_cow_name = data["NOMBRE DE VACA"][i]
-                data_cow_race = data["RAZA DE VACA"][i]
-                data_service_number = data["N° DE SERVICIO"][i]  # verificar caracter
-
-                data_pregnant_vacuno = self.zero_if_nan(data["PREÑADA"][i])
-                data_empty_vacuno = self.zero_if_nan(data["VACIA"][i])
-
-                data_birthday = data["F. NACIMIENTO"][i]
-                data_earring_number = data["N° DE ARETE"][i]  # verificar caracter
-                data_baby_name = data["NOMBRE DE CRIA"][i]
-                data_male = self.zero_if_nan(data["MACHO"][i])
-                data_female = self.zero_if_nan(data["HEMBRA"][i])
-                data_death = self.zero_if_nan(data["MUERTA"][i])
-                data_baby_bull_name = data["CRIA-NOMBRE DE TORO"][
-                    i
-                ]  # solicitar cambio de nombre, nombre original: nombre de toro
-                data_baby_cow_name = data["CRIA-NOMBRE DE VACA"][
-                    i
-                ]  # solicitar cambio de nombre, nombre original: nombre de vaca
-                data_male_attendance = self.zero_if_nan(
-                    data["ASIS VARONES CAPAC MANEJO REPRODUCTIVO"][i]
-                )
-                data_female_attendance = self.zero_if_nan(
-                    data["ASIS MUJERES CAPAC MANEJO REPRODUCTIVO"][i]
-                )
-                data_technical_assistance_attendance = self.zero_if_nan(
-                    data["ASIS TEC MANEJO GANADO VACUNO"][i]
-                )
-                data_vaca = self.zero_if_nan(data["VACA"][i])
-                data_vaquillona = self.zero_if_nan(data["VAQUILLONA"][i])
-                data_vaquilla = self.zero_if_nan(data["VAQUILLA"][i])
-                data_terreno = self.zero_if_nan(data["TERNERO"][i])
-                data_torete = self.zero_if_nan(data["TORETE"][i])
-                data_toro = self.zero_if_nan(data["TORO"][i])
-                data_vacunos_number = (
-                    data_vaca
-                    + data_vaquillona
-                    + data_vaquilla
-                    + data_terreno
-                    + data_torete
-                    + data_toro
-                )
-
                 try:
+                    # DATA OF "MEJORAMIENTO GENETICO"
+                    data_bull_name = data["NOMBRE DE TORO"][i]
+                    data_bull_race = data["RAZA DE TORO"][
+                        i
+                    ]  # solicitar cambio de nombre, nombre original:raza
+                    data_pajilla_type = data["TIPO PAJILLA"][i]
+                    data_pajilla_origin = data["PROCEDENCIA PAJILLA"][i]
+                    data_pajillas_number = self.zero_if_nan(data["N° DE PAJILLAS"][i])
+
+                    data_cow_name = data["NOMBRE DE VACA"][i]
+                    data_cow_race = data["RAZA DE VACA"][i]
+                    data_service_number = data["N° DE SERVICIO"][i]  # verificar caracter
+
+                    data_pregnant_vacuno = self.zero_if_nan(data["PREÑADA"][i])
+                    data_empty_vacuno = self.zero_if_nan(data["VACIA"][i])
+
+                    data_birthday = data["F. NACIMIENTO"][i]
+                    data_earring_number = data["N° DE ARETE"][i]  # verificar caracter
+                    data_baby_name = data["NOMBRE DE CRIA"][i]
+                    data_male = self.zero_if_nan(data["MACHO"][i])
+                    data_female = self.zero_if_nan(data["HEMBRA"][i])
+                    data_death = self.zero_if_nan(data["MUERTA"][i])
+                    data_baby_bull_name = data["CRIA-NOMBRE DE TORO"][
+                        i
+                    ]  # solicitar cambio de nombre, nombre original: nombre de toro
+                    data_baby_cow_name = data["CRIA-NOMBRE DE VACA"][
+                        i
+                    ]  # solicitar cambio de nombre, nombre original: nombre de vaca
+                    data_male_attendance = self.zero_if_nan(
+                        data["ASIS VARONES CAPAC MANEJO REPRODUCTIVO"][i]
+                    )
+                    data_female_attendance = self.zero_if_nan(
+                        data["ASIS MUJERES CAPAC MANEJO REPRODUCTIVO"][i]
+                    )
+                    data_technical_assistance_attendance = self.zero_if_nan(
+                        data["ASIS TEC MANEJO GANADO VACUNO"][i]
+                    )
+                    data_vaca = self.zero_if_nan(data["VACA"][i])
+                    data_vaquillona = self.zero_if_nan(data["VAQUILLONA"][i])
+                    data_vaquilla = self.zero_if_nan(data["VAQUILLA"][i])
+                    data_terreno = self.zero_if_nan(data["TERNERO"][i])
+                    data_torete = self.zero_if_nan(data["TORETE"][i])
+                    data_toro = self.zero_if_nan(data["TORO"][i])
+                    data_vacunos_number = (
+                        data_vaca
+                        + data_vaquillona
+                        + data_vaquilla
+                        + data_terreno
+                        + data_torete
+                        + data_toro
+                    )
+
+                    
                     visit_vacuno = VisitGeneticImprovementVacuno(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
@@ -265,57 +266,43 @@ class ImportAnimals(HelperImport):
                         female_attendance=data_female_attendance,
                         technical_assistance_attendance=data_technical_assistance_attendance,
                         vacunos_number=data_vacunos_number,
+                        checksum=checksum
                     )
                     visits_vacunos.append(visit_vacuno)
-                    print(
-                        "Registrando visita de animales N°:"
-                        + str(i + 1)
-                        + ", TIPO: MG vacunos"
-                    )
-
-                except Zone.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " zona no encontrada:" + data_zone
+                except e:
+                    msg = "la actividad " + data_activity + " requiere la columna " + str(e)
                     raise ValueError(msg)
-                except Community.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " comunidad no encontrada:" + data_community
-                    raise ValueError(msg)
-                except Sector.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " sector no encontrado:" + data_sector
-                    raise ValueError(msg)
-                except Activity.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
-                    raise ValueError(msg)                                                    
+                    
 
             elif data_activity.lower() in self.ovino_activities:
-                data_course_male_attendance = self.zero_if_nan(
-                    data["ASIS VARONES CURSO MANEJO OVINOS"][i]
-                )
-                data_course_female_attendance = self.zero_if_nan(
-                    data["ASIS MUJERES CURSO MANEJO OVINOS"][i]
-                )
-                data_technical_assistance_attendance = self.zero_if_nan(
-                    data["ASIS TEC PRODUCCION GANADO OVINO CORRIEDALE"][i]
-                )
-                data_selected_ovines = self.zero_if_nan(data["OVINOS SELECCIONADOS"][i])
-                data_synchronized_ovines = self.zero_if_nan(
-                    data["OVINOS SINCRONIZADOS"][i]
-                )
-                data_inseminated_sheeps_corriedale = self.zero_if_nan(
-                    data["OVEJAS INSEMINADAS CORRIEDALE"][i]
-                )
-                data_inseminated_sheeps_criollas = self.zero_if_nan(
-                    data["OVEJAS INSEMINADAS CRIOLLAS"][i]
-                )
-                data_pregnant_ovino = self.zero_if_nan(data["PREÑADA"][i])
-                data_empty_ovino = self.zero_if_nan(data["VACIA"][i])
-                data_not_evaluated = self.zero_if_nan(data["NO EVALUADA"][i])
-                data_baby_males = self.zero_if_nan(data["CRIA MACHO"][i])
-                data_baby_females = self.zero_if_nan(data["CRIA HEMBRA"][i])
-                data_baby_deaths = self.zero_if_nan(data["CRIA MUERTA"][i])
-                data_rgc_number = data["N° RGC"][i]
-                data_ovinos_number = self.zero_if_nan(data["OVINOS"][i])
-
                 try:
+                    data_course_male_attendance = self.zero_if_nan(
+                        data["ASIS VARONES CURSO MANEJO OVINOS"][i]
+                    )
+                    data_course_female_attendance = self.zero_if_nan(
+                        data["ASIS MUJERES CURSO MANEJO OVINOS"][i]
+                    )
+                    data_technical_assistance_attendance = self.zero_if_nan(
+                        data["ASIS TEC PRODUCCION GANADO OVINO CORRIEDALE"][i]
+                    )
+                    data_selected_ovines = self.zero_if_nan(data["OVINOS SELECCIONADOS"][i])
+                    data_synchronized_ovines = self.zero_if_nan(
+                        data["OVINOS SINCRONIZADOS"][i]
+                    )
+                    data_inseminated_sheeps_corriedale = self.zero_if_nan(
+                        data["OVEJAS INSEMINADAS CORRIEDALE"][i]
+                    )
+                    data_inseminated_sheeps_criollas = self.zero_if_nan(
+                        data["OVEJAS INSEMINADAS CRIOLLAS"][i]
+                    )
+                    data_pregnant_ovino = self.zero_if_nan(data["PREÑADA"][i])
+                    data_empty_ovino = self.zero_if_nan(data["VACIA"][i])
+                    data_not_evaluated = self.zero_if_nan(data["NO EVALUADA"][i])
+                    data_baby_males = self.zero_if_nan(data["CRIA MACHO"][i])
+                    data_baby_females = self.zero_if_nan(data["CRIA HEMBRA"][i])
+                    data_baby_deaths = self.zero_if_nan(data["CRIA MUERTA"][i])
+                    data_rgc_number = data["N° RGC"][i]
+                    data_ovinos_number = self.zero_if_nan(data["OVINOS"][i])                
                     visit_ovino = VisitGeneticImprovementOvino(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
@@ -337,6 +324,7 @@ class ImportAnimals(HelperImport):
                         baby_deaths=data_baby_deaths,
                         ovinos_number=data_ovinos_number,
                         rgc_number=data_rgc_number,
+                        checksum=checksum
                     )
                     visits_ovinos.append(visit_ovino)
                     print(
@@ -344,81 +332,68 @@ class ImportAnimals(HelperImport):
                         + str(i + 1)
                         + ", TIPO: MG ovino"
                     )
-                except Zone.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " zona no encontrada: " + data_zone
-                    raise ValueError(msg)
-                except Community.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " comunidad no encontrada: " + data_community
-                    raise ValueError(msg)
-                except Sector.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " sector no encontrado: " + data_sector
-                    raise ValueError(msg)
-                except Activity.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                except e:
+                    msg = "la actividad " + data_activity + " requiere la columna " + str(e)
                     raise ValueError(msg)
 
             elif data_activity.lower() in self.alpaca_activities:
-                print(data)
-                data_hato_number = self.zero_if_nan(data["N° DE HATO"][i])
-                data_hato_babies_number = self.zero_if_nan(
-                    data["N° DE CRIAS EN HATO"][i]
-                )
-                data_hato_mothers_number = self.zero_if_nan(
-                    data["N° DE MADRES EN HATO"][i]
-                )
-                data_hato_males_number = self.zero_if_nan(
-                    data["N° DE MACHOS EN HATO"][i]
-                )
-                data_female_alpaca_earring_number = data[
-                    "SELEC N° ARETE ALPACA HEMBRA"
-                ][i]
-                data_female_alpaca_race = data["SELEC RAZA ALPACA HEMBRA"][i]
-                data_female_alpaca_color = data["SELEC COLOR ALPACA HEMBRA"][i]
-                data_female_alpaca_age = data["SELEC EDAD ALPACA HEMBRA"][i]
-                data_female_alpaca_category = data["SELEC CATEGORIA ALPACA HEMBRA"][i]
-                data_female_alpaca_total_score = self.zero_if_nan(
-                    data["SELEC PUNTAJE TOTAL ALPACA HEMBRA"][i]
-                )
-                data_selected_alpacas_number = self.zero_if_nan(
-                    data["SELEC CANT ALPACAS SELECCIONADAS"][i]
-                )
-                data_empadre_date = self.none_if_nan(
-                    self.none_if_nat(data["FECHA EMPADRE"][i])
-                )
-                data_alpacas_empadradas = data["ALPACAS EMPADRADAS"][i]
-                data_alpacas_empadradas_number = self.zero_if_nan(
-                    data["N° DE ALPACAS EMPADRADAS"][i]
-                )
-                data_male_empadre_number = data["N° MACHO EMPADRE"][i]
-                data_second_service_date = self.none_if_nan(
-                    self.none_if_nat(data["FECHA 2DO SERVICIO"][i])
-                )
-                data_second_service_male_number = data["N° MACHO 2DO SERVICIO"][i]
-                data_pregnant_alpaca = self.zero_if_nan(data["PREÑADA"][i])
-                data_empty_alpaca = self.zero_if_nan(data["VACIA"][i])
-                data_baby_birthday = self.none_if_nan(
-                    self.none_if_nat(data["F. NACIMIENTO CRIA"][i])
-                )
-                data_baby_earring_number = data["N° ARETE CRIA"][i]
-                data_female_baby = self.zero_if_nan(data["CRIA HEMBRA"][i])
-                data_male_baby = self.zero_if_nan(data["CRIA MACHO"][i])
-                data_mortality_baby = self.zero_if_nan(data["MORTANDAD CRIA"][i])
-                data_mother_of_baby = data["MADRE DE CRIA"][i]
-                data_father_of_baby = data["PADRE DE CRIA"][i]
-                data_training_male_attendance = self.zero_if_nan(
-                    data["ASIS VARONES CAPAC"][i]
-                )
-                data_training_female_attendance = self.zero_if_nan(
-                    data["ASIS MUJERES CAPAC"][i]
-                )
-                data_technical_assistance_attendance = self.zero_if_nan(
-                    data["ASIS TEC BUENAS PRACTICAS MANEJO ALPACAS"][i]
-                )
-
                 try:
-                    import pdb
-
-                    pdb.set_trace()
+                    data_hato_number = self.zero_if_nan(data["N° DE HATO"][i])
+                    data_hato_babies_number = self.zero_if_nan(
+                        data["N° DE CRIAS EN HATO"][i]
+                    )
+                    data_hato_mothers_number = self.zero_if_nan(
+                        data["N° DE MADRES EN HATO"][i]
+                    )
+                    data_hato_males_number = self.zero_if_nan(
+                        data["N° DE MACHOS EN HATO"][i]
+                    )
+                    data_female_alpaca_earring_number = data[
+                        "SELEC N° ARETE ALPACA HEMBRA"
+                    ][i]
+                    data_female_alpaca_race = data["SELEC RAZA ALPACA HEMBRA"][i]
+                    data_female_alpaca_color = data["SELEC COLOR ALPACA HEMBRA"][i]
+                    data_female_alpaca_age = data["SELEC EDAD ALPACA HEMBRA"][i]
+                    data_female_alpaca_category = data["SELEC CATEGORIA ALPACA HEMBRA"][i]
+                    data_female_alpaca_total_score = self.zero_if_nan(
+                        data["SELEC PUNTAJE TOTAL ALPACA HEMBRA"][i]
+                    )
+                    data_selected_alpacas_number = self.zero_if_nan(
+                        data["SELEC CANT ALPACAS SELECCIONADAS"][i]
+                    )
+                    data_empadre_date = self.none_if_nan(
+                        self.none_if_nat(data["FECHA EMPADRE"][i])
+                    )
+                    data_alpacas_empadradas = data["ALPACAS EMPADRADAS"][i]
+                    data_alpacas_empadradas_number = self.zero_if_nan(
+                        data["N° DE ALPACAS EMPADRADAS"][i]
+                    )
+                    data_male_empadre_number = data["N° MACHO EMPADRE"][i]
+                    data_second_service_date = self.none_if_nan(
+                        self.none_if_nat(data["FECHA 2DO SERVICIO"][i])
+                    )
+                    data_second_service_male_number = data["N° MACHO 2DO SERVICIO"][i]
+                    data_pregnant_alpaca = self.zero_if_nan(data["PREÑADA"][i])
+                    data_empty_alpaca = self.zero_if_nan(data["VACIA"][i])
+                    data_baby_birthday = self.none_if_nan(
+                        self.none_if_nat(data["F. NACIMIENTO CRIA"][i])
+                    )
+                    data_baby_earring_number = data["N° ARETE CRIA"][i]
+                    data_female_baby = self.zero_if_nan(data["CRIA HEMBRA"][i])
+                    data_male_baby = self.zero_if_nan(data["CRIA MACHO"][i])
+                    data_mortality_baby = self.zero_if_nan(data["MORTANDAD CRIA"][i])
+                    data_mother_of_baby = data["MADRE DE CRIA"][i]
+                    data_father_of_baby = data["PADRE DE CRIA"][i]
+                    data_training_male_attendance = self.zero_if_nan(
+                        data["ASIS VARONES CAPAC"][i]
+                    )
+                    data_training_female_attendance = self.zero_if_nan(
+                        data["ASIS MUJERES CAPAC"][i]
+                    )
+                    data_technical_assistance_attendance = self.zero_if_nan(
+                        data["ASIS TEC BUENAS PRACTICAS MANEJO ALPACAS"][i]
+                    )
+                
                     visit_alpaca = VisitGeneticImprovementAlpaca(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
@@ -454,6 +429,7 @@ class ImportAnimals(HelperImport):
                         training_male_attendance=data_training_male_attendance,
                         training_female_attendance=data_training_female_attendance,
                         technical_assistance_attendance=data_technical_assistance_attendance,
+                        checksum=checksum
                     )
                     visits_alpacas.append(visit_alpaca)
                     print(
@@ -461,64 +437,55 @@ class ImportAnimals(HelperImport):
                         + str(i + 1)
                         + ", TIPO: MG alpaca"
                     )
-                except Zone.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " zona no encontrada: " + data_zone
-                    raise ValueError(msg)
-                except Community.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " comunidad no encontrada: " + data_community
-                    raise ValueError(msg)
-                except Sector.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " sector no encontrado: " + data_sector
-                    raise ValueError(msg)
-                except Activity.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                except e:
+                    msg = "la actividad " + data_activity + " requiere la columna " + str(e)
                     raise ValueError(msg)
                                 
             else:
-                data_sickness_observation = self.nan_if_nat(
-                    data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
-                )
-                data_diagnostic = self.nan_if_nat(data["DIAGNOSTICO"][i])
-                data_vaca = self.zero_if_nan(data["VACA"][i])
-                data_vaquillona = self.zero_if_nan(data["VAQUILLONA"][i])
-                data_vaquilla = self.zero_if_nan(data["VAQUILLA"][i])
-                data_terreno = self.zero_if_nan(data["TERNERO"][i])
-                data_torete = self.zero_if_nan(data["TORETE"][i])
-                data_toro = self.zero_if_nan(data["TORO"][i])
-                data_vacunos = (
-                    data_vaca
-                    + data_vaquillona
-                    + data_vaquilla
-                    + data_terreno
-                    + data_torete
-                    + data_toro
-                )
-                data_ovinos = self.zero_if_nan(data["OVINOS"][i], to_int=True)
-                data_alpacas = self.zero_if_nan(data["ALPACAS"][i], to_int=True)
-                data_llamas = self.zero_if_nan(data["LLAMAS"][i], to_int=True)
-                data_canes = self.zero_if_nan(data["CANES"][i], to_int=True)
-                data_medicine_name_1 = data["1 FARMACOS/SALES"][i]
-                data_um_name_1 = data["U.M."][i]
-                data_quantity_1 = self.zero_if_nan(data["CANTIDAD"][i], to_int=True)
-
-                data_medicine_name_2 = data["2 FARMACOS/SALES"][i]
-                data_um_name_2 = data["U.M..1"][i]
-                data_quantity_2 = self.zero_if_nan(data["CANTIDAD.1"][i], to_int=True)
-
-                data_medicine_name_3 = data["3 FARMACOS/SALES"][i]
-                data_um_name_3 = data["U.M..2"][i]
-                data_quantity_3 = self.zero_if_nan(data["CANTIDAD.2"][i], to_int=True)
-
-                data_medicine_name_4 = data["4 FARMACOS/SALES"][i]
-                data_um_name_4 = data["U.M..3"][i]
-                data_quantity_4 = self.zero_if_nan(data["CANTIDAD.3"][i], to_int=True)
-
-                sickness_observation = self.get_sickness_observation(
-                    data_sickness_observation, creates_if_none
-                )
-                diagnostic = self.get_diagnostic(data_diagnostic, creates_if_none)
-
                 try:
+                    data_sickness_observation = self.nan_if_nat(
+                        data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
+                    )
+                    data_diagnostic = self.nan_if_nat(data["DIAGNOSTICO"][i])
+                    data_vaca = self.zero_if_nan(data["VACA"][i])
+                    data_vaquillona = self.zero_if_nan(data["VAQUILLONA"][i])
+                    data_vaquilla = self.zero_if_nan(data["VAQUILLA"][i])
+                    data_terreno = self.zero_if_nan(data["TERNERO"][i])
+                    data_torete = self.zero_if_nan(data["TORETE"][i])
+                    data_toro = self.zero_if_nan(data["TORO"][i])
+                    data_vacunos = (
+                        data_vaca
+                        + data_vaquillona
+                        + data_vaquilla
+                        + data_terreno
+                        + data_torete
+                        + data_toro
+                    )
+                    data_ovinos = self.zero_if_nan(data["OVINOS"][i], to_int=True)
+                    data_alpacas = self.zero_if_nan(data["ALPACAS"][i], to_int=True)
+                    data_llamas = self.zero_if_nan(data["LLAMAS"][i], to_int=True)
+                    data_canes = self.zero_if_nan(data["CANES"][i], to_int=True)
+                    data_medicine_name_1 = data["1 FARMACOS/SALES"][i]
+                    data_um_name_1 = data["U.M."][i]
+                    data_quantity_1 = self.zero_if_nan(data["CANTIDAD"][i], to_int=True)
+
+                    data_medicine_name_2 = data["2 FARMACOS/SALES"][i]
+                    data_um_name_2 = data["U.M..1"][i]
+                    data_quantity_2 = self.zero_if_nan(data["CANTIDAD.1"][i], to_int=True)
+
+                    data_medicine_name_3 = data["3 FARMACOS/SALES"][i]
+                    data_um_name_3 = data["U.M..2"][i]
+                    data_quantity_3 = self.zero_if_nan(data["CANTIDAD.2"][i], to_int=True)
+
+                    data_medicine_name_4 = data["4 FARMACOS/SALES"][i]
+                    data_um_name_4 = data["U.M..3"][i]
+                    data_quantity_4 = self.zero_if_nan(data["CANTIDAD.3"][i], to_int=True)
+
+                    sickness_observation = self.get_sickness_observation(
+                        data_sickness_observation, creates_if_none
+                    )
+                    diagnostic = self.get_diagnostic(data_diagnostic, creates_if_none)
+                    
                     visit_animal = VisitAnimalHealth(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
@@ -538,6 +505,7 @@ class ImportAnimals(HelperImport):
                         torete=data_torete,
                         toro=data_toro,
                         vacunos=data_vacunos,
+                        checksum=checksum
                     )
                     visits_animals.append(visit_animal)
                     print(
@@ -546,24 +514,10 @@ class ImportAnimals(HelperImport):
                         + ", sanidad animal"
                     )
                 
-                except Zone.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " zona no encontrada: " + data_zone
+                except e:
+                    msg = "la actividad " + data_activity + " requiere la columna " + str(e)
                     raise ValueError(msg)
-                except Community.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " comunidad no encontrada: " + data_community
-                    raise ValueError(msg)
-                except Sector.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " sector no encontrado: " + data_sector
-                    raise ValueError(msg)
-                except Activity.DoesNotExist:
-                    msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
-                    raise ValueError(msg)
-                except Diagnostic.DoesNotExist:
-                    msg = "fila "+ str(i + 1) + " diagnostico no encontrado: "+ data_diagnostic
-                    raise ValueError(msg)
-                except SicknessObservation.DoesNotExist:
-                    msg = "fila " + str(i + 1) + "enfermadad/observacion no encontrada: " + data_sickness_observation
-                    raise ValueError(msg)
+                
                 if data_quantity_1 > 0:
                     drug = self.get_drug(
                         data_medicine_name_1, data_um_name_1, creates_if_none
@@ -603,13 +557,10 @@ class ImportAnimals(HelperImport):
 
         VisitAnimalHealth.objects.bulk_create(visits_animals)
         VisitAnimalHealthDetails.objects.bulk_create(visits_details)
+
         VisitGeneticImprovementVacuno.objects.bulk_create(visits_vacunos)
         VisitGeneticImprovementOvino.objects.bulk_create(visits_ovinos)
         VisitGeneticImprovementAlpaca.objects.bulk_create(visits_alpacas)
 
-        return (
-            len(visits_animals)
-            + len(visits_vacunos)
-            + len(visits_ovinos)
-            + len(visits_alpacas)
-        )
+        total = len(visits_animals) + len(visits_vacunos) + len(visits_ovinos) + len(visits_alpacas)        
+        return total

@@ -200,10 +200,11 @@ class HelperImport:
             raise Exception(message)
         except FilesChecksum.DoesNotExist:
             pass
+        return checksum
 
-    def create_checksum(self, df, filename):
+    def create_checksum(self, df, filename, visits):
         checksum = hashlib.sha256(df.to_json().encode()).hexdigest()
-        FilesChecksum.objects.create(checksum=checksum, filename=filename)
+        FilesChecksum.objects.create(checksum=checksum, filename=filename, visits=visits)
 
     def validate_columns(self, df):
         columns_xls = df.columns.ravel()
@@ -221,15 +222,15 @@ class HelperImport:
     def execute(self, file, creates_if_none=True):
         # Here validate the file checksum and columns
         df = pd.read_excel(file)
-        self.validate_file(df)
+        checksum = self.validate_file(df)
         # self.validate_columns(df)
 
         # Here run the implemented _inner_execute func in child class
-        return_value = self._inner_execute(file, creates_if_none)
+        return_value = self._inner_execute(file, creates_if_none, checksum)
 
         # After save all data let's create a checksum to avoid process a file that already uploaded before
-        self.create_checksum(df, filename=file._name)
+        self.create_checksum(df, filename=file._name, visits=return_value)
         return return_value
 
-    def _inner_execute(self, file, creates_if_none):
-        return True
+    def _inner_execute(self, file, creates_if_none, checksum):
+        return 0

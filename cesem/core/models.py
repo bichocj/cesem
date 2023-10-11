@@ -39,6 +39,14 @@ class Zone(models.Model):
 class Community(models.Model):
     name = models.CharField("nombre", max_length=20, unique=True)
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, verbose_name="zona")
+    zone_2 = models.ForeignKey(
+        Zone,
+        on_delete=models.CASCADE,
+        verbose_name="zona 2",
+        related_name="zone_2",
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "comunidad"
@@ -49,9 +57,26 @@ class Community(models.Model):
 
 
 class Sector(models.Model):
-    name = models.CharField("nombre", max_length=20, unique=True)
+    name = models.CharField("nombre", max_length=50, unique=True)
     community = models.ForeignKey(
         Community, on_delete=models.CASCADE, verbose_name="comunidad"
+    )
+    community_2 = models.ForeignKey(
+        Community,
+        on_delete=models.CASCADE,
+        verbose_name="comunidad 2",
+        related_name="comunidad_2",
+        null=True,
+        blank=True,
+    )
+
+    community_3 = models.ForeignKey(
+        Community,
+        on_delete=models.CASCADE,
+        verbose_name="comunidad 3",
+        related_name="comunidad_3",
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -156,6 +181,7 @@ class ProductionUnit(models.Model):
 
 
 class VisitGrass(models.Model):
+    checksum = models.CharField(max_length=100, default='')
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
@@ -356,6 +382,7 @@ class VisitGrass(models.Model):
 
 
 class VisitAnimalHealth(models.Model):
+    checksum = models.CharField(max_length=100, default='')
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
@@ -414,6 +441,7 @@ class VisitAnimalHealthDetails(models.Model):
 
 
 class VisitGeneticImprovementVacuno(models.Model):
+    checksum = models.CharField(max_length=100, default='')
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
@@ -482,6 +510,7 @@ class VisitGeneticImprovementVacuno(models.Model):
 
 
 class VisitGeneticImprovementOvino(models.Model):
+    checksum = models.CharField(max_length=100, default='')
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
@@ -535,6 +564,7 @@ class VisitGeneticImprovementOvino(models.Model):
 
 
 class VisitGeneticImprovementAlpaca(models.Model):
+    checksum = models.CharField(max_length=100, default='')
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
@@ -622,6 +652,12 @@ class VisitGeneticImprovementAlpaca(models.Model):
 
 
 class FilesChecksum(models.Model):
-    created_at = models.DateTimeField(auto_created=True, auto_now=True)
+    created_at = models.DateTimeField('f. creación', auto_created=True, auto_now=True)
     checksum = models.CharField(max_length=100)
-    filename = models.TextField()
+    filename = models.TextField('nombre')
+    visits = models.IntegerField('visitas', default=0)
+
+    class Meta:
+        verbose_name = "Archivo Subido"
+        verbose_name_plural = "Archivos Subidos"
+        ordering = ("created_at",)

@@ -38,11 +38,14 @@ from .api_views.production_units import (
     ProductionUnitPathSerializer,
     ProductionUnitViewSet,
 )
+from .api_views.files_checksum import FilesChecksumPathSerializer, FilesChecksumViewSet
+
+from core import models
 
 
 @login_required
 def home_view(request):
-    #message = "Hello"
+    # message = "Hello"
     return render(request, "dashboard/home.html", locals())
 
 
@@ -71,6 +74,7 @@ activities_path = ActivityPathSerializer.get_path()
 communities_path = CommunityPathSerializer.get_path()
 drugs_path = DrugPathSerializer.get_path()
 production_units_path = ProductionUnitPathSerializer.get_path()
+files_checksum_path = FilesChecksumPathSerializer.get_path()
 visit_vacuno_path = VisitGeneticImprovementVacunoPathSerializer.get_path()
 visit_ovino_path = VisitGeneticImprovementOvinoPathSerializer.get_path()
 visit_alpaca_path = VisitGeneticImprovementAlpacaPathSerializer.get_path()
@@ -96,6 +100,9 @@ router.register(
 router.register(r"%s" % drugs_path, DrugViewSet, basename=drugs_path)
 router.register(
     r"%s" % production_units_path, ProductionUnitViewSet, basename=production_units_path
+)
+router.register(
+    r"%s" % files_checksum_path, FilesChecksumViewSet, basename=files_checksum_path
 )
 router.register(
     r"%s" % visit_vacuno_path,

@@ -102,7 +102,7 @@ class ImportGrass(HelperImport):
             "CAPACITACION MANEJO Y CONSERVACION",
         ]
 
-    def _inner_execute(self, file, creates_if_none=True):
+    def _inner_execute(self, file, creates_if_none=True, checksum=''):
         df = pd.read_excel(file)
         data = df.to_dict()
         rows_count = len(data["N°"].keys())
@@ -279,6 +279,7 @@ class ImportGrass(HelperImport):
                         technical_training_perennial=data_technical_training_perennial,
                         technical_training_anual=data_technical_training_anual,
                         technical_training_conservation=data_technical_training_conservation,
+                        checksum=checksum
                     )
                 )
 

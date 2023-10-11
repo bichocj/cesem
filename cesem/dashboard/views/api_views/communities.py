@@ -11,12 +11,12 @@ class CommunityPathSerializer(BasePathSerializer):
     
     class Meta:
         model = Community
-        fields = ['name', 'url', 'zona', 'zone']
+        fields = ['name', 'url', 'zona', 'zone', 'zone_2']
         extra_kwargs = {
            'zone': {'write_only': True},
         }
         
 
 class CommunityViewSet(viewsets.ModelViewSet):
-    queryset = Community.objects.select_related('zone').all()
+    queryset = Community.objects.select_related('zone', 'zone_2').all()
     serializer_class = CommunityPathSerializer
