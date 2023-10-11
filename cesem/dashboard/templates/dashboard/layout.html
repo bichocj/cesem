@@ -223,6 +223,15 @@
     $(function() {
       if(location.pathname.includes('/api/files-checksum/')) {
         $('#delete_btn_label').text('Eliminar y eliminar visitas importadas')
+
+        $('#delete_btn_form').click((e) => {
+          e.preventDefault()
+          if(confirm('¿Esta seguro de eliminar este registro y todas las visitas asociadas?')){            
+            $('#delete_form').submit();
+          } else {
+            return false;
+          }
+        })
       }
     })
   </script>
