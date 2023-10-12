@@ -9,7 +9,7 @@ from core.models import (
     VisitGeneticImprovementOvino,
     VisitGeneticImprovementAlpaca,
 )
-from django.db.models import F, Sum, Case, When, Value, CharField
+from django.db.models import F, Sum, Case, When, Value, Q
 from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, Round
 from django.shortcuts import render
 from itertools import chain
@@ -122,7 +122,9 @@ def report_weekly(request):
 
     activities = Activity.objects.all().order_by("position")
     animals_data = (
-        VisitAnimalHealth.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
+        VisitAnimalHealth.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -134,7 +136,9 @@ def report_weekly(request):
     )
 
     grass_data = (
-        VisitGrass.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
+        VisitGrass.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -146,7 +150,9 @@ def report_weekly(request):
     )
 
     genetic_improvement_vacuno_data = (
-        VisitGeneticImprovementVacuno.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
+        VisitGeneticImprovementVacuno.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -158,7 +164,9 @@ def report_weekly(request):
     )
 
     genetic_improvement_ovino_data = (
-        VisitGeneticImprovementOvino.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
+        VisitGeneticImprovementOvino.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -170,7 +178,9 @@ def report_weekly(request):
     )
 
     genetic_improvement_alpaca_data = (
-        VisitGeneticImprovementAlpaca.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
+        VisitGeneticImprovementAlpaca.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
             "id",
@@ -190,7 +200,7 @@ def report_weekly(request):
             genetic_improvement_alpaca_data,
         )
     )
-    
+
     activities_data = {}
     weeks_number = {}
 
@@ -226,20 +236,49 @@ def report_weekly(request):
 
 
 def report_monthly(request):
-    
     currentdate = datetime.date.today()
     default_from = "{}-01-01".format(currentdate.year)
     default_to = currentdate.strftime("%Y-%m-%d")
-    
+
     year = request.GET.get("year", currentdate.year)
+
     from_datepicker = request.GET.get("from_datepicker", default_from)
     to_datepicker = request.GET.get("to_datepicker", default_to)
 
     activities = Activity.objects.all().order_by("position")
+    year_str = str(year)
+    prev_year_str = str(year - 1)
+    periods = [
+        {"month": 1, "from": prev_year_str + "-12-21", "to": year_str + "-01-20"},
+        {"month": 2, "from": year_str + "-01-21", "to": year_str + "-02-20"},
+        {"month": 3, "from": year_str + "-02-21", "to": year_str + "-03-20"},
+        {"month": 4, "from": year_str + "-03-21", "to": year_str + "-04-20"},
+        {"month": 5, "from": year_str + "-04-21", "to": year_str + "-05-20"},
+        {"month": 6, "from": year_str + "-05-21", "to": year_str + "-06-20"},
+        {"month": 7, "from": year_str + "-06-21", "to": year_str + "-07-20"},
+        {"month": 8, "from": year_str + "-07-21", "to": year_str + "-08-20"},
+        {"month": 9, "from": year_str + "-08-21", "to": year_str + "-09-20"},
+        {"month": 10, "from": year_str + "-09-21", "to": year_str + "-10-20"},
+        {"month": 11, "from": year_str + "-10-21", "to": year_str + "-11-20"},
+        {"month": 12, "from": year_str + "-11-21", "to": year_str + "-12-20"},
+    ]
+
+    whens = []
+    for period in periods:
+        whens.append(
+            When(
+                Q(visited_at__gte=period.get("from"))
+                & Q(visited_at__lte=period.get("to")),
+                then=Value(period.get("month")),
+            )
+        )
+    # whens.append(default="default")
 
     data = (
-        VisitAnimalHealth.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
-        .annotate(month=ExtractMonth("visited_at"))
+        VisitAnimalHealth.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .annotate(month=Case(*whens))
         .values(
             "activity__id",
             "month",
@@ -248,9 +287,12 @@ def report_monthly(request):
         .order_by("activity__id", "month")
     )
 
+    
     grass_data = (
-        VisitGrass.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
-        .annotate(month=ExtractMonth("visited_at"))
+        VisitGrass.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .annotate(month=Case(*whens))
         .values(
             "activity__id",
             "month",
@@ -260,8 +302,10 @@ def report_monthly(request):
     )
 
     genetic_improvement_vacuno_data = (
-        VisitGeneticImprovementVacuno.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
-        .annotate(month=ExtractMonth("visited_at"))
+        VisitGeneticImprovementVacuno.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .annotate(month=Case(*whens))
         .values(
             "activity__id",
             "month",
@@ -271,8 +315,10 @@ def report_monthly(request):
     )
 
     genetic_improvement_ovino_data = (
-        VisitGeneticImprovementOvino.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
-        .annotate(month=ExtractMonth("visited_at"))
+        VisitGeneticImprovementOvino.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .annotate(month=Case(*whens))
         .values(
             "activity__id",
             "month",
@@ -282,8 +328,10 @@ def report_monthly(request):
     )
 
     genetic_improvement_alpaca_data = (
-        VisitGeneticImprovementAlpaca.objects.filter(visited_at__gte=from_datepicker, visited_at__lte=to_datepicker)
-        .annotate(month=ExtractMonth("visited_at"))
+        VisitGeneticImprovementAlpaca.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .annotate(month=Case(*whens))
         .values(
             "activity__id",
             "month",
@@ -324,7 +372,7 @@ def report_monthly(request):
 def report_zones(request):
     currentdate = datetime.date.today()
     year = request.GET.get("year", currentdate.year)
-    
+
     activities = Activity.objects.all().order_by("position")
     zones = Zone.objects.all().order_by("name")
     data = (
@@ -411,7 +459,7 @@ def report_zones(request):
 def report_community(request):
     currentdate = datetime.date.today()
     year = request.GET.get("year", currentdate.year)
-    
+
     activities = Activity.objects.all().order_by("position")
     communities = Community.objects.all().order_by("name")
     data = (

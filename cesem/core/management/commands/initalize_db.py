@@ -14,8 +14,12 @@ from core.models import (
 )
 import os
 
-path = os.path.join(
+path_initial_data = os.path.join(
     settings.BASE_DIR, "core", "management", "commands", "files", "initial_data.xls"
+)
+
+path_members = os.path.join(
+    settings.BASE_DIR, "core", "management", "commands", "files", "members.xls"
 )
 
 
@@ -23,7 +27,7 @@ class Command(BaseCommand):
     help = "initialize db"
 
     def handle(self, *args, **options):
-        df = pd.read_excel(path)
+        df = pd.read_excel(path_initial_data)
         data = df.to_dict()
         rows_count = len(data["N°"].keys())
         
@@ -59,13 +63,20 @@ class Command(BaseCommand):
                 sector = Sector.objects.create(name=sector_name, community=community)
                 sectors[sector_name] = sector
 
+        df = pd.read_excel(path_members)
+        data = df.to_dict()
+        rows_count = len(data["N°"].keys())
+        
+        print("headers:")
+        print(data.keys())
+        print("")
+
         for i in range(rows_count):
             try:
-                data_nombre = data["NOMBRE RESPONSABLE UP"][i]
+                data_nombre = data["NOMBRE"][i]
                 data_dni = data["DNI"][i]
                 if not str(data_dni).isnumeric():
                     data_dni = 0
                 Person.objects.get_or_create(name=data_nombre, dni=data_dni)
-            except Exception as e:
-                import pdb; pdb.set_trace()
+            except Exception as e:                
                 print('fila ' + str(i) + str(e))

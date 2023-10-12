@@ -77,23 +77,36 @@ class HelperImport:
         if val == "nan":
             return None
 
-    def get_person(self, name, dni=None, sex=None):
+    def get_person(self, name, dni=None, sex=None, creates_if_none=True):
         sex_data = None
         name = str(name)
-        if sex == "M":
-            sex_data = Person.Sexs.MALE
+        sex_data = Person.Sexs.MALE
         if sex == "F":
             sex_data = Person.Sexs.FEMALE
 
         person = None
         if name in self.people_names:
-            person = self.people_names[name]
-        else:
+            if dni == self.people_names[name].dni:
+                person = self.people_names[name]
+
+        if person is None:
             try:
-                person = Person.objects.get(name=name)
+                if str(dni).isnumeric():
+                    person = Person.objects.get(name=name, dni=dni)
+                else:
+                    person = Person.objects.get(name=name)
+                if person.sex != sex_data:
+                    person.sex = sex_data
+                    person.save()
             except Person.DoesNotExist:
-                person = Person.objects.create(name=name, dni=dni, sex=sex_data)
-                self.people_names[name] = person
+                if creates_if_none:
+                    person = Person.objects.create(name=name, dni=dni, sex=sex_data)
+                    self.people_names[name] = person
+                else:
+                    msg = 'La persona ' + name + ' no esta entre las personas registradas'
+                    if str(dni).isnumeric():
+                        msg = 'La persona ' + name + ' con dni '+ str(dni) +' no esta entre las personas registradas'
+                    raise Exception(msg)
         return person
 
     def get_zone(self, name, creates_if_none):
@@ -155,10 +168,7 @@ class HelperImport:
         data_sector,
         data_up_responsable_name,
         data_up_responsable_dni,
-        data_up_responsable_sex,
-        data_up_member_name,
-        data_up_member_dni,
-        data_up_member_sex,
+        data_up_responsable_sex,        
         data_tipology=0,
         data_is_pilot=False,
         creates_if_none=False,
@@ -168,20 +178,15 @@ class HelperImport:
         sector = self.get_sector(data_sector, community, creates_if_none)
         up_responsable = self.get_person(
             data_up_responsable_name, data_up_responsable_dni, data_up_responsable_sex
-        )
-        up_member = self.get_person(
-            data_up_member_name, data_up_member_dni, data_up_member_sex
-        )
-
+        )        
         production_unit, created = ProductionUnit.objects.get_or_create(
             zone=zone,
             community=community,
             sector=sector,
-            person_responsable=up_responsable,
-            person_member=up_member,
+            person_responsable=up_responsable,            
         )
 
-        if created:
+        if created:            
             if (
                 production_unit.tipology != data_tipology
                 or production_unit.is_pilot != data_is_pilot
@@ -189,6 +194,7 @@ class HelperImport:
                 production_unit.tipology = data_tipology
                 production_unit.is_pilot = data_is_pilot
                 production_unit.save()
+        
 
         return production_unit
 

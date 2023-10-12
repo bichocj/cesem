@@ -14,9 +14,10 @@ class Person(models.Model):
         verbose_name = "persona"
         verbose_name_plural = "personas"
         ordering = ("name",)
+        unique_together = ("dni", "name")
 
-    dni = models.IntegerField("dni", null=True, blank=True, unique=True)
-    name = models.CharField("nombres", max_length=50, unique=True)
+    dni = models.IntegerField("dni", null=True, blank=True)
+    name = models.CharField("nombres", max_length=50)
     last_name = models.CharField("apellidos", max_length=50, blank=True, null=True)
     sex = models.IntegerField("sexo", choices=Sexs.choices, blank=True, null=True)
     title = models.IntegerField("titulo", choices=Titles.choices, blank=True, null=True)
@@ -37,7 +38,7 @@ class Zone(models.Model):
 
 
 class Community(models.Model):
-    name = models.CharField("nombre", max_length=20, unique=True)
+    name = models.CharField("nombre", max_length=20)
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, verbose_name="zona")
     zone_2 = models.ForeignKey(
         Zone,
@@ -165,12 +166,6 @@ class ProductionUnit(models.Model):
         related_name="person_responsable_animal",
         verbose_name="up. responsable",
     )
-    person_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal",
-        verbose_name="up. integrante",
-    )
     tipology = models.IntegerField("tipología de UP", default=0)
     is_pilot = models.BooleanField("UP es piloto?", default=False)
 
@@ -181,12 +176,18 @@ class ProductionUnit(models.Model):
 
 
 class VisitGrass(models.Model):
-    checksum = models.CharField(max_length=100, default='')
+    checksum = models.CharField(max_length=100, default="")
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )    
+    up_member = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="person_member_grass",
+        verbose_name="up. integrante", null=True, blank=True,
     )
     utm_coordenate = models.CharField(
         "coordenadas UTM anuales", max_length=30, null=True, blank=True
@@ -382,12 +383,18 @@ class VisitGrass(models.Model):
 
 
 class VisitAnimalHealth(models.Model):
-    checksum = models.CharField(max_length=100, default='')
+    checksum = models.CharField(max_length=100, default="")
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    up_member = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="person_member_animal",
+        verbose_name="up. integrante", null=True, blank=True,
     )
     employ_specialist = models.ForeignKey(
         Person,
@@ -441,12 +448,22 @@ class VisitAnimalHealthDetails(models.Model):
 
 
 class VisitGeneticImprovementVacuno(models.Model):
-    checksum = models.CharField(max_length=100, default='')
+    checksum = models.CharField(max_length=100, default="")
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
     production_unit = models.ForeignKey(
-        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+        ProductionUnit,
+        on_delete=models.CASCADE,
+        verbose_name="UP",
+        blank=True,
+        null=True,
+    )
+    up_member = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="person_member_animal_vacuno",
+        verbose_name="up. integrante", null=True, blank=True,
     )
     employ_specialist = models.ForeignKey(
         Person,
@@ -510,12 +527,18 @@ class VisitGeneticImprovementVacuno(models.Model):
 
 
 class VisitGeneticImprovementOvino(models.Model):
-    checksum = models.CharField(max_length=100, default='')
+    checksum = models.CharField(max_length=100, default="")
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    up_member = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="person_member_animal_ovino",
+        verbose_name="up. integrante", null=True, blank=True,
     )
     employ_specialist = models.ForeignKey(
         Person,
@@ -564,12 +587,18 @@ class VisitGeneticImprovementOvino(models.Model):
 
 
 class VisitGeneticImprovementAlpaca(models.Model):
-    checksum = models.CharField(max_length=100, default='')
+    checksum = models.CharField(max_length=100, default="")
     visited_at = models.DateField(
         "fecha de visita", blank=True, null=True
     )  # Because current XLS doesn't have all dates
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    up_member = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="person_member_animal_alpaca",
+        verbose_name="up. integrante", null=True, blank=True,
     )
     employ_specialist = models.ForeignKey(
         Person,
@@ -652,10 +681,10 @@ class VisitGeneticImprovementAlpaca(models.Model):
 
 
 class FilesChecksum(models.Model):
-    created_at = models.DateTimeField('f. creación', auto_created=True, auto_now=True)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
     checksum = models.CharField(max_length=100)
-    filename = models.TextField('nombre')
-    visits = models.IntegerField('visitas', default=0)
+    filename = models.TextField("nombre")
+    visits = models.IntegerField("visitas", default=0)
 
     class Meta:
         verbose_name = "Archivo Subido"

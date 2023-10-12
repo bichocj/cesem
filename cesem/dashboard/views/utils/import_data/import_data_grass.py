@@ -218,6 +218,9 @@ class ImportGrass(HelperImport):
                 activity = self.get_activity(
                     data_activity.upper(), creates_if_none=False
                 )
+                up_member = self.get_person(
+                    data_up_member_name, data_up_member_dni, data_up_member_sex, creates_if_none=False
+                )
                 production_unit = self.get_production_unit(
                     data_zone,
                     data_community,
@@ -225,9 +228,6 @@ class ImportGrass(HelperImport):
                     data_up_responsable_name,
                     data_up_responsable_dni,
                     data_up_responsable_sex,
-                    data_up_member_name,
-                    data_up_member_dni,
-                    data_up_member_sex,
                     creates_if_none=True,
                 )
                 """
@@ -247,6 +247,7 @@ class ImportGrass(HelperImport):
                     VisitGrass(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
+                        up_member=up_member,
                         utm_coordenate=data_anual_utm_coordinates,
                         producer_classification=data_producer_classification,
                         employ_specialist=employ_specialist,
