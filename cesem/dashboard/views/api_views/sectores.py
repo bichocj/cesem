@@ -13,7 +13,7 @@ class SectorPathSerializer(BasePathSerializer):
     
     class Meta:
         model = Sector
-        fields = ['comunidad', 'comunidad_2', 'comunidad_3', 'community','community_2', 'community_3', 'name', 'url', ]
+        fields = ['name', 'comunidad', 'comunidad_2', 'comunidad_3', 'community','community_2', 'community_3', 'url', ]
         extra_kwargs = {
             'community': {'write_only': True},
             'community_2': {'write_only': True},

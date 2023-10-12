@@ -6,7 +6,7 @@
   <thead>
     <tr>
       {% for column in view|get_columns_labels:columns %}
-      <th>{{ column }}</th>
+      <th style="text-align: left;">{{ column }}</th>
       {% endfor %}
       <th class="col-xs-1"></th>
     </tr>

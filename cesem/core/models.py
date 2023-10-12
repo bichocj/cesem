@@ -15,8 +15,8 @@ class Person(models.Model):
         verbose_name_plural = "personas"
         ordering = ("name",)
 
-    dni = models.IntegerField("dni", null=True, blank=True)
-    name = models.CharField("nombres", max_length=50)
+    dni = models.IntegerField("dni", null=True, blank=True, unique=True)
+    name = models.CharField("nombres", max_length=50, unique=True)
     last_name = models.CharField("apellidos", max_length=50, blank=True, null=True)
     sex = models.IntegerField("sexo", choices=Sexs.choices, blank=True, null=True)
     title = models.IntegerField("titulo", choices=Titles.choices, blank=True, null=True)
