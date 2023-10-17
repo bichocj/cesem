@@ -9,7 +9,7 @@ from core.models import (
     VisitGeneticImprovementOvino,
     VisitGeneticImprovementAlpaca,
 )
-from django.db.models import F, Sum, Case, When, Value, Q
+from django.db.models import F, Sum, Case, When, Value, Q, Count
 from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, Round
 from django.shortcuts import render
 from itertools import chain
@@ -119,8 +119,14 @@ def report_weekly(request):
     year = request.GET.get("year", currentdate.year)
     from_datepicker = request.GET.get("from_datepicker", default_from)
     to_datepicker = request.GET.get("to_datepicker", default_to)
-
+    inform_type = request.GET.get("type", 'count')
+    
     activities = Activity.objects.all().order_by("position")
+    
+    quantity_filter = Count('id')
+    if inform_type == 'sum':
+        quantity_filter = animal_health_quantity_var
+
     animals_data = (
         VisitAnimalHealth.objects.filter(
             visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
@@ -131,7 +137,7 @@ def report_weekly(request):
             "activity__id",
             "week",
         )
-        .annotate(quantity=animal_health_quantity_var)
+        .annotate(quantity=quantity_filter)        
         .order_by("week")
     )
 

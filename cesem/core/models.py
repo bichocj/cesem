@@ -38,7 +38,7 @@ class Zone(models.Model):
 
 
 class Community(models.Model):
-    name = models.CharField("nombre", max_length=20)
+    name = models.CharField("nombre", max_length=50)
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, verbose_name="zona")
     zone_2 = models.ForeignKey(
         Zone,

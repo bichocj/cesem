@@ -128,7 +128,7 @@ class ImportAnimals(HelperImport):
                 raise Drug.DoesNotExist()
         return drug
 
-    def _inner_execute(self, file, creates_if_none=True, checksum=''):
+    def _inner_execute(self, file, creates_if_none=True, checksum=""):
         df = pd.read_excel(file)
         data = df.to_dict()
         rows_count = len(data["N°"].keys())
@@ -165,10 +165,23 @@ class ImportAnimals(HelperImport):
             )
             data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
 
-            employ_specialist = self.get_person(data_employ_specialist, creates_if_none=False)
-            employ_responsable = self.get_person(data_employ_responsable, creates_if_none=False)
-            up_member = self.get_person(data_up_member_name, data_up_member_dni, data_up_member_sex, creates_if_none=False)
-            activity = self.get_activity(data_activity, creates_if_none=False)
+            employ_specialist = self.get_person(
+                data_employ_specialist, creates_if_none=True
+            )
+            employ_responsable = self.get_person(
+                data_employ_responsable, creates_if_none=True
+            )
+            up_member = self.get_person(
+                data_up_member_name,
+                data_up_member_dni,
+                data_up_member_sex,
+                creates_if_none=True,
+                row=i + 1,
+            )
+            activity = self.get_activity(
+                data_activity, creates_if_none=False, row=i + 1
+            )
+
             production_unit = self.get_production_unit(
                 data_zone,
                 data_community,
@@ -179,6 +192,7 @@ class ImportAnimals(HelperImport):
                 data_is_pilot=data_is_pilot,
                 data_tipology=data_tipology,
                 creates_if_none=creates_if_none,
+                row=i + 1,
             )
 
             if data_activity.lower() in self.vacuno_activities:
@@ -194,7 +208,9 @@ class ImportAnimals(HelperImport):
 
                     data_cow_name = data["NOMBRE DE VACA"][i]
                     data_cow_race = data["RAZA DE VACA"][i]
-                    data_service_number = data["N° DE SERVICIO"][i]  # verificar caracter
+                    data_service_number = data["N° DE SERVICIO"][
+                        i
+                    ]  # verificar caracter
 
                     data_pregnant_vacuno = self.zero_if_nan(data["PREÑADA"][i])
                     data_empty_vacuno = self.zero_if_nan(data["VACIA"][i])
@@ -235,7 +251,6 @@ class ImportAnimals(HelperImport):
                         + data_toro
                     )
 
-                    
                     visit_vacuno = VisitGeneticImprovementVacuno(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
@@ -265,13 +280,17 @@ class ImportAnimals(HelperImport):
                         female_attendance=data_female_attendance,
                         technical_assistance_attendance=data_technical_assistance_attendance,
                         vacunos_number=data_vacunos_number,
-                        checksum=checksum
+                        checksum=checksum,
                     )
                     visits_vacunos.append(visit_vacuno)
                 except e:
-                    msg = "la actividad " + data_activity + " requiere la columna " + str(e)
+                    msg = (
+                        "la actividad "
+                        + data_activity
+                        + " requiere la columna "
+                        + str(e)
+                    )
                     raise ValueError(msg)
-                    
 
             elif data_activity.lower() in self.ovino_activities:
                 try:
@@ -284,7 +303,9 @@ class ImportAnimals(HelperImport):
                     data_technical_assistance_attendance = self.zero_if_nan(
                         data["ASIS TEC PRODUCCION GANADO OVINO CORRIEDALE"][i]
                     )
-                    data_selected_ovines = self.zero_if_nan(data["OVINOS SELECCIONADOS"][i])
+                    data_selected_ovines = self.zero_if_nan(
+                        data["OVINOS SELECCIONADOS"][i]
+                    )
                     data_synchronized_ovines = self.zero_if_nan(
                         data["OVINOS SINCRONIZADOS"][i]
                     )
@@ -301,7 +322,7 @@ class ImportAnimals(HelperImport):
                     data_baby_females = self.zero_if_nan(data["CRIA HEMBRA"][i])
                     data_baby_deaths = self.zero_if_nan(data["CRIA MUERTA"][i])
                     data_rgc_number = data["N° RGC"][i]
-                    data_ovinos_number = self.zero_if_nan(data["OVINOS"][i])                
+                    data_ovinos_number = self.zero_if_nan(data["OVINOS"][i])
                     visit_ovino = VisitGeneticImprovementOvino(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
@@ -324,7 +345,7 @@ class ImportAnimals(HelperImport):
                         baby_deaths=data_baby_deaths,
                         ovinos_number=data_ovinos_number,
                         rgc_number=data_rgc_number,
-                        checksum=checksum
+                        checksum=checksum,
                     )
                     visits_ovinos.append(visit_ovino)
                     print(
@@ -333,7 +354,12 @@ class ImportAnimals(HelperImport):
                         + ", TIPO: MG ovino"
                     )
                 except e:
-                    msg = "la actividad " + data_activity + " requiere la columna " + str(e)
+                    msg = (
+                        "la actividad "
+                        + data_activity
+                        + " requiere la columna "
+                        + str(e)
+                    )
                     raise ValueError(msg)
 
             elif data_activity.lower() in self.alpaca_activities:
@@ -354,7 +380,9 @@ class ImportAnimals(HelperImport):
                     data_female_alpaca_race = data["SELEC RAZA ALPACA HEMBRA"][i]
                     data_female_alpaca_color = data["SELEC COLOR ALPACA HEMBRA"][i]
                     data_female_alpaca_age = data["SELEC EDAD ALPACA HEMBRA"][i]
-                    data_female_alpaca_category = data["SELEC CATEGORIA ALPACA HEMBRA"][i]
+                    data_female_alpaca_category = data["SELEC CATEGORIA ALPACA HEMBRA"][
+                        i
+                    ]
                     data_female_alpaca_total_score = self.zero_if_nan(
                         data["SELEC PUNTAJE TOTAL ALPACA HEMBRA"][i]
                     )
@@ -393,7 +421,7 @@ class ImportAnimals(HelperImport):
                     data_technical_assistance_attendance = self.zero_if_nan(
                         data["ASIS TEC BUENAS PRACTICAS MANEJO ALPACAS"][i]
                     )
-                
+
                     visit_alpaca = VisitGeneticImprovementAlpaca(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
@@ -430,7 +458,7 @@ class ImportAnimals(HelperImport):
                         training_male_attendance=data_training_male_attendance,
                         training_female_attendance=data_training_female_attendance,
                         technical_assistance_attendance=data_technical_assistance_attendance,
-                        checksum=checksum
+                        checksum=checksum,
                     )
                     visits_alpacas.append(visit_alpaca)
                     print(
@@ -439,9 +467,14 @@ class ImportAnimals(HelperImport):
                         + ", TIPO: MG alpaca"
                     )
                 except e:
-                    msg = "la actividad " + data_activity + " requiere la columna " + str(e)
+                    msg = (
+                        "la actividad "
+                        + data_activity
+                        + " requiere la columna "
+                        + str(e)
+                    )
                     raise ValueError(msg)
-                                
+
             else:
                 try:
                     data_sickness_observation = self.nan_if_nat(
@@ -472,21 +505,27 @@ class ImportAnimals(HelperImport):
 
                     data_medicine_name_2 = data["2 FARMACOS/SALES"][i]
                     data_um_name_2 = data["U.M..1"][i]
-                    data_quantity_2 = self.zero_if_nan(data["CANTIDAD.1"][i], to_int=True)
+                    data_quantity_2 = self.zero_if_nan(
+                        data["CANTIDAD.1"][i], to_int=True
+                    )
 
                     data_medicine_name_3 = data["3 FARMACOS/SALES"][i]
                     data_um_name_3 = data["U.M..2"][i]
-                    data_quantity_3 = self.zero_if_nan(data["CANTIDAD.2"][i], to_int=True)
+                    data_quantity_3 = self.zero_if_nan(
+                        data["CANTIDAD.2"][i], to_int=True
+                    )
 
                     data_medicine_name_4 = data["4 FARMACOS/SALES"][i]
                     data_um_name_4 = data["U.M..3"][i]
-                    data_quantity_4 = self.zero_if_nan(data["CANTIDAD.3"][i], to_int=True)
+                    data_quantity_4 = self.zero_if_nan(
+                        data["CANTIDAD.3"][i], to_int=True
+                    )
 
                     sickness_observation = self.get_sickness_observation(
                         data_sickness_observation, creates_if_none
                     )
                     diagnostic = self.get_diagnostic(data_diagnostic, creates_if_none)
-                    
+
                     visit_animal = VisitAnimalHealth(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
@@ -507,7 +546,7 @@ class ImportAnimals(HelperImport):
                         torete=data_torete,
                         toro=data_toro,
                         vacunos=data_vacunos,
-                        checksum=checksum
+                        checksum=checksum,
                     )
                     visits_animals.append(visit_animal)
                     print(
@@ -515,11 +554,16 @@ class ImportAnimals(HelperImport):
                         + str(i + 1)
                         + ", sanidad animal"
                     )
-                
-                except e:
-                    msg = "la actividad " + data_activity + " requiere la columna " + str(e)
+
+                except Exception as e:
+                    msg = (
+                        "la actividad "
+                        + data_activity
+                        + " requiere la columna "
+                        + str(e)
+                    )
                     raise ValueError(msg)
-                
+
                 if data_quantity_1 > 0:
                     drug = self.get_drug(
                         data_medicine_name_1, data_um_name_1, creates_if_none
@@ -564,5 +608,10 @@ class ImportAnimals(HelperImport):
         VisitGeneticImprovementOvino.objects.bulk_create(visits_ovinos)
         VisitGeneticImprovementAlpaca.objects.bulk_create(visits_alpacas)
 
-        total = len(visits_animals) + len(visits_vacunos) + len(visits_ovinos) + len(visits_alpacas)        
+        total = (
+            len(visits_animals)
+            + len(visits_vacunos)
+            + len(visits_ovinos)
+            + len(visits_alpacas)
+        )
         return total

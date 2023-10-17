@@ -77,24 +77,24 @@ class HelperImport:
         if val == "nan":
             return None
 
-    def get_person(self, name, dni=None, sex=None, creates_if_none=True):
+    def get_person(self, name, dni=None, sex=None, creates_if_none=True, row=0):
         sex_data = None
-        name = str(name)
+        name = str(name).strip()
         sex_data = Person.Sexs.MALE
         if sex == "F":
             sex_data = Person.Sexs.FEMALE
 
         person = None
+        if not str(dni).isnumeric():
+            dni = 0
+
         if name in self.people_names:
             if dni == self.people_names[name].dni:
                 person = self.people_names[name]
 
         if person is None:
             try:
-                if str(dni).isnumeric():
-                    person = Person.objects.get(name=name, dni=dni)
-                else:
-                    person = Person.objects.get(name=name)
+                person = Person.objects.get(name=name, dni=dni)
                 if person.sex != sex_data:
                     person.sex = sex_data
                     person.save()
@@ -103,9 +103,19 @@ class HelperImport:
                     person = Person.objects.create(name=name, dni=dni, sex=sex_data)
                     self.people_names[name] = person
                 else:
-                    msg = 'La persona ' + name + ' no esta entre las personas registradas'
+                    msg = (
+                        "La persona " + name + " no esta entre las personas registradas"
+                    )
                     if str(dni).isnumeric():
-                        msg = 'La persona ' + name + ' con dni '+ str(dni) +' no esta entre las personas registradas'
+                        msg = (
+                            "La persona "
+                            + name
+                            + " con dni "
+                            + str(dni)
+                            + " no esta entre las personas registradas"
+                        )
+                    if row > 0:
+                        msg += ", fila " + str(row)
                     raise Exception(msg)
         return person
 
@@ -148,9 +158,9 @@ class HelperImport:
                 raise Sector.DoesNotExist()
         return sector
 
-    def get_activity(self, name, creates_if_none):
+    def get_activity(self, name, creates_if_none=False, row=0):
         activity = None
-        name = str(name)
+        name = str(name).strip()
         if name in self.activities_names:
             activity = self.activities_names[name]
         else:
@@ -158,7 +168,7 @@ class HelperImport:
                 activity = Activity.objects.create(name=name, short_name=name)
                 self.activities_names[name] = activity
             else:
-                raise Activity.DoesNotExist()
+                raise Exception("La actividad " + name + " no esta registrada, fila " +str(row))
         return activity
 
     def get_production_unit(
@@ -168,25 +178,30 @@ class HelperImport:
         data_sector,
         data_up_responsable_name,
         data_up_responsable_dni,
-        data_up_responsable_sex,        
+        data_up_responsable_sex,
         data_tipology=0,
         data_is_pilot=False,
         creates_if_none=False,
+        row=0,
     ):
         zone = self.get_zone(data_zone, creates_if_none)
         community = self.get_community(data_community, zone, creates_if_none)
         sector = self.get_sector(data_sector, community, creates_if_none)
         up_responsable = self.get_person(
-            data_up_responsable_name, data_up_responsable_dni, data_up_responsable_sex
-        )        
+            data_up_responsable_name,
+            data_up_responsable_dni,
+            data_up_responsable_sex,
+            creates_if_none=False,
+            row=row,
+        )
         production_unit, created = ProductionUnit.objects.get_or_create(
             zone=zone,
             community=community,
             sector=sector,
-            person_responsable=up_responsable,            
+            person_responsable=up_responsable,
         )
 
-        if created:            
+        if created:
             if (
                 production_unit.tipology != data_tipology
                 or production_unit.is_pilot != data_is_pilot
@@ -194,7 +209,6 @@ class HelperImport:
                 production_unit.tipology = data_tipology
                 production_unit.is_pilot = data_is_pilot
                 production_unit.save()
-        
 
         return production_unit
 
@@ -210,7 +224,9 @@ class HelperImport:
 
     def create_checksum(self, df, filename, visits):
         checksum = hashlib.sha256(df.to_json().encode()).hexdigest()
-        FilesChecksum.objects.create(checksum=checksum, filename=filename, visits=visits)
+        FilesChecksum.objects.create(
+            checksum=checksum, filename=filename, visits=visits
+        )
 
     def validate_columns(self, df):
         columns_xls = df.columns.ravel()
