@@ -34,7 +34,15 @@ th span
 {% endblock %}
 {% block body %}
 
-<h2>Reporte por zonas</h2>
+<form action="." class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2>Reporte por Zonas</h2>
+    <div class="btn-group" role="group" aria-label="..." >
+      <button class="btn btn-default {% if inform_type == 'count' %}active{% endif%}" name="type" value="count" type="submit">conteo de actividades</button>
+      <button class="btn btn-default {% if inform_type == 'sum' %}active{% endif%}" name="type" value="sum" type="submit">suma de atenciones</button>      
+    </div>
+  </div>
+</form>
 
 <table class="table table-bordered">
   <thead>

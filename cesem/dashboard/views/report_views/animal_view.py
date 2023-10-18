@@ -38,7 +38,7 @@ mapping_activity_quantity = {
     "evaluación de cosecha de pastos cultivados perennes (monitoreo)": "perennial_yield",
 }
 """
-grass_quantity_var = Round(
+grass_quantity_var_sum = Round(
     Sum(
         F("planting_intention_hectares")
         + F("ground_analysis")
@@ -64,11 +64,11 @@ grass_quantity_var = Round(
     )
 )
 
-animal_health_quantity_var = Sum(
+animal_health_quantity_var_sum = Sum(
     F("vacunos") + F("ovinos") + F("alpacas") + F("llamas") + F("canes")
 )
 
-vacuno_quantity_var = Sum(
+vacuno_quantity_var_sum = Sum(
     F("pajillas_number")
     + F("male_attendance")
     + F("female_attendance")
@@ -81,7 +81,7 @@ vacuno_quantity_var = Sum(
     + F("vacunos_number")
 )
 
-ovino_quantity_var = Sum(
+ovino_quantity_var_sum = Sum(
     F("inseminated_sheeps_corriedale")
     + F("inseminated_sheeps_criollas")
     + F("course_male_attendance")
@@ -97,7 +97,7 @@ ovino_quantity_var = Sum(
     + F("baby_deaths")
     + F("ovinos_number")
 )
-alpaca_quantity_var = Sum(
+alpaca_quantity_var_sum = Sum(
     F("alpacas_empadradas_number")
     + F("training_male_attendance")
     + F("training_female_attendance")
@@ -122,10 +122,19 @@ def report_weekly(request):
     inform_type = request.GET.get("type", 'count')
     
     activities = Activity.objects.all().order_by("position")
+        
     
-    quantity_filter = Count('id')
-    if inform_type == 'sum':
-        quantity_filter = animal_health_quantity_var
+    animal_health_quantity_var = Count('id')
+    grass_quantity_var = Count('id')
+    vacuno_quantity_var = Count('id')
+    ovino_quantity_var = Count('id')
+    alpaca_quantity_var = Count('id')
+    if inform_type == 'count':
+        animal_health_quantity_var = animal_health_quantity_var_sum
+        grass_quantity_var = grass_quantity_var_sum
+        vacuno_quantity_var = vacuno_quantity_var_sum
+        ovino_quantity_var = ovino_quantity_var_sum
+        alpaca_quantity_var = alpaca_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -137,10 +146,10 @@ def report_weekly(request):
             "activity__id",
             "week",
         )
-        .annotate(quantity=quantity_filter)        
+        .annotate(quantity=animal_health_quantity_var)        
         .order_by("week")
     )
-
+    
     grass_data = (
         VisitGrass.objects.filter(
             visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
@@ -250,6 +259,7 @@ def report_monthly(request):
 
     from_datepicker = request.GET.get("from_datepicker", default_from)
     to_datepicker = request.GET.get("to_datepicker", default_to)
+    inform_type = request.GET.get("type", 'count')
 
     activities = Activity.objects.all().order_by("position")
     year_str = str(year)
@@ -280,7 +290,19 @@ def report_monthly(request):
         )
     # whens.append(default="default")
 
-    data = (
+    animal_health_quantity_var = Count('id')
+    grass_quantity_var = Count('id')
+    vacuno_quantity_var = Count('id')
+    ovino_quantity_var = Count('id')
+    alpaca_quantity_var = Count('id')
+    if inform_type == 'count':
+        animal_health_quantity_var = animal_health_quantity_var_sum
+        grass_quantity_var = grass_quantity_var_sum
+        vacuno_quantity_var = vacuno_quantity_var_sum
+        ovino_quantity_var = ovino_quantity_var_sum
+        alpaca_quantity_var = alpaca_quantity_var_sum
+
+    animals_data = (
         VisitAnimalHealth.objects.filter(
             visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
@@ -292,7 +314,6 @@ def report_monthly(request):
         .annotate(quantity=animal_health_quantity_var)
         .order_by("activity__id", "month")
     )
-
     
     grass_data = (
         VisitGrass.objects.filter(
@@ -348,7 +369,7 @@ def report_monthly(request):
 
     data = list(
         chain(
-            data,
+            animals_data,
             grass_data,
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
@@ -378,10 +399,24 @@ def report_monthly(request):
 def report_zones(request):
     currentdate = datetime.date.today()
     year = request.GET.get("year", currentdate.year)
+    inform_type = request.GET.get("type", 'count')
 
     activities = Activity.objects.all().order_by("position")
     zones = Zone.objects.all().order_by("name")
-    data = (
+    
+    animal_health_quantity_var = Count('id')
+    grass_quantity_var = Count('id')
+    vacuno_quantity_var = Count('id')
+    ovino_quantity_var = Count('id')
+    alpaca_quantity_var = Count('id')
+    if inform_type == 'count':
+        animal_health_quantity_var = animal_health_quantity_var_sum
+        grass_quantity_var = grass_quantity_var_sum
+        vacuno_quantity_var = vacuno_quantity_var_sum
+        ovino_quantity_var = ovino_quantity_var_sum
+        alpaca_quantity_var = alpaca_quantity_var_sum
+
+    animals_data = (
         VisitAnimalHealth.objects.annotate(year=ExtractYear("visited_at"))
         .values(
             "activity",
@@ -438,7 +473,7 @@ def report_zones(request):
 
     data = list(
         chain(
-            data,
+            animals_data,
             grass_data,
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
@@ -465,10 +500,24 @@ def report_zones(request):
 def report_community(request):
     currentdate = datetime.date.today()
     year = request.GET.get("year", currentdate.year)
+    inform_type = request.GET.get("type", 'count')
 
     activities = Activity.objects.all().order_by("position")
     communities = Community.objects.all().order_by("name")
-    data = (
+    
+    animal_health_quantity_var = Count('id')
+    grass_quantity_var = Count('id')
+    vacuno_quantity_var = Count('id')
+    ovino_quantity_var = Count('id')
+    alpaca_quantity_var = Count('id')
+    if inform_type == 'count':
+        animal_health_quantity_var = animal_health_quantity_var_sum
+        grass_quantity_var = grass_quantity_var_sum
+        vacuno_quantity_var = vacuno_quantity_var_sum
+        ovino_quantity_var = ovino_quantity_var_sum
+        alpaca_quantity_var = alpaca_quantity_var_sum
+
+    animals_data = (
         VisitAnimalHealth.objects.annotate(year=ExtractYear("visited_at"))
         .values(
             "activity",
@@ -525,7 +574,7 @@ def report_community(request):
 
     data = list(
         chain(
-            data,
+            animals_data,
             grass_data,
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
