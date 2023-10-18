@@ -71,12 +71,17 @@ class Command(BaseCommand):
         print(data.keys())
         print("")
 
+        counting_created = 0
         for i in range(rows_count):
             try:
                 data_nombre = data["NOMBRE"][i]
                 data_dni = data["DNI"][i]
                 if not str(data_dni).isnumeric():
                     data_dni = 0
-                Person.objects.get_or_create(name=data_nombre, dni=data_dni)
+                person, created = Person.objects.get_or_create(name=data_nombre, dni=data_dni)
+                if created:
+                    counting_created = counting_created + 1
             except Exception as e:                
                 print('fila ' + str(i) + str(e))
+        
+        print("{} personas creadas".format(counting_created))
