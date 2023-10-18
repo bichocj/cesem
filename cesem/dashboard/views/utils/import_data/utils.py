@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 import hashlib
 from core.models import (
@@ -66,6 +67,16 @@ class HelperImport:
             return "nan"
         else:
             return val
+
+    def to_date(self, val, index):
+        if type(val) is datetime:
+            return val
+        if type(val) is str:
+            return datetime.strptime(val, '%d/%m/%Y')
+        if type(val) is pd._libs.tslibs.timestamps.Timestamp:
+            return val.date()
+        
+        raise ValueError('se esperaba una fecha valida {}, tipo {}, fila {}'.format(val, type(val), index))
 
     def none_if_nat(self, val):
         if type(val) is pd._libs.tslibs.nattype.NaTType:

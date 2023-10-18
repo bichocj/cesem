@@ -178,7 +178,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-APPEND_SLASH = True
+# APPEND_SLASH = True
 
 INTERNAL_IPS = ["localhost", "127.0.0.1"]
 
@@ -193,4 +193,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://cesem-stg.fly.dev",
 ]
 
-DATE_FORMAT = "%d-%m-%Y"
+# DATE_FORMAT = "%d-%m-%Y"
+# DATE_INPUT_FORMATS = "%d-%m-%Y"
+# USE_L10N = False

@@ -61,6 +61,7 @@ def upload_file(request, file_type):
             rows = importer.execute(excel_file, True)
             message_success = "Se registraron {} filas".format(str(rows))
         except Exception as e:
+            #import pdb; pdb.set_trace()
             message_error = str(e)
     return render(request, "dashboard/import_visits.html", locals())
 

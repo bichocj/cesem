@@ -11,7 +11,7 @@ class VisitGeneticImprovementAlpacaPathSerializer(BasePathSerializer):
         many=False, source="production_unit.person_responsable"
     )
     up_miembro = serializers.StringRelatedField(
-        many=False, source="production_unit.person_member"
+        many=False, source="up_member"
     )
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
@@ -73,7 +73,7 @@ class VisitGeneticImprovementAlpacaViewSet(viewsets.ModelViewSet):
         VisitGeneticImprovementAlpaca.objects.select_related("production_unit")
         .select_related("production_unit__zone")
         .select_related("production_unit__person_responsable")
-        .select_related("production_unit__person_member")
+        .select_related("up_member")
         .select_related("employ_specialist", "employ_responsable")
         .select_related("activity")
         .all()
@@ -83,7 +83,7 @@ class VisitGeneticImprovementAlpacaViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         "production_unit__zone__name": ["contains"],
         "production_unit__person_responsable__name": ["contains"],
-        "production_unit__person_member__name": ["contains"],
+        "up_member__name": ["contains"],
         "employ_specialist__name": ["contains"],
         "employ_responsable__name": ["contains"],
         "activity__name": ["contains"],

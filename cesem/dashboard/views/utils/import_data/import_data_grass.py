@@ -107,9 +107,10 @@ class ImportGrass(HelperImport):
         data = df.to_dict()
         rows_count = len(data["N°"].keys())
         visits = []
-        # import pdb; pdb.set_trace()
-        for i in range(rows_count):
+        for i in range(rows_count):            
             data_visited_at = self.none_if_nat(data["FECHA"][i])
+            data_visited_at = self.to_date(data_visited_at, i + 1)
+            
             data_zone = self.nan_if_nat(data["ZONA"][i])
             data_community = self.nan_if_nat(data["COMUNIDAD"][i])
             data_sector = self.nan_if_nat(data["SECTOR/IRRIGACION"][i])
@@ -298,6 +299,8 @@ class ImportGrass(HelperImport):
             except Activity.DoesNotExist:
                 msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
                 raise ValueError(msg)
-
+            except Exception as e:
+                msg = "fila " + str(i + 1) +  " " + str(e)
+                raise ValueError(msg)
         VisitGrass.objects.bulk_create(visits)
         return len(visits)

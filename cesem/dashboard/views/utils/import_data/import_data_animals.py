@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from django.conf import settings
 from core.models import (
     Activity,
@@ -142,6 +143,8 @@ class ImportAnimals(HelperImport):
             # data['N°'][i]
             # data['MES'][i] ################
             data_visited_at = self.none_if_nat(data["FECHA"][i])
+            data_visited_at = self.to_date(data_visited_at, i + 1)
+
             data_zone = self.nan_if_nat(data["ZONA"][i])
             data_community = self.nan_if_nat(data["COMUNIDAD"][i])
             # data['PDE-2019'][i]
