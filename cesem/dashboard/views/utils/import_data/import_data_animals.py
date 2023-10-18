@@ -182,7 +182,9 @@ class ImportAnimals(HelperImport):
                 row=i + 1,
             )
             activity = self.get_activity(
-                data_activity, creates_if_none=False, row=i + 1
+                data_activity,
+                creates_if_none=False,
+                row=i + 1
             )
 
             production_unit = self.get_production_unit(
@@ -194,7 +196,6 @@ class ImportAnimals(HelperImport):
                 data_up_responsable_sex,
                 data_is_pilot=data_is_pilot,
                 data_tipology=data_tipology,
-                creates_if_none=creates_if_none,
                 row=i + 1,
             )
 

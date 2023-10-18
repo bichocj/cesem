@@ -132,7 +132,7 @@ class HelperImport:
 
     def get_zone(self, name, creates_if_none):
         zone = None
-        name = str(name)
+        name = str(name).strip().upper()
         if name in self.zones_names:
             zone = self.zones_names[str(name)]
         else:
@@ -145,7 +145,7 @@ class HelperImport:
 
     def get_community(self, name, zone, creates_if_none):
         community = None
-        name = str(name)
+        name = str(name).strip().upper()
         if name in self.community_names:
             community = self.community_names[name]
         else:
@@ -158,7 +158,7 @@ class HelperImport:
 
     def get_sector(self, name, community, creates_if_none):
         sector = None
-        name = str(name)
+        name = str(name).strip().upper()
         if name in self.sector_names:
             sector = self.sector_names[name]
         else:
@@ -171,7 +171,7 @@ class HelperImport:
 
     def get_activity(self, name, creates_if_none=False, row=0):
         activity = None
-        name = str(name).strip()
+        name = str(name).strip().upper()
         if name in self.activities_names:
             activity = self.activities_names[name]
         else:
@@ -192,12 +192,11 @@ class HelperImport:
         data_up_responsable_sex,
         data_tipology=0,
         data_is_pilot=False,
-        creates_if_none=False,
         row=0,
     ):
-        zone = self.get_zone(data_zone, creates_if_none)
-        community = self.get_community(data_community, zone, creates_if_none)
-        sector = self.get_sector(data_sector, community, creates_if_none)
+        zone = self.get_zone(data_zone, creates_if_none=False)
+        community = self.get_community(data_community, zone, creates_if_none=False)
+        sector = self.get_sector(data_sector, community, creates_if_none=False)
         up_responsable = self.get_person(
             data_up_responsable_name,
             data_up_responsable_dni,

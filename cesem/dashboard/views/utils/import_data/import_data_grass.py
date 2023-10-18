@@ -217,10 +217,16 @@ class ImportGrass(HelperImport):
                 employ_responsable = self.get_person(data_employ_responsable)
                 employ_specialist = self.get_person(data_employ_specialist)
                 activity = self.get_activity(
-                    data_activity.upper(), creates_if_none=False
+                    data_activity,
+                    creates_if_none=False,
+                    row=i + 1
                 )
                 up_member = self.get_person(
-                    data_up_member_name, data_up_member_dni, data_up_member_sex, creates_if_none=False
+                    data_up_member_name, 
+                    data_up_member_dni, 
+                    data_up_member_sex, 
+                    creates_if_none=True,
+                    row=i + 1,
                 )
                 production_unit = self.get_production_unit(
                     data_zone,
@@ -229,7 +235,7 @@ class ImportGrass(HelperImport):
                     data_up_responsable_name,
                     data_up_responsable_dni,
                     data_up_responsable_sex,
-                    creates_if_none=True,
+                    row=i+1   
                 )
                 """
                 Used in previous logic
