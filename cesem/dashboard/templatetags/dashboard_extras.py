@@ -61,6 +61,31 @@ def get_activity_data_value(activity, index_name, activities_data):
                 return activities_data[activity_id][index_name]
         return 0
 
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+@register.filter
+def get_meta(activity, year):
+    if year == 2022:
+        return activity.meta_2022    
+    if year == 2023:
+        return activity.meta_2023    
+    if year == 2024:
+        return activity.meta_2024
+    return '{} no configurado, consultar con el administrador'.format(year)    
+
+
+@register.simple_tag
+def get_activity_progress_value(year, activity, activities_data):
+    try:
+        value = activities_data[activity.id]
+        meta = get_meta(activity, year)
+        result = (value/meta)*100
+        result = '{}%'.format(str(round(result, 2)))
+        return result
+    except:
+        return 0
 
 @register.simple_tag
 def get_activity_data_zone_value(activity, zone, activities_data):

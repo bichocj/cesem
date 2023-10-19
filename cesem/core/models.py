@@ -107,6 +107,9 @@ class Activity(models.Model):
         verbose_name="actividad superior",
     )
     um = models.CharField("unidad de medida", null=True, blank=True, max_length=50)
+    meta_2022 = models.IntegerField('meta 2022', default=0) 
+    meta_2023 = models.IntegerField('meta 2023', default=0) 
+    meta_2024 = models.IntegerField('meta 2024', default=0) 
 
     def __str__(self) -> str:
         return self.name

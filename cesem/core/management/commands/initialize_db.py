@@ -15,7 +15,7 @@ from core.models import (
 import os
 
 path_initial_data = os.path.join(
-    settings.BASE_DIR, "core", "management", "commands", "files", "initial_data.xls"
+    settings.BASE_DIR, "core", "management", "commands", "files", "initial_data_zona_comunidades_sectores.xls"
 )
 
 path_members = os.path.join(

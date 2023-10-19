@@ -1,0 +1,55 @@
+{% extends 'dashboard/layout.html' %}
+<br />
+{% load dashboard_extras %}
+<br />
+{% block title %}CESEM | administrador{% endblock %} 
+
+{% block body %}
+
+
+<div >
+  <form action="." class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2>Reporte Anual</h2>
+      <div class="btn-group" role="group" aria-label="..." >
+        <button class="btn btn-default {% if inform_type == 'count' %}active{% endif%}" name="type" value="count" type="submit">conteo de actividades</button>
+        <button class="btn btn-default {% if inform_type == 'sum' %}active{% endif%}" name="type" value="sum" type="submit">suma de atenciones</button>      
+      </div>
+    </div>  
+    <div class="d-flex">
+      <div class="btn-group" role="group" aria-label="..." >
+        <button class="btn btn-default {% if year_str == '2022' %}active{% endif%}" name="year" value="2022" type="submit">2022</button>
+        <button class="btn btn-default {% if year_str == '2023' %}active{% endif%}" name="year" value="2023" type="submit">2023</button>      
+        <button class="btn btn-default {% if year_str == '2024' %}active{% endif%}" name="year" value="2024" type="submit">2024</button>      
+      </div>      
+    </div>
+  </form>
+</div>
+
+
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th colspan="2">Actividad</th>
+      <th>UM</th>
+      <th>Meta</th>      
+      <th>{{year_str}}</th>
+      <th>Avance</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in activities %}
+    <tr class="{% get_activity_class a%}">
+      <td>{{a.position}}</td>
+      <td style="white-space: nowrap;">{{a.name}}</td>
+      <td>{{a.um}}</td>
+      <td>{{a|get_meta:year}}</td>
+      <td>{{ activities_data|get_item:a.id|default:0 }}</td>
+      <td>{% get_activity_progress_value year a activities_data %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

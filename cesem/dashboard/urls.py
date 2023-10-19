@@ -1,15 +1,16 @@
 from django.urls import path, include
 
 from .views import views
-from .views.report_views import animal_view
+from .views.report_views import all_reports
 
 app_name = "dashboard"
 
 urls_reports = [
-    path(r"monthly/", view=animal_view.report_monthly, name="report_monthly"),
-    path(r"weekly/", view=animal_view.report_weekly, name="report_weekly"),
-    path(r"zones/", view=animal_view.report_zones, name="report_zones"),
-    path(r"community/", view=animal_view.report_community, name="report_community"),
+    path(r"monthly/", view=all_reports.report_monthly, name="report_monthly"),
+    path(r"weekly/", view=all_reports.report_weekly, name="report_weekly"),
+    path(r"yearly/", view=all_reports.report_yearly, name="report_yearly"),
+    path(r"zones/", view=all_reports.report_zones, name="report_zones"),
+    path(r"community/", view=all_reports.report_community, name="report_community"),
 ]
 
 urlpatterns = [

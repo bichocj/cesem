@@ -86,6 +86,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'reports/yearly'|active_if_path_match:request}}"
+              href="{% url 'dashboard:report_yearly'%}">
+              Reporte Anual
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="bd-links-link d-inline-block rounded {{'reports/zones'|active_if_path_match:request}}"
               href="{% url 'dashboard:report_zones'%}">
               Reporte Por Zona

@@ -4,7 +4,12 @@ from .utils import BasePathSerializer
 
 
 class ActivityPathSerializer(BasePathSerializer):
-    relacionado = serializers.StringRelatedField(many=False, source="parent.position")
+    superior = serializers.SerializerMethodField()
+
+    def get_superior(self, obj):
+        if obj.parent:
+            return obj.parent.position
+        return ''
 
     @staticmethod
     def get_path():
@@ -17,8 +22,10 @@ class ActivityPathSerializer(BasePathSerializer):
             "name",
             "short_name",
             "um",
-            "parent",
-            "relacionado",
+            "superior",
+            "meta_2022",
+            "meta_2023",
+            "meta_2024",
             "url",
         )
         extra_kwargs = {
