@@ -92,6 +92,10 @@ body {
 }
 
 
+.component {
+    background-color: orange;
+  }
+
 .activity {
     background-color: #92d050;
   }

@@ -15,10 +15,21 @@ def get_columns_labels(view_model, colums):
 
 
 @register.filter
-def get_column_label(view_model, column_name):
+def get_column_label(view_model, column_name):        
     if column_name in view_model.get_serializer().fields:
         return view_model.get_serializer().fields[column_name].label
     return column_name
+
+@register.filter
+def get_is_hidden(view_model, column_name):
+    meta = view_model.get_serializer().Meta
+    if 'custom_kwargs' in meta.__dict__:
+        custom_kwargs = meta.custom_kwargs
+        if custom_kwargs:
+            if column_name in custom_kwargs:
+                if 'hidden' in custom_kwargs[column_name]:
+                    return True
+    return False
 
 
 @register.filter
@@ -35,16 +46,21 @@ def get_model_name_plural(value):
 def get_model_name(value):
     return value.get_serializer().Meta.model._meta.verbose_name.title()
 
-
-@register.simple_tag
-def get_activity_class(activity):
+def get_count_position_points(activity):
     letters = list(activity.position)
     points = filter(lambda letter: letter == ".", letters)
     points = list(points)
     points = len(points)
+    return points
+
+@register.simple_tag
+def get_activity_class(activity):
+    points = get_count_position_points(activity)
     if points == 0:
-        return "activity"
+        return "component"
     if points == 1:
+        return "activity"
+    if points == 2:
         return "sub-activity"
     return ""
 
@@ -59,6 +75,9 @@ def get_activity_data_value(activity, index_name, activities_data):
         if activity_id in activities_data:
             if index_name in activities_data[activity_id]:
                 return activities_data[activity_id][index_name]
+        points = get_count_position_points(activity)
+        if points < 2:
+            return ''
         return 0
 
 @register.filter
