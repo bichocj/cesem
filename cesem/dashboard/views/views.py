@@ -4,6 +4,7 @@ from rest_framework import routers
 
 from .utils.import_data.import_data_animals import ImportAnimals
 from .utils.import_data.import_data_grass import ImportGrass
+from .utils.import_data.import_data_components import ImportComponents
 from .api_views.people import PersonViewSet, PersonPathSerializer
 from .api_views.users import UserViewSet, UserPathSerializer
 from .api_views.zones import ZoneViewSet, ZonePathSerializer
@@ -28,6 +29,10 @@ from .api_views.visits_alpaca import (
 )
 
 from .api_views.visits_grass import VisitGrassViewSet, VisitGrassPathSerializer
+from .api_views.visits_components import (
+    VisitComponentsViewSet,
+    VisitComponentsPathSerializer,
+)
 from .api_views.diagnostics import DiagnosticViewSet, DiagnosticPathSerializer
 from .api_views.sickness_observations import (
     SicknessObservationViewSet,
@@ -58,10 +63,12 @@ def upload_file(request, file_type):
                 importer = ImportAnimals()
             elif file_type == "pastos":
                 importer = ImportGrass()
+            elif file_type == "componentes":
+                importer = ImportComponents()
             rows = importer.execute(excel_file, True)
             message_success = "Se registraron {} filas".format(str(rows))
         except Exception as e:
-            #import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             message_error = str(e)
     return render(request, "dashboard/import_visits.html", locals())
 
@@ -79,6 +86,7 @@ files_checksum_path = FilesChecksumPathSerializer.get_path()
 visit_vacuno_path = VisitGeneticImprovementVacunoPathSerializer.get_path()
 visit_ovino_path = VisitGeneticImprovementOvinoPathSerializer.get_path()
 visit_alpaca_path = VisitGeneticImprovementAlpacaPathSerializer.get_path()
+visit_components_path = VisitComponentsPathSerializer.get_path()
 
 router = routers.DefaultRouter()
 router.register(
@@ -119,4 +127,9 @@ router.register(
     r"%s" % visit_alpaca_path,
     VisitGeneticImprovementAlpacaViewSet,
     basename=visit_alpaca_path,
+)
+router.register(
+    r"%s" % visit_components_path,
+    VisitComponentsViewSet,
+    basename=visit_components_path,
 )
