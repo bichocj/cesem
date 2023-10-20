@@ -131,7 +131,6 @@ def get_month(month_number):
     now = now.replace(day=1)
     now = now.replace(month=month_number)
     locale.setlocale(locale.LC_TIME, "es_ES")
-    print(month_number, now.strftime("%m"))
     return now.strftime("%B").title()
 
 

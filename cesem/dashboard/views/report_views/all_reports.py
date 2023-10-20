@@ -493,7 +493,6 @@ def report_yearly(request):
         activity_key = s.get("activity__id")
         value = s.get("quantity")
         activities_data[activity_key] = value
-        print('--- {} {}'.format(activity_key, value))
 
     return render(request, "dashboard/report_yearly.html", locals())
 
@@ -719,11 +718,9 @@ def get_data_of_sub_activity(activities, activities_data):
     sub_activity_data = {}
     for a in activities:
         if is_sub_activity(a):
-            print('is_sub_activity')
             sub_activity = a
             for activity_key in activities_data:
                 if activity_is_in_sub_activity(activities, activity_key, sub_activity):
-                    print('activity_is_in_sub_activity')
                     if sub_activity.id not in sub_activity_data:
                         sub_activity_data[sub_activity.id] = {}
                     for related_key in activities_data[activity_key]:
