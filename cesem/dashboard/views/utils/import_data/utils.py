@@ -10,6 +10,9 @@ from core.models import (
     ProductionUnit,
     FilesChecksum,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class HelperImport:
@@ -72,11 +75,15 @@ class HelperImport:
         if type(val) is datetime:
             return val
         if type(val) is str:
-            return datetime.strptime(val, '%d/%m/%Y')
+            return datetime.strptime(val, "%d/%m/%Y")
         if type(val) is pd._libs.tslibs.timestamps.Timestamp:
             return val.date()
-        
-        raise ValueError('se esperaba una fecha valida {}, tipo {}, fila {}'.format(val, type(val), index))
+
+        raise ValueError(
+            "se esperaba una fecha valida {}, tipo {}, fila {}".format(
+                val, type(val), index
+            )
+        )
 
     def none_if_nat(self, val):
         if type(val) is pd._libs.tslibs.nattype.NaTType:
@@ -127,10 +134,10 @@ class HelperImport:
                         )
                     if row > 0:
                         msg += ", fila " + str(row)
-                    raise Exception(msg)
+                    raise ValueError(msg)
         return person
 
-    def get_zone(self, name, creates_if_none):
+    def get_zone(self, name, creates_if_none=False, row=0):
         zone = None
         name = str(name).strip().upper()
         if name in self.zones_names:
@@ -140,10 +147,12 @@ class HelperImport:
                 zone = Zone.objects.create(name=name)
                 self.zones_names[str(name)] = zone
             else:
-                raise Zone.DoesNotExist()
+                raise ValueError(
+                    "La zona " + name + " no esta registrada, fila " + str(row)
+                )
         return zone
 
-    def get_community(self, name, zone, creates_if_none):
+    def get_community(self, name, zone, creates_if_none=False, row=0):
         community = None
         name = str(name).strip().upper()
         if name in self.community_names:
@@ -153,10 +162,12 @@ class HelperImport:
                 community = Community.objects.create(name=name, zone=zone)
                 self.community_names[name] = community
             else:
-                raise Community.DoesNotExist()
+                raise ValueError(
+                    "La comunidad " + name + " no esta registrada, fila " + str(row)
+                )
         return community
 
-    def get_sector(self, name, community, creates_if_none):
+    def get_sector(self, name, community, creates_if_none=False, row=0):
         sector = None
         name = str(name).strip().upper()
         if name in self.sector_names:
@@ -166,7 +177,9 @@ class HelperImport:
                 sector = Sector.objects.create(name=name, community=community)
                 self.sector_names[name] = sector
             else:
-                raise Sector.DoesNotExist()
+                raise ValueError(
+                    "El sector " + name + " no esta registrado, fila " + str(row)
+                )
         return sector
 
     def get_activity(self, name, creates_if_none=False, row=0):
@@ -179,7 +192,9 @@ class HelperImport:
                 activity = Activity.objects.create(name=name, short_name=name)
                 self.activities_names[name] = activity
             else:
-                raise Exception("La actividad " + name + " no esta registrada, fila " +str(row))
+                raise ValueError(
+                    "La actividad " + name + " no esta registrada, fila " + str(row)
+                )
         return activity
 
     def get_production_unit(
@@ -194,9 +209,11 @@ class HelperImport:
         data_is_pilot=False,
         row=0,
     ):
-        zone = self.get_zone(data_zone, creates_if_none=False)
-        community = self.get_community(data_community, zone, creates_if_none=False)
-        sector = self.get_sector(data_sector, community, creates_if_none=False)
+        zone = self.get_zone(data_zone, creates_if_none=False, row=row)
+        community = self.get_community(
+            data_community, zone, creates_if_none=False, row=row
+        )
+        sector = self.get_sector(data_sector, community, creates_if_none=False, row=row)
         up_responsable = self.get_person(
             data_up_responsable_name,
             data_up_responsable_dni,
@@ -219,7 +236,6 @@ class HelperImport:
                 production_unit.tipology = data_tipology
                 production_unit.is_pilot = data_is_pilot
                 production_unit.save()
-
         return production_unit
 
     def validate_file(self, df):
@@ -227,7 +243,7 @@ class HelperImport:
         try:
             FilesChecksum.objects.get(checksum=checksum)
             message = "Parece que este archivo ya fue subido anteriormente"
-            raise Exception(message)
+            raise ValueError(message)
         except FilesChecksum.DoesNotExist:
             pass
         return checksum
@@ -249,7 +265,7 @@ class HelperImport:
             message = "El archivo subido no tiene las siguientes columnas: {}".format(
                 ",".join(columns_missing)
             )
-            raise Exception(message)
+            raise ValueError(message)
 
     def execute(self, file, creates_if_none=True):
         # Here validate the file checksum and columns

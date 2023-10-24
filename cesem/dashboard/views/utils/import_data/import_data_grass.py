@@ -14,6 +14,10 @@ from core.models import (
 import pandas as pd
 
 from .utils import HelperImport
+import logging
+
+baset_path = os.path.join(settings.BASE_DIR, "core", "management", "commands", "files")
+logger = logging.getLogger(__name__)
 
 baset_path = os.path.join(settings.BASE_DIR, "core", "management", "commands", "files")
 
@@ -102,15 +106,14 @@ class ImportGrass(HelperImport):
             "CAPACITACION MANEJO Y CONSERVACION",
         ]
 
-    def _inner_execute(self, file, creates_if_none=True, checksum=''):
+    def _inner_execute(self, file, creates_if_none=True, checksum=""):
         df = pd.read_excel(file)
         data = df.to_dict()
         rows_count = len(data["N°"].keys())
         visits = []
-        for i in range(rows_count):            
+        for i in range(rows_count):
             data_visited_at = self.none_if_nat(data["FECHA"][i])
             data_visited_at = self.to_date(data_visited_at, i + 1)
-            
             data_zone = self.nan_if_nat(data["ZONA"][i])
             data_community = self.nan_if_nat(data["COMUNIDAD"][i])
             data_sector = self.nan_if_nat(data["SECTOR/IRRIGACION"][i])
@@ -217,14 +220,12 @@ class ImportGrass(HelperImport):
                 employ_responsable = self.get_person(data_employ_responsable)
                 employ_specialist = self.get_person(data_employ_specialist)
                 activity = self.get_activity(
-                    data_activity,
-                    creates_if_none=False,
-                    row=i + 1
+                    data_activity, creates_if_none=False, row=i + 1
                 )
                 up_member = self.get_person(
-                    data_up_member_name, 
-                    data_up_member_dni, 
-                    data_up_member_sex, 
+                    data_up_member_name,
+                    data_up_member_dni,
+                    data_up_member_sex,
                     creates_if_none=True,
                     row=i + 1,
                 )
@@ -235,7 +236,7 @@ class ImportGrass(HelperImport):
                     data_up_responsable_name,
                     data_up_responsable_dni,
                     data_up_responsable_sex,
-                    row=i+1   
+                    row=i + 1,
                 )
                 """
                 Used in previous logic
@@ -287,26 +288,30 @@ class ImportGrass(HelperImport):
                         technical_training_perennial=data_technical_training_perennial,
                         technical_training_anual=data_technical_training_anual,
                         technical_training_conservation=data_technical_training_conservation,
-                        checksum=checksum
+                        checksum=checksum,
                     )
                 )
 
-                print("Procesando visita de pastos Nº: ", i + 1)
+                logger.info("Procesando visita de pastos Nº: " + str(i + 1))
 
             except Zone.DoesNotExist:
                 msg = "fila " + str(i + 1) + " zona no encontrada:" + data_zone
                 raise ValueError(msg)
             except Community.DoesNotExist:
-                msg = "fila " + str(i + 1) + " comunidad no encontrada:" + data_community
+                msg = (
+                    "fila " + str(i + 1) + " comunidad no encontrada:" + data_community
+                )
                 raise ValueError(msg)
             except Sector.DoesNotExist:
                 msg = "fila " + str(i + 1) + " sector no encontrado:" + data_sector
                 raise ValueError(msg)
             except Activity.DoesNotExist:
-                msg = "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                msg = (
+                    "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                )
                 raise ValueError(msg)
             except Exception as e:
-                msg = "fila " + str(i + 1) +  " " + str(e)
+                msg = "fila " + str(i + 1) + " " + str(e)
                 raise ValueError(msg)
         VisitGrass.objects.bulk_create(visits)
         return len(visits)

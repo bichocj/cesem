@@ -16,8 +16,10 @@ from core.models import (
     VisitGeneticImprovementAlpaca,
 )
 import pandas as pd
-
 from .utils import HelperImport
+import logging
+
+logger = logging.getLogger(__name__)
 
 baset_path = os.path.join(settings.BASE_DIR, "core", "management", "commands", "files")
 
@@ -167,7 +169,6 @@ class ImportAnimals(HelperImport):
                 data["NOMBRE DE RESPONSABLE DE ACTIVIDAD"][i]
             )
             data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
-
             employ_specialist = self.get_person(
                 data_employ_specialist, creates_if_none=True
             )
@@ -182,11 +183,8 @@ class ImportAnimals(HelperImport):
                 row=i + 1,
             )
             activity = self.get_activity(
-                data_activity,
-                creates_if_none=False,
-                row=i + 1
+                data_activity, creates_if_none=False, row=i + 1
             )
-
             production_unit = self.get_production_unit(
                 data_zone,
                 data_community,
@@ -352,7 +350,7 @@ class ImportAnimals(HelperImport):
                         checksum=checksum,
                     )
                     visits_ovinos.append(visit_ovino)
-                    print(
+                    logger.info(
                         "Registrando visita de animales N°:"
                         + str(i + 1)
                         + ", TIPO: MG ovino"
@@ -465,7 +463,7 @@ class ImportAnimals(HelperImport):
                         checksum=checksum,
                     )
                     visits_alpacas.append(visit_alpaca)
-                    print(
+                    logger.info(
                         "Registrando visita de animales N°:"
                         + str(i + 1)
                         + ", TIPO: MG alpaca"
@@ -553,7 +551,7 @@ class ImportAnimals(HelperImport):
                         checksum=checksum,
                     )
                     visits_animals.append(visit_animal)
-                    print(
+                    logger.info(
                         "Registrando visita de animales N°:"
                         + str(i + 1)
                         + ", sanidad animal"
