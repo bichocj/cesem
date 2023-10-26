@@ -114,7 +114,7 @@ class ImportGrass(HelperImport):
         for i in range(rows_count):
             data_visited_at = self.none_if_nat(data["FECHA"][i])
             data_visited_at = self.to_date(data_visited_at, i + 1)
-            data_zone = self.nan_if_nat(data["ZONA"][i])
+            data_zone = self.zero_if_nan(self.nan_if_nat(data["ZONA"][i]), True)
             data_community = self.nan_if_nat(data["COMUNIDAD"][i])
             data_sector = self.nan_if_nat(data["SECTOR/IRRIGACION"][i])
             data_up_responsable_name = self.nan_if_nat(
@@ -295,19 +295,25 @@ class ImportGrass(HelperImport):
                 logger.info("Procesando visita de pastos Nº: " + str(i + 1))
 
             except Zone.DoesNotExist:
-                msg = "fila " + str(i + 1) + " zona no encontrada:" + data_zone
+                msg = "fila " + str(i + 1) + " zona no encontrada:" + str(data_zone)
                 raise ValueError(msg)
             except Community.DoesNotExist:
                 msg = (
-                    "fila " + str(i + 1) + " comunidad no encontrada:" + data_community
+                    "fila "
+                    + str(i + 1)
+                    + " comunidad no encontrada:"
+                    + str(data_community)
                 )
                 raise ValueError(msg)
             except Sector.DoesNotExist:
-                msg = "fila " + str(i + 1) + " sector no encontrado:" + data_sector
+                msg = "fila " + str(i + 1) + " sector no encontrado:" + str(data_sector)
                 raise ValueError(msg)
             except Activity.DoesNotExist:
                 msg = (
-                    "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                    "fila "
+                    + str(i + 1)
+                    + " actividad no encontrada: "
+                    + str(data_activity)
                 )
                 raise ValueError(msg)
             except Exception as e:

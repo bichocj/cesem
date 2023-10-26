@@ -10,9 +10,6 @@ from core.models import (
     ProductionUnit,
     FilesChecksum,
 )
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class HelperImport:
@@ -134,10 +131,10 @@ class HelperImport:
                         )
                     if row > 0:
                         msg += ", fila " + str(row)
-                    raise ValueError(msg)
+                    raise Exception(msg)
         return person
 
-    def get_zone(self, name, creates_if_none=False, row=0):
+    def get_zone(self, name, creates_if_none):
         zone = None
         name = str(name).strip().upper()
         if name in self.zones_names:
@@ -147,12 +144,10 @@ class HelperImport:
                 zone = Zone.objects.create(name=name)
                 self.zones_names[str(name)] = zone
             else:
-                raise ValueError(
-                    "La zona " + name + " no esta registrada, fila " + str(row)
-                )
+                raise Zone.DoesNotExist()
         return zone
 
-    def get_community(self, name, zone, creates_if_none=False, row=0):
+    def get_community(self, name, zone, creates_if_none):
         community = None
         name = str(name).strip().upper()
         if name in self.community_names:
@@ -162,12 +157,10 @@ class HelperImport:
                 community = Community.objects.create(name=name, zone=zone)
                 self.community_names[name] = community
             else:
-                raise ValueError(
-                    "La comunidad " + name + " no esta registrada, fila " + str(row)
-                )
+                raise Community.DoesNotExist()
         return community
 
-    def get_sector(self, name, community, creates_if_none=False, row=0):
+    def get_sector(self, name, community, creates_if_none):
         sector = None
         name = str(name).strip().upper()
         if name in self.sector_names:
@@ -177,9 +170,7 @@ class HelperImport:
                 sector = Sector.objects.create(name=name, community=community)
                 self.sector_names[name] = sector
             else:
-                raise ValueError(
-                    "El sector " + name + " no esta registrado, fila " + str(row)
-                )
+                raise Sector.DoesNotExist()
         return sector
 
     def get_activity(self, name, creates_if_none=False, row=0):
@@ -192,7 +183,7 @@ class HelperImport:
                 activity = Activity.objects.create(name=name, short_name=name)
                 self.activities_names[name] = activity
             else:
-                raise ValueError(
+                raise Exception(
                     "La actividad " + name + " no esta registrada, fila " + str(row)
                 )
         return activity
@@ -209,11 +200,9 @@ class HelperImport:
         data_is_pilot=False,
         row=0,
     ):
-        zone = self.get_zone(data_zone, creates_if_none=False, row=row)
-        community = self.get_community(
-            data_community, zone, creates_if_none=False, row=row
-        )
-        sector = self.get_sector(data_sector, community, creates_if_none=False, row=row)
+        zone = self.get_zone(data_zone, creates_if_none=False)
+        community = self.get_community(data_community, zone, creates_if_none=False)
+        sector = self.get_sector(data_sector, community, creates_if_none=False)
         up_responsable = self.get_person(
             data_up_responsable_name,
             data_up_responsable_dni,
@@ -236,6 +225,7 @@ class HelperImport:
                 production_unit.tipology = data_tipology
                 production_unit.is_pilot = data_is_pilot
                 production_unit.save()
+
         return production_unit
 
     def validate_file(self, df):
@@ -243,7 +233,7 @@ class HelperImport:
         try:
             FilesChecksum.objects.get(checksum=checksum)
             message = "Parece que este archivo ya fue subido anteriormente"
-            raise ValueError(message)
+            raise Exception(message)
         except FilesChecksum.DoesNotExist:
             pass
         return checksum
@@ -265,7 +255,7 @@ class HelperImport:
             message = "El archivo subido no tiene las siguientes columnas: {}".format(
                 ",".join(columns_missing)
             )
-            raise ValueError(message)
+            raise Exception(message)
 
     def execute(self, file, creates_if_none=True):
         # Here validate the file checksum and columns
