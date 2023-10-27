@@ -127,11 +127,22 @@ def get_start_date_of_week(week_number, year):
 
 @register.filter
 def get_month(month_number):
-    now = datetime.now()
-    now = now.replace(day=1)
-    now = now.replace(month=month_number)
-    locale.setlocale(locale.LC_TIME, "es_ES")
-    return now.strftime("%B").title()
+    months_names = [
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre'
+    ]
+
+    return months_names[month_number - 1]
 
 
 @register.filter

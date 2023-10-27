@@ -54,6 +54,11 @@ class VisitAdmin(admin.ModelAdmin):
     inlines = [
         VisitDetailInline,
     ]
+    list_display = ('visited_at','activity')
+    list_filter = [
+        'visited_at',
+        "activity",
+    ]
 
 
 admin.site.register(VisitGeneticImprovementVacuno)

@@ -10,7 +10,7 @@ from core.models import (
     VisitGeneticImprovementAlpaca,
 )
 from django.db.models import F, Sum, Case, When, Value, Q, Count
-from django.db.models.functions import ExtractWeek, ExtractMonth, ExtractYear, Round
+from django.db.models.functions import ExtractWeek, Round
 from django.shortcuts import render
 from itertools import chain
 
@@ -113,12 +113,12 @@ alpaca_quantity_var_sum = Sum(
 
 def report_weekly(request):
     currentdate = datetime.date.today()
-    default_from = "{}-01-01".format(currentdate.year)
-    default_to = currentdate.strftime("%Y-%m-%d")
+    year = int(request.GET.get("year", currentdate.year))
+    year_str = str(year)
+    prev_year_str = str(year - 1)
 
-    year = request.GET.get("year", currentdate.year)
-    from_datepicker = request.GET.get("from_datepicker", default_from)
-    to_datepicker = request.GET.get("to_datepicker", default_to)
+    default_from = "{}-12-21".format(prev_year_str)
+    default_to = "{}-12-20".format(year_str)
     inform_type = request.GET.get("type", "count")
 
     activities = Activity.objects.all().order_by("position")
@@ -128,7 +128,7 @@ def report_weekly(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
-    if inform_type == "count":
+    if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
@@ -137,7 +137,7 @@ def report_weekly(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
@@ -151,7 +151,7 @@ def report_weekly(request):
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
@@ -165,7 +165,7 @@ def report_weekly(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
@@ -179,7 +179,7 @@ def report_weekly(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
@@ -193,7 +193,7 @@ def report_weekly(request):
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(week=ExtractWeek("visited_at"))
         .values(
@@ -251,18 +251,17 @@ def report_weekly(request):
 
 def report_monthly(request):
     currentdate = datetime.date.today()
-    default_from = "{}-01-01".format(currentdate.year)
-    default_to = currentdate.strftime("%Y-%m-%d")
+    year = int(request.GET.get("year", currentdate.year))
+    year_str = str(year)
+    prev_year_str = str(year - 1)
 
-    year = request.GET.get("year", currentdate.year)
-
-    from_datepicker = request.GET.get("from_datepicker", default_from)
-    to_datepicker = request.GET.get("to_datepicker", default_to)
+    default_from = "{}-12-21".format(prev_year_str)
+    default_to = "{}-12-20".format(year_str)
+    
     inform_type = request.GET.get("type", "count")
 
     activities = Activity.objects.all().order_by("position")
-    year_str = str(year)
-    prev_year_str = str(year - 1)
+    
     periods = [
         {"month": 1, "from": prev_year_str + "-12-21", "to": year_str + "-01-20"},
         {"month": 2, "from": year_str + "-01-21", "to": year_str + "-02-20"},
@@ -294,7 +293,7 @@ def report_monthly(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
-    if inform_type == "count":
+    if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
@@ -303,7 +302,7 @@ def report_monthly(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(month=Case(*whens))
         .values(
@@ -316,7 +315,7 @@ def report_monthly(request):
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(month=Case(*whens))
         .values(
@@ -329,7 +328,7 @@ def report_monthly(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(month=Case(*whens))
         .values(
@@ -342,7 +341,7 @@ def report_monthly(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(month=Case(*whens))
         .values(
@@ -355,7 +354,7 @@ def report_monthly(request):
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .annotate(month=Case(*whens))
         .values(
@@ -398,20 +397,22 @@ def report_monthly(request):
 def report_yearly(request):
     currentdate = datetime.date.today()
     year = int(request.GET.get("year", currentdate.year))
-    inform_type = request.GET.get("type", "count")
-
-    activities = Activity.objects.all().order_by("position")
     year_str = str(year)
     prev_year_str = str(year - 1)
-    from_date = prev_year_str + "-12-21"
-    to_date = year_str + "-12-20"
+    default_from = "{}-12-21".format(prev_year_str)
+    default_to = "{}-12-20".format(year_str)
+
+    inform_type = request.GET.get("type", "count")
+    activities = Activity.objects.all().order_by("position")
+    
 
     animal_health_quantity_var = Count("id")
     grass_quantity_var = Count("id")
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
-    if inform_type == "count":
+    
+    if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
@@ -420,8 +421,8 @@ def report_yearly(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=from_date, 
-            visited_at__lte=to_date
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
         )
         .values(
             "activity__id",            
@@ -430,10 +431,11 @@ def report_yearly(request):
         .order_by("activity__id",)
     )
 
+    
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=from_date, 
-            visited_at__lte=to_date
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
         )
         .values(
             "activity__id",            
@@ -444,8 +446,8 @@ def report_yearly(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=from_date, 
-            visited_at__lte=to_date
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
         )
         .values(
             "activity__id",            
@@ -456,8 +458,8 @@ def report_yearly(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=from_date, 
-            visited_at__lte=to_date
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
         )
         .values(
             "activity__id",            
@@ -468,8 +470,8 @@ def report_yearly(request):
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=from_date, 
-            visited_at__lte=to_date
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
         )
         .values(
             "activity__id",            
@@ -499,7 +501,13 @@ def report_yearly(request):
 
 def report_zones(request):
     currentdate = datetime.date.today()
-    year = request.GET.get("year", currentdate.year)
+    year = int(request.GET.get("year", currentdate.year))
+    year_str = str(year)
+    prev_year_str = str(year - 1)
+
+    default_from = "{}-12-21".format(prev_year_str)
+    default_to = "{}-12-20".format(year_str)
+    
     inform_type = request.GET.get("type", "count")
 
     activities = Activity.objects.all().order_by("position")
@@ -510,7 +518,7 @@ def report_zones(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
-    if inform_type == "count":
+    if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
@@ -518,7 +526,10 @@ def report_zones(request):
         alpaca_quantity_var = alpaca_quantity_var_sum
 
     animals_data = (
-        VisitAnimalHealth.objects.annotate(year=ExtractYear("visited_at"))
+        VisitAnimalHealth.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__zone",
@@ -529,7 +540,10 @@ def report_zones(request):
     )
 
     grass_data = (
-        VisitGrass.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGrass.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__zone",
@@ -540,7 +554,10 @@ def report_zones(request):
     )
 
     genetic_improvement_vacuno_data = (
-        VisitGeneticImprovementVacuno.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGeneticImprovementVacuno.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__zone",
@@ -551,7 +568,10 @@ def report_zones(request):
     )
 
     genetic_improvement_ovino_data = (
-        VisitGeneticImprovementOvino.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGeneticImprovementOvino.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__zone",
@@ -562,7 +582,10 @@ def report_zones(request):
     )
 
     genetic_improvement_alpaca_data = (
-        VisitGeneticImprovementAlpaca.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGeneticImprovementAlpaca.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__zone",
@@ -600,7 +623,13 @@ def report_zones(request):
 
 def report_community(request):
     currentdate = datetime.date.today()
-    year = request.GET.get("year", currentdate.year)
+    year = int(request.GET.get("year", currentdate.year))
+    year_str = str(year)
+    prev_year_str = str(year - 1)
+
+    default_from = "{}-12-21".format(prev_year_str)
+    default_to = "{}-12-20".format(year_str)
+
     inform_type = request.GET.get("type", "count")
 
     activities = Activity.objects.all().order_by("position")
@@ -611,7 +640,7 @@ def report_community(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
-    if inform_type == "count":
+    if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
@@ -619,7 +648,10 @@ def report_community(request):
         alpaca_quantity_var = alpaca_quantity_var_sum
 
     animals_data = (
-        VisitAnimalHealth.objects.annotate(year=ExtractYear("visited_at"))
+        VisitAnimalHealth.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__community",
@@ -630,7 +662,10 @@ def report_community(request):
     )
 
     grass_data = (
-        VisitGrass.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGrass.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__community",
@@ -641,7 +676,10 @@ def report_community(request):
     )
 
     genetic_improvement_vacuno_data = (
-        VisitGeneticImprovementVacuno.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGeneticImprovementVacuno.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__community",
@@ -652,7 +690,10 @@ def report_community(request):
     )
 
     genetic_improvement_ovino_data = (
-        VisitGeneticImprovementOvino.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGeneticImprovementOvino.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__community",
@@ -663,7 +704,10 @@ def report_community(request):
     )
 
     genetic_improvement_alpaca_data = (
-        VisitGeneticImprovementAlpaca.objects.annotate(year=ExtractYear("visited_at"))
+        VisitGeneticImprovementAlpaca.objects.filter(
+            visited_at__gte=default_from, 
+            visited_at__lte=default_to
+        )
         .values(
             "activity",
             "production_unit__community",
