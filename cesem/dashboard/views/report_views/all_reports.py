@@ -535,7 +535,6 @@ def report_zones(request):
             "production_unit__zone",
         )
         .annotate(quantity=animal_health_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__zone")
     )
 
@@ -549,7 +548,6 @@ def report_zones(request):
             "production_unit__zone",
         )
         .annotate(quantity=grass_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__zone")
     )
 
@@ -563,7 +561,6 @@ def report_zones(request):
             "production_unit__zone",
         )
         .annotate(quantity=vacuno_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__zone")
     )
 
@@ -577,7 +574,6 @@ def report_zones(request):
             "production_unit__zone",
         )
         .annotate(quantity=ovino_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__zone")
     )
 
@@ -591,7 +587,6 @@ def report_zones(request):
             "production_unit__zone",
         )
         .annotate(quantity=alpaca_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__zone")
     )
 
@@ -657,7 +652,6 @@ def report_community(request):
             "production_unit__community",
         )
         .annotate(quantity=animal_health_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__community")
     )
 
@@ -671,7 +665,6 @@ def report_community(request):
             "production_unit__community",
         )
         .annotate(quantity=grass_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__community")
     )
 
@@ -685,7 +678,6 @@ def report_community(request):
             "production_unit__community",
         )
         .annotate(quantity=vacuno_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__community")
     )
 
@@ -698,8 +690,7 @@ def report_community(request):
             "activity",
             "production_unit__community",
         )
-        .annotate(quantity=ovino_quantity_var)
-        .filter(visited_at__year=year)
+        .annotate(quantity=ovino_quantity_var)        
         .order_by("production_unit__community")
     )
 
@@ -713,7 +704,6 @@ def report_community(request):
             "production_unit__community",
         )
         .annotate(quantity=alpaca_quantity_var)
-        .filter(visited_at__year=year)
         .order_by("production_unit__community")
     )
 
@@ -767,11 +757,12 @@ def get_data_of_sub_activity(activities, activities_data):
                 if activity_is_in_sub_activity(activities, activity_key, sub_activity):
                     if sub_activity.id not in sub_activity_data:
                         sub_activity_data[sub_activity.id] = {}
-                    for related_key in activities_data[activity_key]:
-                        if related_key not in sub_activity_data[sub_activity.id]:
-                            sub_activity_data[sub_activity.id][related_key] = 0
-                        sub_activity_data[sub_activity.id][
-                            related_key
-                        ] += activities_data[activity_key][related_key]
+                    at = activities.get(id=activity_key)
+                    if at.sum_in_parent:
+                        for related_key in activities_data[activity_key]:
+                            
+                            if related_key not in sub_activity_data[sub_activity.id]:
+                                sub_activity_data[sub_activity.id][related_key] = 0
+                            sub_activity_data[sub_activity.id][related_key] += activities_data[activity_key][related_key]
 
     return sub_activity_data
