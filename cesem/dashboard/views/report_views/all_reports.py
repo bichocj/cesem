@@ -257,11 +257,11 @@ def report_monthly(request):
 
     default_from = "{}-12-21".format(prev_year_str)
     default_to = "{}-12-20".format(year_str)
-    
+
     inform_type = request.GET.get("type", "count")
 
     activities = Activity.objects.all().order_by("position")
-    
+
     periods = [
         {"month": 1, "from": prev_year_str + "-12-21", "to": year_str + "-01-20"},
         {"month": 2, "from": year_str + "-01-21", "to": year_str + "-02-20"},
@@ -404,14 +404,13 @@ def report_yearly(request):
 
     inform_type = request.GET.get("type", "count")
     activities = Activity.objects.all().order_by("position")
-    
 
     animal_health_quantity_var = Count("id")
     grass_quantity_var = Count("id")
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
-    
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
@@ -421,63 +420,67 @@ def report_yearly(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=animal_health_quantity_var)
-        .order_by("activity__id",)
+        .order_by(
+            "activity__id",
+        )
     )
 
-    
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=grass_quantity_var)
-        .order_by("activity__id", )
+        .order_by(
+            "activity__id",
+        )
     )
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=vacuno_quantity_var)
-        .order_by("activity__id", )
+        .order_by(
+            "activity__id",
+        )
     )
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=ovino_quantity_var)
-        .order_by("activity__id", )
+        .order_by(
+            "activity__id",
+        )
     )
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=alpaca_quantity_var)
-        .order_by("activity__id", )
+        .order_by(
+            "activity__id",
+        )
     )
 
     data = list(
@@ -507,7 +510,7 @@ def report_zones(request):
 
     default_from = "{}-12-21".format(prev_year_str)
     default_to = "{}-12-20".format(year_str)
-    
+
     inform_type = request.GET.get("type", "count")
 
     activities = Activity.objects.all().order_by("position")
@@ -527,8 +530,7 @@ def report_zones(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -540,8 +542,7 @@ def report_zones(request):
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -553,8 +554,7 @@ def report_zones(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -566,8 +566,7 @@ def report_zones(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -579,8 +578,7 @@ def report_zones(request):
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -644,8 +642,7 @@ def report_community(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -657,8 +654,7 @@ def report_community(request):
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -670,8 +666,7 @@ def report_community(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -683,21 +678,19 @@ def report_community(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
             "production_unit__community",
         )
-        .annotate(quantity=ovino_quantity_var)        
+        .annotate(quantity=ovino_quantity_var)
         .order_by("production_unit__community")
     )
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -738,7 +731,9 @@ def is_sub_activity(activity):
     points = filter(lambda letter: letter == ".", letters)
     points = list(points)
     points = len(points)
-    return points == 2 # this is the numbers of points considered to sum the subactivities
+    return (
+        points == 2
+    )  # this is the numbers of points considered to sum the subactivities
 
 
 def activity_is_in_sub_activity(activities, activity_key, sub_activity):
@@ -760,9 +755,10 @@ def get_data_of_sub_activity(activities, activities_data):
                     at = activities.get(id=activity_key)
                     if at.sum_in_parent:
                         for related_key in activities_data[activity_key]:
-                            
                             if related_key not in sub_activity_data[sub_activity.id]:
                                 sub_activity_data[sub_activity.id][related_key] = 0
-                            sub_activity_data[sub_activity.id][related_key] += activities_data[activity_key][related_key]
+                            sub_activity_data[sub_activity.id][
+                                related_key
+                            ] += activities_data[activity_key][related_key]
 
     return sub_activity_data
