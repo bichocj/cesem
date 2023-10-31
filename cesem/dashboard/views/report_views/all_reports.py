@@ -8,6 +8,7 @@ from core.models import (
     VisitGeneticImprovementVacuno,
     VisitGeneticImprovementOvino,
     VisitGeneticImprovementAlpaca,
+    VisitComponents,
 )
 from django.db.models import F, Sum, Case, When, Value, Q, Count
 from django.db.models.functions import ExtractWeek, Round
@@ -109,6 +110,7 @@ alpaca_quantity_var_sum = Sum(
     + F("male_baby")
     + F("female_baby")
 )
+components_quantity_var_sum = Sum(F("quantity"))
 
 
 def report_weekly(request):
@@ -128,6 +130,7 @@ def report_weekly(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
@@ -205,6 +208,39 @@ def report_weekly(request):
         .order_by("week")
     )
 
+    if inform_type == "sum":
+        # cantidad de asistentes
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .annotate(week=ExtractWeek("visited_at"))
+            .values("id", "activity__id", "week")
+            .annotate(quantity=Count("id"))
+            .order_by("week")
+        )
+
+    else:
+        # cantidad de capacitaciones que se dieron
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .annotate(week=ExtractWeek("visited_at"))
+            .values(
+                "week",
+                "visited_at",
+                "production_unit__zone",
+                "production_unit__community",
+                "production_unit__sector",
+                "activity__id",
+            )
+            .distinct()
+            .values("week", "activity__id")
+            .annotate(quantity=Count("activity__id"))
+            .order_by("week")
+        )
+
     data = list(
         chain(
             animals_data,
@@ -212,6 +248,7 @@ def report_weekly(request):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            components_data,
         )
     )
 
@@ -257,11 +294,11 @@ def report_monthly(request):
 
     default_from = "{}-12-21".format(prev_year_str)
     default_to = "{}-12-20".format(year_str)
-    
+
     inform_type = request.GET.get("type", "count")
 
     activities = Activity.objects.all().order_by("position")
-    
+
     periods = [
         {"month": 1, "from": prev_year_str + "-12-21", "to": year_str + "-01-20"},
         {"month": 2, "from": year_str + "-01-21", "to": year_str + "-02-20"},
@@ -365,6 +402,39 @@ def report_monthly(request):
         .order_by("activity__id", "month")
     )
 
+    if inform_type == "sum":
+        # cantidad de asistentes
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .annotate(month=Case(*whens))
+            .values("activity__id", "month")
+            .annotate(quantity=Count("id"))
+            .order_by("activity__id", "month")
+        )
+
+    else:
+        # cantidad de capacitaciones que se dieron
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .annotate(month=Case(*whens))
+            .values(
+                "month",
+                "visited_at",
+                "production_unit__zone",
+                "production_unit__community",
+                "production_unit__sector",
+                "activity__id",
+            )
+            .distinct()
+            .values("month", "activity__id")
+            .annotate(quantity=Count("activity__id"))
+            .order_by("activity__id", "month")
+        )
+
     data = list(
         chain(
             animals_data,
@@ -372,6 +442,7 @@ def report_monthly(request):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            components_data,
         )
     )
 
@@ -404,14 +475,13 @@ def report_yearly(request):
 
     inform_type = request.GET.get("type", "count")
     activities = Activity.objects.all().order_by("position")
-    
 
     animal_health_quantity_var = Count("id")
     grass_quantity_var = Count("id")
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
-    
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
@@ -421,64 +491,98 @@ def report_yearly(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=animal_health_quantity_var)
-        .order_by("activity__id",)
+        .order_by(
+            "activity__id",
+        )
     )
 
-    
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=grass_quantity_var)
-        .order_by("activity__id", )
+        .order_by(
+            "activity__id",
+        )
     )
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=vacuno_quantity_var)
-        .order_by("activity__id", )
+        .order_by(
+            "activity__id",
+        )
     )
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=ovino_quantity_var)
-        .order_by("activity__id", )
+        .order_by(
+            "activity__id",
+        )
     )
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
-            "activity__id",            
+            "activity__id",
         )
         .annotate(quantity=alpaca_quantity_var)
-        .order_by("activity__id", )
+        .order_by(
+            "activity__id",
+        )
     )
+
+    if inform_type == "sum":
+        # cantidad de asistentes
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .values("activity__id")
+            .annotate(quantity=Count("id"))
+            .order_by("activity__id")
+        )
+
+    else:
+        # cantidad de capacitaciones que se dieron
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .values(
+                "visited_at",
+                "production_unit__zone",
+                "production_unit__community",
+                "production_unit__sector",
+                "activity__id",
+            )
+            .distinct()
+            .values("activity__id")
+            .annotate(quantity=Count("activity__id"))
+            .order_by("activity__id")
+        )
 
     data = list(
         chain(
@@ -487,6 +591,7 @@ def report_yearly(request):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            components_data,
         )
     )
 
@@ -507,7 +612,7 @@ def report_zones(request):
 
     default_from = "{}-12-21".format(prev_year_str)
     default_to = "{}-12-20".format(year_str)
-    
+
     inform_type = request.GET.get("type", "count")
 
     activities = Activity.objects.all().order_by("position")
@@ -527,8 +632,7 @@ def report_zones(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -541,8 +645,7 @@ def report_zones(request):
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -555,8 +658,7 @@ def report_zones(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -569,8 +671,7 @@ def report_zones(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -583,8 +684,7 @@ def report_zones(request):
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -595,6 +695,36 @@ def report_zones(request):
         .order_by("production_unit__zone")
     )
 
+    if inform_type == "sum":
+        # cantidad de asistentes
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .values("activity__id", "production_unit__zone")
+            .annotate(quantity=Count("id"))
+            .order_by("production_unit__zone")
+        )
+
+    else:
+        # cantidad de capacitaciones que se dieron
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .values(
+                "visited_at",
+                "production_unit__zone",
+                "production_unit__community",
+                "production_unit__sector",
+                "activity__id",
+            )
+            .distinct()
+            .values("activity__id", "production_unit__zone")
+            .annotate(quantity=Count("activity__id"))
+            .order_by("production_unit__zone")
+        )
+
     data = list(
         chain(
             animals_data,
@@ -602,6 +732,7 @@ def report_zones(request):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            components_data,
         )
     )
 
@@ -649,8 +780,7 @@ def report_community(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -663,8 +793,7 @@ def report_community(request):
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -677,8 +806,7 @@ def report_community(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -691,8 +819,7 @@ def report_community(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -705,8 +832,7 @@ def report_community(request):
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, 
-            visited_at__lte=default_to
+            visited_at__gte=default_from, visited_at__lte=default_to
         )
         .values(
             "activity",
@@ -717,6 +843,36 @@ def report_community(request):
         .order_by("production_unit__community")
     )
 
+    if inform_type == "sum":
+        # cantidad de asistentes
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .values("activity__id", "production_unit__community")
+            .annotate(quantity=Count("id"))
+            .order_by("production_unit__community")
+        )
+
+    else:
+        # cantidad de capacitaciones que se dieron
+        components_data = (
+            VisitComponents.objects.filter(
+                visited_at__gte=default_from, visited_at__lte=default_to
+            )
+            .values(
+                "visited_at",
+                "production_unit__zone",
+                "production_unit__community",
+                "production_unit__sector",
+                "activity__id",
+            )
+            .distinct()
+            .values("activity__id", "production_unit__community")
+            .annotate(quantity=Count("activity__id"))
+            .order_by("production_unit__community")
+        )
+
     data = list(
         chain(
             animals_data,
@@ -724,6 +880,7 @@ def report_community(request):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            components_data,
         )
     )
     activities_data = {}
@@ -748,7 +905,9 @@ def is_sub_activity(activity):
     points = filter(lambda letter: letter == ".", letters)
     points = list(points)
     points = len(points)
-    return points == 2 # this is the numbers of points considered to sum the subactivities
+    return (
+        points == 2
+    )  # this is the numbers of points considered to sum the subactivities
 
 
 def activity_is_in_sub_activity(activities, activity_key, sub_activity):
