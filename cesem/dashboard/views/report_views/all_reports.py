@@ -926,3 +926,4 @@ def get_data_of_sub_activity(activities, activities_data):
                             ] += activities_data[activity_key][related_key]
 
     return sub_activity_data
+
