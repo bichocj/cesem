@@ -9,7 +9,7 @@ class ActivityPathSerializer(BasePathSerializer):
     def get_superior(self, obj):
         if obj.parent:
             return obj.parent.position
-        return ''
+        return ""
 
     @staticmethod
     def get_path():
@@ -24,6 +24,7 @@ class ActivityPathSerializer(BasePathSerializer):
             "um",
             "superior",
             "parent",
+            "sum_in_parent",
             "meta_2022",
             "meta_2023",
             "meta_2024",
@@ -34,14 +35,17 @@ class ActivityPathSerializer(BasePathSerializer):
             # "um": {"write_only": True},
         }
 
+
 class ActivityDetailsPathSerializer(BasePathSerializer):
     actividad_superior_posicion = serializers.SerializerMethodField()
-    actividad_superior_nombre = serializers.StringRelatedField(many=False, source='parent')
+    actividad_superior_nombre = serializers.StringRelatedField(
+        many=False, source="parent"
+    )
 
     def get_actividad_superior_posicion(self, obj):
         if obj.parent:
             return obj.parent.position
-        return ''
+        return ""
 
     @staticmethod
     def get_path():
@@ -54,8 +58,9 @@ class ActivityDetailsPathSerializer(BasePathSerializer):
             "name",
             "short_name",
             "um",
-            'parent',
-            'actividad_superior_nombre',
+            "parent",
+            "sum_in_parent",
+            "actividad_superior_nombre",
             "actividad_superior_posicion",
             "meta_2022",
             "meta_2023",
@@ -63,7 +68,7 @@ class ActivityDetailsPathSerializer(BasePathSerializer):
             "url",
         )
         extra_kwargs = {
-            #"parent": {"write_only": True},
+            # "parent": {"write_only": True},
             # "um": {"write_only": True},
         }
 
@@ -72,7 +77,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivityPathSerializer
     serializer_details_class = ActivityDetailsPathSerializer
-    
+
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = self.serializer_details_class
         return super().retrieve(request, *args, **kwargs)
