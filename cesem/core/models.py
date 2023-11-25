@@ -96,7 +96,7 @@ class Activity(models.Model):
         ordering = ("position",)
 
     position = models.CharField("posición", max_length=10)
-    name = models.CharField("nombre", max_length=100)
+    name = models.CharField("nombre", max_length=500)
     short_name = models.CharField("nombre corto", default="", max_length=100)
     parent = models.ForeignKey(
         "self",
@@ -106,7 +106,7 @@ class Activity(models.Model):
         blank=True,
         verbose_name="actividad superior",
     )
-    sum_in_parent = models.BooleanField('sumar en resumen', default=True)
+    sum_in_parent = models.BooleanField("sumar en resumen", default=True)
     um = models.CharField("unidad de medida", null=True, blank=True, max_length=50)
     meta_2022 = models.IntegerField("meta 2022", default=0)
     meta_2023 = models.IntegerField("meta 2023", default=0)

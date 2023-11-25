@@ -15,19 +15,20 @@ def get_columns_labels(view_model, colums):
 
 
 @register.filter
-def get_column_label(view_model, column_name):        
+def get_column_label(view_model, column_name):
     if column_name in view_model.get_serializer().fields:
         return view_model.get_serializer().fields[column_name].label
     return column_name
 
+
 @register.filter
 def get_is_hidden(view_model, column_name):
     meta = view_model.get_serializer().Meta
-    if 'custom_kwargs' in meta.__dict__:
+    if "custom_kwargs" in meta.__dict__:
         custom_kwargs = meta.custom_kwargs
         if custom_kwargs:
             if column_name in custom_kwargs:
-                if 'hidden' in custom_kwargs[column_name]:
+                if "hidden" in custom_kwargs[column_name]:
                     return True
     return False
 
@@ -46,6 +47,7 @@ def get_model_name_plural(value):
 def get_model_name(value):
     return value.get_serializer().Meta.model._meta.verbose_name.title()
 
+
 def get_count_position_points(activity):
     letters = list(activity.position)
     points = filter(lambda letter: letter == ".", letters)
@@ -53,8 +55,15 @@ def get_count_position_points(activity):
     points = len(points)
     return points
 
+
 @register.simple_tag
 def get_activity_class(activity):
+    # for components II and III logic
+    if (
+        activity.position.startswith("2.") or activity.position.startswith("3.")
+    ) and len(activity.position) == 5:
+        return ""
+
     points = get_count_position_points(activity)
     if points == 0:
         return "component"
@@ -76,23 +85,32 @@ def get_activity_data_value(activity, index_name, activities_data):
             if index_name in activities_data[activity_id]:
                 return activities_data[activity_id][index_name]
         points = get_count_position_points(activity)
+        # for components II and III logic
+        if (
+            activity.position.startswith("2.") or activity.position.startswith("3.")
+        ) and len(activity.position) == 3:
+            return 0
+
         if points < 2:
-            return ''
+            return ""
+
         return 0
+
 
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
 
+
 @register.filter
 def get_meta(activity, year):
     if year == 2022:
-        return activity.meta_2022    
+        return activity.meta_2022
     if year == 2023:
-        return activity.meta_2023    
+        return activity.meta_2023
     if year == 2024:
         return activity.meta_2024
-    return '{} no configurado, consultar con el administrador'.format(year)    
+    return "{} no configurado, consultar con el administrador".format(year)
 
 
 @register.simple_tag
@@ -100,11 +118,12 @@ def get_activity_progress_value(year, activity, activities_data):
     try:
         value = activities_data[activity.id]
         meta = get_meta(activity, year)
-        result = (value/meta)*100
-        result = '{}%'.format(str(round(result, 2)))
+        result = (value / meta) * 100
+        result = "{}%".format(str(round(result, 2)))
         return result
     except:
         return 0
+
 
 @register.simple_tag
 def get_activity_data_zone_value(activity, zone, activities_data):
@@ -128,18 +147,18 @@ def get_start_date_of_week(week_number, year):
 @register.filter
 def get_month(month_number):
     months_names = [
-        'enero',
-        'febrero',
-        'marzo',
-        'abril',
-        'mayo',
-        'junio',
-        'julio',
-        'agosto',
-        'septiembre',
-        'octubre',
-        'noviembre',
-        'diciembre'
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
     ]
 
     return months_names[month_number - 1]

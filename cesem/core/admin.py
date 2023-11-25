@@ -15,6 +15,7 @@ from core.models import (
     VisitGeneticImprovementVacuno,
     VisitGeneticImprovementAlpaca,
     VisitGeneticImprovementOvino,
+    VisitComponents,
 )
 
 
@@ -54,9 +55,9 @@ class VisitAdmin(admin.ModelAdmin):
     inlines = [
         VisitDetailInline,
     ]
-    list_display = ('visited_at','activity')
+    list_display = ("visited_at", "activity")
     list_filter = [
-        'visited_at',
+        "visited_at",
         "activity",
     ]
 
@@ -64,3 +65,4 @@ class VisitAdmin(admin.ModelAdmin):
 admin.site.register(VisitGeneticImprovementVacuno)
 admin.site.register(VisitGeneticImprovementOvino)
 admin.site.register(VisitGeneticImprovementAlpaca)
+admin.site.register(VisitComponents)

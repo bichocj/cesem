@@ -7,12 +7,14 @@ from .zones import ZonePathSerializer
 
 class VisitGeneticImprovementAlpacaPathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
+    comunidad = serializers.StringRelatedField(
+        many=False, source="production_unit.community"
+    )
+    sector = serializers.StringRelatedField(many=False, source="production_unit.sector")
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
     )
-    up_miembro = serializers.StringRelatedField(
-        many=False, source="up_member"
-    )
+    up_miembro = serializers.StringRelatedField(many=False, source="up_member")
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
     )
@@ -30,7 +32,8 @@ class VisitGeneticImprovementAlpacaPathSerializer(BasePathSerializer):
         fields = [
             "visited_at",
             "zona",
-            "up_responsable",
+            "comunidad",
+            "sector" "up_responsable",
             "up_miembro",
             "cesem_especialista",
             "cesem_responsable",

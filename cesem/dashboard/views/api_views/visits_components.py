@@ -7,6 +7,10 @@ from .zones import ZonePathSerializer
 
 class VisitComponentsPathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
+    comunidad = serializers.StringRelatedField(
+        many=False, source="production_unit.community"
+    )
+    sector = serializers.StringRelatedField(many=False, source="production_unit.sector")
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
     )
@@ -31,6 +35,8 @@ class VisitComponentsPathSerializer(BasePathSerializer):
             "year",
             "general_data",
             "zona",
+            "comunidad",
+            "sector",
             "up_responsable",
             "age",
             "tecnico_cadenas",

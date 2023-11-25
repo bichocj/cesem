@@ -2,37 +2,42 @@
 <br />
 {% load dashboard_extras %}
 <br />
-{% block title %}CESEM | administrador{% endblock %} 
+{% block title %}CESEM | administrador{% endblock %}
 
 {% block body %}
 
 
-<div >
+<div>
   <form action="." class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h2>Reporte Mensual</h2>
-      <div class="btn-group" role="group" aria-label="..." >
-        <button class="btn btn-default {% if inform_type == 'count' %}active{% endif%}" name="type" value="count" type="submit">conteo de actividades</button>
-        <button class="btn btn-default {% if inform_type == 'sum' %}active{% endif%}" name="type" value="sum" type="submit">suma de atenciones</button>      
+      <div class="btn-group" role="group" aria-label="...">
+        <button class="btn btn-default {% if inform_type == 'count' %}active{% endif%}" name="type" value="count"
+          type="submit">conteo de actividades / cant. de sesiones</button>
+        <button class="btn btn-default {% if inform_type == 'sum' %}active{% endif%}" name="type" value="sum"
+          type="submit">suma de atenciones / cant. de asistentes</button>
       </div>
     </div>
-    
+
     <div class="d-flex flex-column">
       <div class="d-flex">
-        <div class="btn-group" role="group" aria-label="..." >
-          <button class="btn btn-default {% if year_str == '2022' %}active{% endif%}" name="year" value="2022" type="submit">2022</button>
-          <button class="btn btn-default {% if year_str == '2023' %}active{% endif%}" name="year" value="2023" type="submit">2023</button>      
-          <button class="btn btn-default {% if year_str == '2024' %}active{% endif%}" name="year" value="2024" type="submit">2024</button>      
-        </div>      
+        <div class="btn-group" role="group" aria-label="...">
+          <button class="btn btn-default {% if year_str == '2022' %}active{% endif%}" name="year" value="2022"
+            type="submit">2022</button>
+          <button class="btn btn-default {% if year_str == '2023' %}active{% endif%}" name="year" value="2023"
+            type="submit">2023</button>
+          <button class="btn btn-default {% if year_str == '2024' %}active{% endif%}" name="year" value="2024"
+            type="submit">2024</button>
+        </div>
       </div>
 
       <div class="d-flex">
         <div>
-          Desde: 
+          Desde:
           {{default_from}}
         </div>
         <div class="ms-4">
-          Hasta: 
+          Hasta:
           {{default_to}}
         </div>
       </div>
@@ -70,7 +75,7 @@
 
 {% block script %}
 <script>
-  $( function() {
+  $(function () {
     $('#from-datepicker,#to-datepicker').datetimepicker({
       locale: 'es',
       "allowInputToggle": false,

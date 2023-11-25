@@ -7,12 +7,14 @@ from .zones import ZonePathSerializer
 
 class VisitGrassPathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
+    comunidad = serializers.StringRelatedField(
+        many=False, source="production_unit.community"
+    )
+    sector = serializers.StringRelatedField(many=False, source="production_unit.sector")
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
     )
-    up_miembro = serializers.StringRelatedField(
-        many=False, source="up_member"
-    )
+    up_miembro = serializers.StringRelatedField(many=False, source="up_member")
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
     )
@@ -30,6 +32,8 @@ class VisitGrassPathSerializer(BasePathSerializer):
         fields = [
             "visited_at",
             "zona",
+            "comunidad",
+            "sector",
             "up_responsable",
             "up_miembro",
             "cesem_especialista",
@@ -54,9 +58,7 @@ class VisitGrassDetailPathSerializer(BasePathSerializer):
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
     )
-    up_miembro = serializers.StringRelatedField(
-        many=False, source="up_member"
-    )
+    up_miembro = serializers.StringRelatedField(many=False, source="up_member")
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
     )
@@ -113,7 +115,7 @@ class VisitGrassViewSet(viewsets.ModelViewSet):
     queryset = (
         VisitGrass.objects.select_related("production_unit")
         .select_related("production_unit__zone")
-        .select_related("production_unit__person_responsable")        
+        .select_related("production_unit__person_responsable")
         .select_related("employ_specialist", "employ_responsable", "up_member")
         .select_related("activity")
         .all()

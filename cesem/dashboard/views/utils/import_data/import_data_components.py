@@ -4,8 +4,11 @@ from core.models import VisitComponents, Zone, Community, Activity, Sector
 import pandas as pd
 
 from .utils import HelperImport
+import logging
 
 baset_path = os.path.join(settings.BASE_DIR, "core", "management", "commands", "files")
+logger = logging.getLogger(__name__)
+
 mapping_activities = {
     "buenas prácticas de ordeño i": "2.1.1. BPO I",
     "buenas prácticas de ordeño ii": "2.1.2. BPO II",
@@ -57,6 +60,7 @@ class ImportComponents(HelperImport):
         data = df.to_dict()
         rows_count = len(data["N°"].keys())
         visits = []
+        print("data", data)
         for i in range(rows_count):
             data_parte_number = self.zero_if_nan(data["N° PARTE"][i])
             data_year = data["AÑO"][i]
@@ -118,20 +122,28 @@ class ImportComponents(HelperImport):
                         pedagogical_process=data_pedagogical_process,
                     )
                 )
+                logger.info("Procesando registro de componentes Nº: " + str(i + 1))
+
             except Zone.DoesNotExist:
-                msg = "fila " + str(i + 1) + " zona no encontrada:" + data_zone
+                msg = "fila " + str(i + 1) + " zona no encontrada:" + str(data_zone)
                 raise ValueError(msg)
             except Community.DoesNotExist:
                 msg = (
-                    "fila " + str(i + 1) + " comunidad no encontrada:" + data_community
+                    "fila "
+                    + str(i + 1)
+                    + " comunidad no encontrada:"
+                    + str(data_community)
                 )
                 raise ValueError(msg)
             except Sector.DoesNotExist:
-                msg = "fila " + str(i + 1) + " sector no encontrado:" + data_sector
+                msg = "fila " + str(i + 1) + " sector no encontrado:" + str(data_sector)
                 raise ValueError(msg)
             except Activity.DoesNotExist:
                 msg = (
-                    "fila " + str(i + 1) + " actividad no encontrada: " + data_activity
+                    "fila "
+                    + str(i + 1)
+                    + " actividad no encontrada: "
+                    + str(data_activity)
                 )
                 raise ValueError(msg)
             except Exception as e:
