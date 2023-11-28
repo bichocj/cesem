@@ -1,6 +1,6 @@
 from rest_framework import viewsets, serializers
 from django.db.models import F, Sum
-from core.models import ProductionUnit, VisitAnimalHealth, VisitGrass
+from core.models import ProductionUnit, VisitAnimalHealth, VisitGrass, VisitComponents
 from .utils import BasePathSerializer
 
 
@@ -10,6 +10,9 @@ class ProductionUnitPathSerializer(BasePathSerializer):
     sector = serializers.StringRelatedField(many=False)
     responsable = serializers.StringRelatedField(
         many=False, source="person_responsable"
+    )
+    dni = serializers.StringRelatedField(
+        many=False, source="person_responsable.dni"
     )
     miembro = serializers.StringRelatedField(many=False, source="person_member")
     tipologia = serializers.StringRelatedField(many=False, source="tipology")
@@ -27,6 +30,7 @@ class ProductionUnitPathSerializer(BasePathSerializer):
             "comunidad",
             "sector",
             "responsable",
+            "dni",
             "miembro",
             "tipologia",
             "es_pilot",
@@ -90,6 +94,26 @@ class VisitGrassPathSerializer(BasePathSerializer):
             "url",
         ]
 
+class VisitComponentsPathSerializer(BasePathSerializer):
+    fecha_visita = serializers.StringRelatedField(source="visited_at")
+    especialista = serializers.StringRelatedField(source="employ_specialist")
+    responsable = serializers.StringRelatedField(source="employ_responsable")
+    actividad = serializers.StringRelatedField(source="activity")
+
+    @staticmethod
+    def get_path():
+        return "visits-components"
+
+    class Meta:
+        model = VisitGrass
+        fields = [
+            "fecha_visita",
+            "especialista",
+            "responsable",
+            "actividad",
+            "url",
+        ]
+
 
 class SumaPastosPathSerializer(serializers.Serializer):
     has_intens_siembra = serializers.IntegerField()
@@ -135,6 +159,9 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     responsable = serializers.StringRelatedField(
         many=False, source="person_responsable"
     )
+    dni = serializers.StringRelatedField(
+        many=False, source="person_responsable.dni"
+    )
     miembro = serializers.StringRelatedField(many=False, source="person_member")
     tipologia = serializers.StringRelatedField(many=False, source="tipology")
     es_pilot = serializers.StringRelatedField(many=False, source="is_pilot")
@@ -142,6 +169,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     suma_pastos = serializers.SerializerMethodField()
     visitas_animales = serializers.SerializerMethodField()
     visitas_pastos = serializers.SerializerMethodField()
+    visitas_capacitaciones = serializers.SerializerMethodField()
 
     @staticmethod
     def get_path():
@@ -155,6 +183,11 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     def get_visitas_pastos(self, obj):
         data = VisitGrass.objects.filter(production_unit__id=obj.id)
         serializer = VisitGrassPathSerializer(instance=data, many=True)
+        return serializer.data
+
+    def get_visitas_capacitaciones(self, obj):        
+        data = VisitComponents.objects.filter(production_unit__id=obj.id)        
+        serializer = VisitComponentsPathSerializer(instance=data, many=True)
         return serializer.data
 
     def get_suma_pastos(self, obj):
@@ -212,17 +245,17 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
 
     def get_suma_animales(self, obj):
         data = VisitAnimalHealth.objects.filter(production_unit__id=obj.id).aggregate(
-            total_vacas=Sum("vaca"),
-            total_vaquillonas=Sum("vaquillona"),
-            total_vaquillas=Sum("vaquilla"),
-            total_terrenos=Sum("terreno"),
-            total_toretes=Sum("torete"),
-            total_toros=Sum("toro"),
-            total_vacunos=Sum("vacunos"),
-            total_ovinos=Sum("ovinos"),
-            total_alpacas=Sum("alpacas"),
-            total_llamas=Sum("llamas"),
-            total_canes=Sum("canes"),
+            total_vacas=Sum("vaca", default=0),
+            total_vaquillonas=Sum("vaquillona", default=0),
+            total_vaquillas=Sum("vaquilla", default=0),
+            total_terrenos=Sum("terreno", default=0),
+            total_toretes=Sum("torete", default=0),
+            total_toros=Sum("toro", default=0),
+            total_vacunos=Sum("vacunos", default=0),
+            total_ovinos=Sum("ovinos", default=0),
+            total_alpacas=Sum("alpacas", default=0),
+            total_llamas=Sum("llamas", default=0),
+            total_canes=Sum("canes", default=0),
         )
         serializer = SumaAnimalesPathSerializer(instance=data, many=False)
         return serializer.data
@@ -231,6 +264,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         model = ProductionUnit
         fields = (
             "responsable",
+            "dni",
             "miembro",
             "zona_nombre",
             "zone",
@@ -243,6 +277,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "suma_pastos",
             "visitas_animales",
             "visitas_pastos",
+            "visitas_capacitaciones",
         )
         extra_kwargs = {
             "zone": {"write_only": True},
