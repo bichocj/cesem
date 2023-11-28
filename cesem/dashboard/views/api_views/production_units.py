@@ -250,7 +250,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
 
 
 class ProductionUnitViewSet(viewsets.ModelViewSet):
-    queryset = ProductionUnit.objects.all()
+    queryset = ProductionUnit.objects.filter(is_official=True)
     serializer_class = ProductionUnitPathSerializer
     serializer_details_class = ProductionUnitDetailsPathSerializer
     filterset_fields = {

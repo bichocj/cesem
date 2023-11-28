@@ -172,6 +172,7 @@ class ProductionUnit(models.Model):
     )
     tipology = models.IntegerField("tipología de UP", default=0)
     is_pilot = models.BooleanField("UP es piloto?", default=False)
+    is_official = models.BooleanField("es oficial?", default=True)
 
     class Meta:
         verbose_name = "Unidad de Producción"

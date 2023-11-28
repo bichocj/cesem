@@ -103,6 +103,7 @@ class ImportComponents(HelperImport):
                     data_dni_responsible,
                     data_gender_responsible,
                     row=i + 1,
+                    is_component=True,
                 )
 
                 visits.append(
