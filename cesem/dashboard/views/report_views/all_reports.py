@@ -125,7 +125,6 @@ def report_weekly(request):
     default_to = "{}-12-20".format(year_str)
     inform_type_prev = request.GET.get("type_prev", "count")
     inform_type = request.GET.get("type", inform_type_prev)
-    print("inform type", inform_type)
 
     activities = Activity.objects.all().order_by("position")
 
@@ -214,7 +213,6 @@ def report_weekly(request):
 
     if inform_type == "sum":
         # cantidad de asistentes
-        print("tipo sum")
         components_data = (
             VisitComponents.objects.filter(
                 visited_at__gte=default_from, visited_at__lte=default_to
@@ -228,7 +226,6 @@ def report_weekly(request):
 
     else:
         # cantidad de capacitaciones que se dieron
-        print("otro tipo")
         components_data = (
             VisitComponents.objects.filter(
                 visited_at__gte=default_from, visited_at__lte=default_to
@@ -244,7 +241,6 @@ def report_weekly(request):
             .annotate(quantity=Count("visited_at", distinct=True))
             .order_by("week")
         )
-        print("semanal", components_data)
 
     data = list(
         chain(
@@ -293,14 +289,16 @@ def report_weekly(request):
 
 def report_monthly(request):
     currentdate = datetime.date.today()
-    year = int(request.GET.get("year", currentdate.year))
+    year_prev = int(request.GET.get("year_prev", currentdate.year))
+    year = int(request.GET.get("year", year_prev))
     year_str = str(year)
     prev_year_str = str(year - 1)
 
     default_from = "{}-12-21".format(prev_year_str)
     default_to = "{}-12-20".format(year_str)
 
-    inform_type = request.GET.get("type", "count")
+    inform_type_prev = request.GET.get("type_prev", "count")
+    inform_type = request.GET.get("type", inform_type_prev)
 
     activities = Activity.objects.all().order_by("position")
 
@@ -428,16 +426,14 @@ def report_monthly(request):
             .annotate(month=Case(*whens))
             .values(
                 "month",
-                # "visited_at",
                 "production_unit__zone",
                 "production_unit__community",
                 "production_unit__sector",
                 "activity__id",
             )
-            .annotate(quantity=Count("activity__id", distinct=True))
-            # .order_by("activity__id", "month")
+            .annotate(quantity=Count("visited_at", distinct=True))
+            .order_by("activity__id", "month")
         )
-        print("components data", components_data)
 
     data = list(
         chain(
@@ -471,13 +467,15 @@ def report_monthly(request):
 
 def report_yearly(request):
     currentdate = datetime.date.today()
-    year = int(request.GET.get("year", currentdate.year))
+    year_prev = int(request.GET.get("year_prev", currentdate.year))
+    year = int(request.GET.get("year", year_prev))
     year_str = str(year)
     prev_year_str = str(year - 1)
     default_from = "{}-12-21".format(prev_year_str)
     default_to = "{}-12-20".format(year_str)
 
-    inform_type = request.GET.get("type", "count")
+    inform_type_prev = request.GET.get("type_prev", "count")
+    inform_type = request.GET.get("type", inform_type_prev)
     activities = Activity.objects.all().order_by("position")
 
     animal_health_quantity_var = Count("id")
@@ -576,15 +574,13 @@ def report_yearly(request):
                 visited_at__gte=default_from, visited_at__lte=default_to
             )
             .values(
-                "visited_at",
                 "production_unit__zone",
                 "production_unit__community",
                 "production_unit__sector",
                 "activity__id",
             )
-            .distinct()
             .values("activity__id")
-            .annotate(quantity=Count("activity__id"))
+            .annotate(quantity=Count("visited_at"))
             .order_by("activity__id")
         )
 
@@ -610,14 +606,16 @@ def report_yearly(request):
 
 def report_zones(request):
     currentdate = datetime.date.today()
-    year = int(request.GET.get("year", currentdate.year))
+    year_prev = int(request.GET.get("year_prev", currentdate.year))
+    year = int(request.GET.get("year", year_prev))
     year_str = str(year)
     prev_year_str = str(year - 1)
 
     default_from = "{}-12-21".format(prev_year_str)
     default_to = "{}-12-20".format(year_str)
 
-    inform_type = request.GET.get("type", "count")
+    inform_type_prev = request.GET.get("type_prev", "count")
+    inform_type = request.GET.get("type", inform_type_prev)
 
     activities = Activity.objects.all().order_by("position")
     zones = Zone.objects.all().order_by("name")
@@ -712,15 +710,10 @@ def report_zones(request):
                 visited_at__gte=default_from, visited_at__lte=default_to
             )
             .values(
-                "visited_at",
                 "production_unit__zone",
-                "production_unit__community",
-                "production_unit__sector",
-                "activity__id",
+                "activity",
             )
-            .distinct()
-            .values("activity__id", "production_unit__zone")
-            .annotate(quantity=Count("activity__id"))
+            .annotate(quantity=Count("visited_at", distinct=True))
             .order_by("production_unit__zone")
         )
 
@@ -753,14 +746,16 @@ def report_zones(request):
 
 def report_community(request):
     currentdate = datetime.date.today()
-    year = int(request.GET.get("year", currentdate.year))
+    year_prev = int(request.GET.get("year_prev", currentdate.year))
+    year = int(request.GET.get("year", year_prev))
     year_str = str(year)
     prev_year_str = str(year - 1)
 
     default_from = "{}-12-21".format(prev_year_str)
     default_to = "{}-12-20".format(year_str)
 
-    inform_type = request.GET.get("type", "count")
+    inform_type_prev = request.GET.get("type_prev", "count")
+    inform_type = request.GET.get("type", inform_type_prev)
 
     activities = Activity.objects.all().order_by("position")
     communities = Community.objects.all().order_by("name")
@@ -855,15 +850,10 @@ def report_community(request):
                 visited_at__gte=default_from, visited_at__lte=default_to
             )
             .values(
-                "visited_at",
-                "production_unit__zone",
                 "production_unit__community",
-                "production_unit__sector",
-                "activity__id",
+                "activity",
             )
-            .distinct()
-            .values("activity__id", "production_unit__community")
-            .annotate(quantity=Count("activity__id"))
+            .annotate(quantity=Count("visited_at", distinct=True))
             .order_by("production_unit__community")
         )
 
@@ -900,7 +890,7 @@ def is_sub_activity(activity):
         activity.position.startswith("2.") or activity.position.startswith("3.")
     ) and len(activity.position) == 3:
         return True
-    
+
     letters = list(activity.position)
     points = filter(lambda letter: letter == ".", letters)
     points = list(points)

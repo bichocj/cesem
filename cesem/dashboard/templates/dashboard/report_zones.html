@@ -39,6 +39,8 @@
   <div>
     <h2>Reporte por Zonas</h2>
     <div class="btn-group" role="group" aria-label="...">
+      <input type="hidden" name="year_prev" value="{{year_str}}">
+      <input type="hidden" name="type_prev" value="{{inform_type}}">
       <button class="btn btn-default {% if inform_type == 'count' %}active{% endif%}" name="type" value="count"
         type="submit">conteo de actividades / cant. de sesiones</button>
       <button class="btn btn-default {% if inform_type == 'sum' %}active{% endif%}" name="type" value="sum"
