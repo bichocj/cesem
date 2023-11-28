@@ -47,7 +47,7 @@
 
 
 
-<table class="table table-bordered">
+<table class="table table-bordered" id="exportable">
   <thead>
     <tr>
       <th colspan="2">Actividad</th>
@@ -70,21 +70,6 @@
     {% endfor %}
   </tbody>
 </table>
+<button class="btn btn-primary"  onclick="ExportToExcel('xlsx','Reporte Mensual {{year_str}}.xlsx')">Exportar tabla a excel</button>
 
-{% endblock %}
-
-{% block script %}
-<script>
-  $(function () {
-    $('#from-datepicker,#to-datepicker').datetimepicker({
-      locale: 'es',
-      "allowInputToggle": false,
-      "showClose": false,
-      "showClear": false,
-      "showTodayButton": false,
-      viewMode: 'months',
-      "format": "YYYY-MM-DD",
-    });
-  });
-</script>
 {% endblock %}
