@@ -16,6 +16,7 @@ from core.models import (
     VisitGeneticImprovementAlpaca,
     VisitGeneticImprovementOvino,
     VisitComponents,
+    ProductionUnit,
 )
 
 
@@ -35,6 +36,7 @@ admin.site.register(SicknessObservation)
 admin.site.register(Zone)
 admin.site.register(Sector)
 admin.site.register(VisitGrass)
+admin.site.register(ProductionUnit)
 
 
 @admin.register(FilesChecksum)

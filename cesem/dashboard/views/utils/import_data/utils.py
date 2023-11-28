@@ -106,7 +106,6 @@ class HelperImport:
         if name in self.people_names:
             if dni == self.people_names[name].dni:
                 person = self.people_names[name]
-
         if person is None:
             try:
                 person = Person.objects.get(name=name, dni=dni)
@@ -133,6 +132,51 @@ class HelperImport:
                         msg += ", fila " + str(row)
                     raise Exception(msg)
         return person
+
+    def get_person_for_components(
+        self, name, dni=None, sex=None, creates_if_none=True, row=0
+    ):
+        sex_data = None
+        name = str(name).strip()
+        sex_data = Person.Sexs.MALE
+        if sex == "F":
+            sex_data = Person.Sexs.FEMALE
+
+        person = None
+        if not str(dni).isnumeric():
+            dni = 0
+
+        if name in self.people_names:
+            if dni == self.people_names[name].dni:
+                person = self.people_names[name]
+        created = False
+        if person is None:
+            try:
+                person = Person.objects.get(name=name, dni=dni)
+                if person.sex != sex_data:
+                    person.sex = sex_data
+                    person.save()
+            except Person.DoesNotExist:
+                if creates_if_none:
+                    created = True
+                    person = Person.objects.create(name=name, dni=dni, sex=sex_data)
+                    self.people_names[name] = person
+                else:
+                    msg = (
+                        "La persona " + name + " no esta entre las personas registradas"
+                    )
+                    if str(dni).isnumeric():
+                        msg = (
+                            "La persona "
+                            + name
+                            + " con dni "
+                            + str(dni)
+                            + " no esta entre las personas registradas"
+                        )
+                    if row > 0:
+                        msg += ", fila " + str(row)
+                    raise Exception(msg)
+        return person, created
 
     def get_zone(self, name, creates_if_none):
         zone = None
@@ -199,22 +243,40 @@ class HelperImport:
         data_tipology=0,
         data_is_pilot=False,
         row=0,
+        is_component=False,
     ):
         zone = self.get_zone(data_zone, creates_if_none=False)
         community = self.get_community(data_community, zone, creates_if_none=False)
         sector = self.get_sector(data_sector, community, creates_if_none=False)
-        up_responsable = self.get_person(
-            data_up_responsable_name,
-            data_up_responsable_dni,
-            data_up_responsable_sex,
-            creates_if_none=False,
-            row=row,
-        )
+        person_created = None
+        if is_component:
+            up_responsable, person_created = self.get_person_for_components(
+                data_up_responsable_name,
+                data_up_responsable_dni,
+                data_up_responsable_sex,
+                creates_if_none=True,
+                row=row,
+            )
+        else:
+            up_responsable = self.get_person(
+                data_up_responsable_name,
+                data_up_responsable_dni,
+                data_up_responsable_sex,
+                creates_if_none=False,
+                row=row,
+            )
+
+        is_official_var = True
+        if (
+            person_created
+        ):  # means responsable was created, so, it is not an official up
+            is_official_var = False
         production_unit, created = ProductionUnit.objects.get_or_create(
             zone=zone,
             community=community,
             sector=sector,
             person_responsable=up_responsable,
+            is_official=is_official_var,
         )
 
         if created:
