@@ -24,12 +24,10 @@
     <div class="d-flex flex-column">
       <div class="d-flex">
         <div class="btn-group" role="group" aria-label="...">
-          <button class="btn btn-default {% if year_str == '2022' %}active{% endif%}" name="year" value="2022"
-            type="submit">2022</button>
-          <button class="btn btn-default {% if year_str == '2023' %}active{% endif%}" name="year" value="2023"
-            type="submit">2023</button>
-          <button class="btn btn-default {% if year_str == '2024' %}active{% endif%}" name="year" value="2024"
-            type="submit">2024</button>
+          {% for year in filter_years_list %}
+            <button class="btn btn-default {% if year_str == year %}active{% endif%}" name="year" value={{year}}
+              type="submit">{{year}}</button>
+          {% endfor %}
         </div>
       </div>
 
@@ -54,8 +52,8 @@
     <tr>
       <th colspan="2">Actividad</th>
       <th>UM</th>
-      {% for w in month_number %}
-      <th><span>{{w|get_month}}</span></th>
+      {% for p in periods %}
+      <th><span title="{{p.from_p}} / {{p.to_p}}">{{p|get_month}}</span></th>
       {% endfor %}
     </tr>
   </thead>
@@ -65,8 +63,8 @@
       <td>{{a.position}}</td>
       <td style="white-space: nowrap;">{{a.name}}</td>
       <td>{{a.um}}</td>
-      {% for w in month_number %}
-      <td>{% get_activity_data_value a w activities_data %}</td>
+      {% for p in periods %}
+      <td>{% get_activity_data_value a p activities_data %}</td>
       {% endfor %}
     </tr>
     {% endfor %}

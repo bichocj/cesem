@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from rest_framework import routers
@@ -44,7 +45,7 @@ from .api_views.production_units import (
     ProductionUnitViewSet,
 )
 from .api_views.files_checksum import FilesChecksumPathSerializer, FilesChecksumViewSet
-
+from core.models import AnualPeriod
 
 @login_required
 def home_view(request):
@@ -68,6 +69,33 @@ def upload_file(request, file_type):
         except Exception as e:
             message_error = str(e)
     return render(request, "dashboard/import_visits.html", locals())
+
+@login_required
+def change_anual_period(request):
+    from_anual_period_object = AnualPeriod.objects.first()
+    from_anual_period = from_anual_period_object.date_from
+
+    # verificando si el from se trata de una fecha que solo existe en bisiesto
+    if from_anual_period.month == 2 and from_anual_period.day == 29:
+        to_anual_period = datetime.date(from_anual_period.year+1, 2, 28)
+    else:
+        to_anual_period = from_anual_period.replace(year=from_anual_period.year+1) - datetime.timedelta(days=1)
+    
+    if "POST" == request.method:
+        from_anual_period_str = request.POST.get("from_anual_period")
+        from_anual_period = datetime.datetime.strptime(from_anual_period_str, '%Y-%m-%d').date()
+
+        from_anual_period_object.date_from = from_anual_period
+        from_anual_period_object.save()
+
+        # verificando si el from se trata de una fecha que solo existe en bisiesto
+        if from_anual_period.month == 2 and from_anual_period.day == 29:
+            to_anual_period = datetime.date(from_anual_period.year+1, 2, 28)
+        else:
+            to_anual_period = from_anual_period.replace(year=from_anual_period.year+1) - datetime.timedelta(days=1)
+        
+
+    return render(request, "dashboard/anual_period.html", locals())
 
 
 people_path = PersonPathSerializer.get_path()

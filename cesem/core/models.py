@@ -756,3 +756,10 @@ class FilesChecksum(models.Model):
         verbose_name = "Archivo Subido"
         verbose_name_plural = "Archivos Subidos"
         ordering = ("created_at",)
+
+
+class AnualPeriod(models.Model):
+    date_from = models.DateField("fecha de inicio de periodo")
+    class Meta:
+        verbose_name = "Periodo anual"
+        verbose_name_plural = "Periodo anual"

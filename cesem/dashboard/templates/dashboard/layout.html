@@ -188,6 +188,12 @@
               Farmacos
             </a>
           </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'change-period/'|active_if_path_match:request}}"
+              href="{% url 'dashboard:change_anual_period' %}">
+              Modificar periodo anual
+            </a>
+          </li>
         </ul>
         <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
           Subida de información
@@ -237,15 +243,15 @@
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
   <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
-<script>
-  function ExportToExcel(type, fn, dl) {
-       var elt = document.getElementById('exportable');
-       var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-       return dl ?
-         XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
-         XLSX.writeFile(wb, fn || ('cesem-.' + (type || 'xlsx')));
+  <script>
+    function ExportToExcel(type, fn, dl) {
+      var elt = document.getElementById('exportable');
+      var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+      return dl ?
+        XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+        XLSX.writeFile(wb, fn || ('cesem-.' + (type || 'xlsx')));
     }
-</script>
+  </script>
 
   {% block script %}
   {% endblock %}
@@ -263,7 +269,16 @@
           }
         })
       }
+      $('#from-datepicker,#to-datepicker,#from-anual-period').datetimepicker({
+        locale: 'es',
+        "allowInputToggle": false,
+        "showClose": false,
+        "showClear": false,
+        "showTodayButton": false,
+        "format": "YYYY-MM-DD",
+      });
     })
+
   </script>
 </body>
 

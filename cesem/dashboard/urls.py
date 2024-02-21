@@ -16,6 +16,7 @@ urls_reports = [
 urlpatterns = [
     path("", view=views.home_view),
     path("import-xls/<slug:file_type>/", view=views.upload_file, name="upload_file"),
+    path("change-period/", view=views.change_anual_period, name="change_anual_period"),
     path(r"api/", include(views.router.urls)),
     path(r"reports/", include(urls_reports)),
 ]

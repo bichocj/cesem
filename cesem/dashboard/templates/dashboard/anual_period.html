@@ -1,0 +1,41 @@
+{% extends 'dashboard/layout.html' %}
+<br />
+{% load dashboard_extras %}
+<br />
+{% block title %}CESEM | administrador{% endblock %}
+
+{% block body %}
+
+{% if message_error %}
+<div class="alert alert-danger" role="alert">
+  <strong>No se proceso el archivo</strong>, se encontró el siguiente error: {{message_error}}
+</div>
+{% endif %}
+{% if message_success %}
+<div class="alert alert-success" role="alert">
+  <strong>Se proceso el archivo</strong>, {{message_success}}
+</div>
+{% endif %}
+<h2>Cambiar periodo anual</h2>
+<br/>
+<h3>Periodo anual actual:</h3>
+<span>{{from_anual_period}} - {{to_anual_period}}</span>
+<br/>
+<br/>
+
+
+<form action="." method="post" enctype="multipart/form-data" class="form-inline">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="exampleInputName2">Nueva fecha de inicio de periodo: </label>
+    <input type="text" class="form-control" id="from-anual-period" name="from_anual_period" size="30" value="{{from_anual_period|date:'Y-m-d'}}">
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+<br/>
+<br/>
+<span>* Para reportes: Considerar que este periodo se aplicará para todos los años.</span>
+
+
+{% endblock %}

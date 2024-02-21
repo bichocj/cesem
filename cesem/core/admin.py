@@ -17,6 +17,7 @@ from core.models import (
     VisitGeneticImprovementOvino,
     VisitComponents,
     ProductionUnit,
+    AnualPeriod
 )
 
 
@@ -68,3 +69,4 @@ admin.site.register(VisitGeneticImprovementVacuno)
 admin.site.register(VisitGeneticImprovementOvino)
 admin.site.register(VisitGeneticImprovementAlpaca)
 admin.site.register(VisitComponents)
+admin.site.register(AnualPeriod)

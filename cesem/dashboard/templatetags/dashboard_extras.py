@@ -2,6 +2,7 @@ import locale
 from datetime import datetime
 from django import template
 from django.template import loader
+from core.models import AnualPeriod
 
 register = template.Library()
 
@@ -80,6 +81,10 @@ def get_activity_data_value(activity, index_name, activities_data):
         int(activity.position)  # is Principal actitivy
         return ""
     except:
+        #para reporte mensual
+        if type(index_name) == dict:
+            index_name = index_name.get('month')
+
         activity_id = activity.id
         if activity_id in activities_data:
             if index_name in activities_data[activity_id]:
@@ -91,6 +96,27 @@ def get_activity_data_value(activity, index_name, activities_data):
         ) and len(activity.position) == 3:
             return 0
 
+        if points < 2:
+            return ""
+
+        return 0
+
+@register.simple_tag
+def get_yearly_activity_data_value(activity, activities_data):
+    try:
+        int(activity.position)  # is Principal actitivy
+        return ""
+    except:
+        activity_id = activity.id
+        if activity_id in activities_data:
+            return activities_data.get(activity.id)
+        
+        points = get_count_position_points(activity)
+        # for components II and III logic
+        if (
+            activity.position.startswith("2.") or activity.position.startswith("3.")
+        ) and len(activity.position) == 3:
+            return 0
         if points < 2:
             return ""
 
@@ -122,6 +148,15 @@ def get_activity_progress_value(year, activity, activities_data):
         result = "{}%".format(str(round(result, 2)))
         return result
     except:
+        points = get_count_position_points(activity)
+        # for components II and III logic
+        if (
+            activity.position.startswith("2.") or activity.position.startswith("3.")
+        ) and len(activity.position) == 3:
+            return 0
+        if points < 2:
+            return ""
+
         return 0
 
 
@@ -139,26 +174,30 @@ def get_activity_data_zone_value(activity, zone, activities_data):
 
 
 @register.filter
-def get_start_date_of_week(week_number, year):
-    start_of_week = datetime.strptime(f"{year}-W{week_number}-1", "%Y-W%W-%w").date()
+def get_start_date_of_week(week_number):
+    start_of_week = datetime.strptime(
+        f"{week_number[1]}-W{week_number[0]}-1", "%Y-W%W-%w"
+    ).date()
     return start_of_week
 
 
 @register.filter
-def get_month(month_number):
+def get_month(month_period):
+    _,month_number,_ = month_period.get('from_p').split('-')
+    month_number = int(month_number) 
     months_names = [
-        "enero",
-        "febrero",
-        "marzo",
-        "abril",
-        "mayo",
-        "junio",
-        "julio",
-        "agosto",
-        "septiembre",
-        "octubre",
-        "noviembre",
-        "diciembre",
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre",
     ]
 
     return months_names[month_number - 1]

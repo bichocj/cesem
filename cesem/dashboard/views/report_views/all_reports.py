@@ -1,4 +1,6 @@
 import datetime
+import calendar
+from dateutil.relativedelta import relativedelta
 from core.models import (
     Activity,
     VisitAnimalHealth,
@@ -9,36 +11,13 @@ from core.models import (
     VisitGeneticImprovementOvino,
     VisitGeneticImprovementAlpaca,
     VisitComponents,
+    AnualPeriod
 )
-from django.db.models import F, Sum, Case, When, Value, Q, Count
-from django.db.models.functions import ExtractWeek, Round
+from django.db.models import F, Sum, Case, When, Value, Q, Count, CharField
+from django.db.models.functions import ExtractWeek, Round, ExtractYear, Concat
 from django.shortcuts import render
 from itertools import chain
 
-"""
-mapping_activity_quantity = {
-    "instalación de parcelas de avena forrajera asociado con vicia": "avena_vicia_planted_hectares",
-    "instalación de parcelas de avena forrajera": "avena_planted_hectares",
-    "entrega de semilla de avena tayco": "oat_kg",
-    "entrega de semillas de vicia": "vicia_kg",
-    "entrega de fertilizante nitrogenado": "fertilizer",
-    "preparación de terreno para siembra del cultivo anual": "plow_hours",  # sum "dredge_hours" after
-    "instalación de alfalfa + dactylis": "alfalfa_dactylis_planted_hectares",
-    "instalación de rye grass + trébol blanco": "ryegrass_trebol_planted_hectares",
-    "entrega de semilla de alfalfa (25 Kg/Ha)": "alfalfa_kg",
-    "entrega de semilla de dactylis (5 Kg/Ha)": "dactylis_kg",
-    "entrega de semilla de ryegrass (20 Kg/Ha)": "ryegrass_kg",
-    "entrega de semilla de trébol blanco (5 Kg/Ha)": "trebol_b_kg",
-    # "adquisición de fertilizante fosforado (02 bolsas/ha) Zona 9": "fertilizer",
-    "preparación de terreno para siembra del cultivo de pastos perennes": "plow_hours",  # sum "dredge_hours" after
-    "curso taller en instalación de pastos anuales y perennes (parcelas demostrativas)": "technical_training_perennial",  # sum "technical_training_anual" after
-    "curso taller en manejo y conservación de forrajes cultivados": "technical_training_conservation",
-    "asistencia técnica": "technical_assistance",
-    "evaluación de intensión de siembra de cultivos anuales y perennes": "planting_intention_hectares",
-    "evaluación de cosecha de pastos cultivados anuales (monitoreo)": "anual_yield",
-    "evaluación de cosecha de pastos cultivados perennes (monitoreo)": "perennial_yield",
-}
-"""
 grass_quantity_var_sum = Round(
     Sum(
         F("planting_intention_hectares")
@@ -98,6 +77,7 @@ ovino_quantity_var_sum = Sum(
     + F("baby_deaths")
     + F("ovinos_number")
 )
+
 alpaca_quantity_var_sum = Sum(
     F("alpacas_empadradas_number")
     + F("training_male_attendance")
@@ -110,24 +90,9 @@ alpaca_quantity_var_sum = Sum(
     + F("male_baby")
     + F("female_baby")
 )
-components_quantity_var_sum = Sum(F("quantity"))
 
 
-def report_weekly(request):
-    # TODO: create a function to replace year_prev, inform_type_prev
-    currentdate = datetime.date.today()
-    year_prev = int(request.GET.get("year_prev", currentdate.year))
-    year = int(request.GET.get("year", year_prev))
-    year_str = str(year)
-    prev_year_str = str(year - 1)
-
-    default_from = "{}-12-21".format(prev_year_str)
-    default_to = "{}-12-20".format(year_str)
-    inform_type_prev = request.GET.get("type_prev", "count")
-    inform_type = request.GET.get("type", inform_type_prev)
-
-    activities = Activity.objects.all().order_by("position")
-
+def get_weekly_data(from_datepicker, to_datepicker, inform_type):
     animal_health_quantity_var = Count("id")
     grass_quantity_var = Count("id")
     vacuno_quantity_var = Count("id")
@@ -143,103 +108,73 @@ def report_weekly(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
-        .annotate(week=ExtractWeek("visited_at"))
-        .values(
-            "id",
-            "activity__id",
-            "week",
-        )
+        .values("activity__id", "visited_at")
         .annotate(quantity=animal_health_quantity_var)
-        .order_by("week")
+        .order_by("visited_at")
     )
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
-        .annotate(week=ExtractWeek("visited_at"))
-        .values(
-            "id",
-            "activity__id",
-            "week",
-        )
+        .values("activity__id", "visited_at")
         .annotate(quantity=grass_quantity_var)
-        .order_by("week")
+        .order_by("visited_at")
     )
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
-        .annotate(week=ExtractWeek("visited_at"))
-        .values(
-            "id",
-            "activity__id",
-            "week",
-        )
+        .values("activity__id", "visited_at")
         .annotate(quantity=vacuno_quantity_var)
-        .order_by("week")
+        .order_by("visited_at")
     )
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
-        .annotate(week=ExtractWeek("visited_at"))
-        .values(
-            "id",
-            "activity__id",
-            "week",
-        )
+        .values("activity__id", "visited_at")
         .annotate(quantity=ovino_quantity_var)
-        .order_by("week")
+        .order_by("visited_at")
     )
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
-        .annotate(week=ExtractWeek("visited_at"))
-        .values(
-            "id",
-            "activity__id",
-            "week",
-        )
+        .values("activity__id", "visited_at")
         .annotate(quantity=alpaca_quantity_var)
-        .order_by("week")
+        .order_by("visited_at")
     )
 
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
             VisitComponents.objects.filter(
-                visited_at__gte=default_from, visited_at__lte=default_to
+                visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
-            .annotate(week=ExtractWeek("visited_at"))
-            .values("id", "activity__id", "week")
+            .values("id", "activity__id", "visited_at")
             .annotate(quantity=Count("id"))
-            .order_by("week")
+            .order_by("visited_at")
         )
-        print("components_data", components_data)
 
     else:
         # cantidad de capacitaciones que se dieron
         components_data = (
             VisitComponents.objects.filter(
-                visited_at__gte=default_from, visited_at__lte=default_to
+                visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
-            .annotate(week=ExtractWeek("visited_at"))
+            .annotate(location_concat=Concat(F('production_unit__zone'), F('production_unit__community'), F('production_unit__sector'), output_field=CharField()))
             .values(
-                "week",
-                "production_unit__zone",
-                "production_unit__community",
-                "production_unit__sector",
+                "visited_at",
                 "activity__id",
             )
-            .annotate(quantity=Count("visited_at", distinct=True))
-            .order_by("week")
+            .annotate(quantity=Count('location_concat', distinct=True))
+            .order_by("visited_at")
         )
 
     data = list(
@@ -253,76 +188,141 @@ def report_weekly(request):
         )
     )
 
-    activities_data = {}
+    return data
+
+
+def get_weeks_number(from_week_year, to_week_year):
     weeks_number = {}
+    week_from, year_from = from_week_year
+    week_to, year_to = to_week_year
 
-    min_week, max_week, first_week = 0, 0, 0
-    for s in data:
-        activity_key = s.get("activity__id")
-        week_key = s.get("week")
-        value = s.get("quantity")
-        if not first_week:
-            first_week = True
-            min_week = week_key
-            max_week = week_key
+    for year in range(year_from, year_to + 1):
+        week_from_iter = week_from if year == year_from else 1
+        week_to_iter = week_to if year == year_to else get_last_week_of_year(year)
+        for week in range(week_from_iter, week_to_iter + 1):
+            weeks_number[(week, year)]= ""
 
-        if activity_key not in activities_data:
-            activities_data[activity_key] = {}
+    # todas las semanas existentes dentro del from y el to
+    return weeks_number
 
-        if week_key in activities_data[activity_key]:
-            activities_data[activity_key][week_key] += value
+
+def get_last_week_of_year(year):
+    last_day = datetime.datetime(year, 12, 31)
+    return last_day.isocalendar()[1]
+
+
+def get_week_year_of(date_str):
+    if isinstance(date_str, str):
+        date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+        return (date.isocalendar()[1], date.isocalendar()[0])
+
+
+def get_activities_data(data, activities):
+    """
+    Format:
+    {
+        'activity_key':{ 
+            ('week', 'year'): value
+        },
+        'activity_key':{ 
+			('week', 'year'): value
+		}
+    }
+    """
+    activities_data = {}
+    for d in data:
+        activity_id = d.get('activity__id')
+        visited_at = d.get('visited_at')
+        quantity = d.get('quantity')
+        year, week, _ = visited_at.isocalendar()
+
+        if activity_id in activities_data:
+            if (week, year) in activities_data[activity_id]:
+                activities_data[activity_id][(week, year)] += quantity
+            else:
+                activities_data[activity_id][(week, year)] = quantity
         else:
-            activities_data[activity_key][week_key] = value
-
-        if week_key > max_week:
-            max_week = week_key
-
-    for week_key in range(min_week, max_week + 1):
-        weeks_number[
-            week_key
-        ] = ""  # todas las semanas existentes en la data de animales + pastos, sin repetirse, mas las semanas faltantes
+            activities_data[activity_id] = {}
+            activities_data[activity_id][(week, year)] = quantity
 
     sub_activity_data = get_data_of_sub_activity(activities, activities_data)
     activities_data.update(sub_activity_data)
-    return render(request, "dashboard/report_weekly.html", locals())
+
+    return activities_data
 
 
-def report_monthly(request):
-    currentdate = datetime.date.today()
-    year_prev = int(request.GET.get("year_prev", currentdate.year))
-    year = int(request.GET.get("year", year_prev))
-    year_str = str(year)
-    prev_year_str = str(year - 1)
+def get_anual_period():
+    from_anual_period_object = AnualPeriod.objects.first()
+    from_anual_period = from_anual_period_object.date_from
 
-    default_from = "{}-12-21".format(prev_year_str)
-    default_to = "{}-12-20".format(year_str)
+    if from_anual_period.month == 2 and from_anual_period.day == 29:
+        to_anual_period = datetime.date(from_anual_period.year+1, 2, 28)
+    else:
+        to_anual_period = from_anual_period.replace(year=from_anual_period.year+1) - datetime.timedelta(days=1)
+    
+    return from_anual_period, to_anual_period
 
-    inform_type_prev = request.GET.get("type_prev", "count")
-    inform_type = request.GET.get("type", inform_type_prev)
 
-    activities = Activity.objects.all().order_by("position")
+def get_last_years(from_anual_period):
+    period_year = from_anual_period.year
 
-    periods = [
-        {"month": 1, "from": prev_year_str + "-12-21", "to": year_str + "-01-20"},
-        {"month": 2, "from": year_str + "-01-21", "to": year_str + "-02-20"},
-        {"month": 3, "from": year_str + "-02-21", "to": year_str + "-03-20"},
-        {"month": 4, "from": year_str + "-03-21", "to": year_str + "-04-20"},
-        {"month": 5, "from": year_str + "-04-21", "to": year_str + "-05-20"},
-        {"month": 6, "from": year_str + "-05-21", "to": year_str + "-06-20"},
-        {"month": 7, "from": year_str + "-06-21", "to": year_str + "-07-20"},
-        {"month": 8, "from": year_str + "-07-21", "to": year_str + "-08-20"},
-        {"month": 9, "from": year_str + "-08-21", "to": year_str + "-09-20"},
-        {"month": 10, "from": year_str + "-09-21", "to": year_str + "-10-20"},
-        {"month": 11, "from": year_str + "-10-21", "to": year_str + "-11-20"},
-        {"month": 12, "from": year_str + "-11-21", "to": year_str + "-12-20"},
-    ]
+    return [str(period_year - 2), str(period_year - 1), str(period_year)]
 
+
+def get_current_period(year, from_anual_period, to_anual_period):
+    month_from_period = from_anual_period.month
+    day_from_period = from_anual_period.day
+    month_to_period = to_anual_period.month
+    day_to_period = to_anual_period.day
+
+    # para el caso de que alguna de las fechas haya sido 29 pero no exista en el año actual
+    if day_from_period == 29 and month_from_period == 2 and not calendar.isleap(year):
+        default_from = datetime.date(year, 2, 28)
+    else:
+        default_from = datetime.date(year, month_from_period, day_from_period)
+    
+    if month_from_period == 1 and day_from_period == 1:
+        default_to_year = year
+    else:
+        default_to_year = year + 1
+    
+    # para el caso de que alguna de las fechas haya sido 29 pero no exista en el año actual
+    if day_to_period == 29 and month_to_period == 2 and not calendar.isleap(default_to_year):
+        default_to = datetime.date(default_to_year, 2, 28)
+    else:
+        default_to = datetime.date(default_to_year, month_to_period, day_to_period)
+    
+    return default_from.strftime('%Y-%m-%d'), default_to.strftime('%Y-%m-%d')
+
+
+def generate_period_list(from_date, to_date):
+    # Convertir las fechas de entrada a objetos datetime.date
+    from_date_obj = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
+    to_date_obj = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
+
+    periods = []
+
+    current_from = from_date_obj
+    current_to = (from_date_obj  + relativedelta(months=1)) - datetime.timedelta(days=1)
+    for i in range(12):
+        periods.append({
+            "month": i+1,
+            "from_p": current_from.strftime('%Y-%m-%d'),
+            "to_p": current_to.strftime('%Y-%m-%d')
+        })
+        current_from = current_to + datetime.timedelta(days=1)
+        current_to = (current_from  + relativedelta(months=1)) - datetime.timedelta(days=1)
+
+    return periods
+
+
+def get_monthly_data(default_from, default_to, periods, inform_type):
     whens = []
     for period in periods:
         whens.append(
             When(
-                Q(visited_at__gte=period.get("from"))
-                & Q(visited_at__lte=period.get("to")),
+                Q(visited_at__gte=period.get("from_p"))
+                & Q(visited_at__lte=period.get("to_p")),
                 then=Value(period.get("month")),
             )
         )
@@ -445,9 +445,12 @@ def report_monthly(request):
             components_data,
         )
     )
+    return data
 
+
+def get_monthly_activities_data(data, activities):
     activities_data = {}
-    month_number = {}
+
     for s in data:
         activity_key = s.get("activity__id")
         month_key = s.get("month")
@@ -455,29 +458,18 @@ def report_monthly(request):
 
         if activity_key not in activities_data:
             activities_data[activity_key] = {}
-        activities_data[activity_key][month_key] = value
-
-        month_number[month_key] = ""
+        if activities_data[activity_key].get(month_key): #este caso se ha agregado porque en componentes se vio el caso que habian 2 valores para la misma celda, por tanto se sumarán
+            activities_data[activity_key][month_key] += value
+        else:
+            activities_data[activity_key][month_key] = value
 
     sub_activity_data = get_data_of_sub_activity(activities, activities_data)
     activities_data.update(sub_activity_data)
 
-    return render(request, "dashboard/report_monthly.html", locals())
+    return activities_data
 
 
-def report_yearly(request):
-    currentdate = datetime.date.today()
-    year_prev = int(request.GET.get("year_prev", currentdate.year))
-    year = int(request.GET.get("year", year_prev))
-    year_str = str(year)
-    prev_year_str = str(year - 1)
-    default_from = "{}-12-21".format(prev_year_str)
-    default_to = "{}-12-20".format(year_str)
-
-    inform_type_prev = request.GET.get("type_prev", "count")
-    inform_type = request.GET.get("type", inform_type_prev)
-    activities = Activity.objects.all().order_by("position")
-
+def get_yearly_data(default_from, default_to, inform_type):
     animal_health_quantity_var = Count("id")
     grass_quantity_var = Count("id")
     vacuno_quantity_var = Count("id")
@@ -579,8 +571,7 @@ def report_yearly(request):
                 "production_unit__sector",
                 "activity__id",
             )
-            .values("activity__id")
-            .annotate(quantity=Count("visited_at"))
+            .annotate(quantity=Count("visited_at", distinct=True))
             .order_by("activity__id")
         )
 
@@ -594,25 +585,103 @@ def report_yearly(request):
             components_data,
         )
     )
+    return data
 
+
+def get_yearly_activities_data(data, activities):
     activities_data = {}
     for s in data:
         activity_key = s.get("activity__id")
         value = s.get("quantity")
-        activities_data[activity_key] = value
+        if activities_data.get(activity_key): #este caso se ha agregado porque en componentes se vio el caso que habian 2 valores para la misma celda, por tanto se sumarán
+            activities_data[activity_key] += value    
+        else:
+            activities_data[activity_key] = value
+
+    sub_activity_data = {}
+    for a in activities:
+        if is_sub_activity(a):
+            sub_activity = a
+            for activity_key in activities_data:
+                if activity_is_in_sub_activity(activities, activity_key, sub_activity):
+                    if sub_activity.id not in sub_activity_data:
+                        sub_activity_data[sub_activity.id] = 0
+                    at = activities.get(id=activity_key)
+                    if at.sum_in_parent:
+                        sub_activity_data[sub_activity.id] += activities_data[activity_key]
+    
+    activities_data.update(sub_activity_data)
+    
+    return activities_data
+
+
+def report_weekly(request):
+    currentdate = datetime.date.today()
+    default_from = "{}-01-01".format(currentdate.year)
+    default_to = currentdate.strftime("%Y-%m-%d")
+    from_datepicker = request.GET.get("from_datepicker", default_from)
+    to_datepicker = request.GET.get("to_datepicker", default_to)
+
+    # TODO: create a function to replace year_prev, inform_type_prev
+    inform_type_prev = request.GET.get("type_prev", "count")
+    inform_type = request.GET.get("type", inform_type_prev)
+
+    activities = Activity.objects.all().order_by("position")
+
+    data = get_weekly_data(from_datepicker, to_datepicker, inform_type)
+    activities_data = get_activities_data(data, activities)
+    weeks_number = get_weeks_number(get_week_year_of(from_datepicker), get_week_year_of(to_datepicker))
+
+    return render(request, "dashboard/report_weekly.html", locals())
+
+
+def report_monthly(request):
+    from_anual_period, to_anual_period = get_anual_period()
+    filter_years_list = get_last_years(from_anual_period)
+
+    year_prev = int(request.GET.get("year_prev", from_anual_period.year))
+    year = int(request.GET.get("year", year_prev))
+    year_str = str(year)
+    default_from, default_to = get_current_period(year, from_anual_period, to_anual_period)
+
+    inform_type_prev = request.GET.get("type_prev", "count")
+    inform_type = request.GET.get("type", inform_type_prev)
+
+    activities = Activity.objects.all().order_by("position")
+    periods = generate_period_list(default_from, default_to)
+
+    data = get_monthly_data(default_from, default_to, periods, inform_type)
+    activities_data = get_monthly_activities_data(data, activities)
+
+    return render(request, "dashboard/report_monthly.html", locals())
+
+
+def report_yearly(request):
+    from_anual_period, to_anual_period = get_anual_period()
+    filter_years_list = get_last_years(from_anual_period)
+
+    year_prev = int(request.GET.get("year_prev", from_anual_period.year))
+    year = int(request.GET.get("year", year_prev))
+    year_str = str(year)
+
+    default_from, default_to = get_current_period(year, from_anual_period, to_anual_period)
+
+    inform_type_prev = request.GET.get("type_prev", "count")
+    inform_type = request.GET.get("type", inform_type_prev)
+    activities = Activity.objects.all().order_by("position")
+
+    data = get_yearly_data(default_from, default_to, inform_type)
+    activities_data = get_yearly_activities_data(data, activities)
 
     return render(request, "dashboard/report_yearly.html", locals())
 
 
 def report_zones(request):
     currentdate = datetime.date.today()
-    year_prev = int(request.GET.get("year_prev", currentdate.year))
-    year = int(request.GET.get("year", year_prev))
-    year_str = str(year)
-    prev_year_str = str(year - 1)
-
-    default_from = "{}-12-21".format(prev_year_str)
-    default_to = "{}-12-20".format(year_str)
+    default_from = "{}-01-01".format(currentdate.year)
+    default_to = currentdate.strftime("%Y-%m-%d")
+    from_datepicker = request.GET.get("from_datepicker", default_from)
+    to_datepicker = request.GET.get("to_datepicker", default_to)
 
     inform_type_prev = request.GET.get("type_prev", "count")
     inform_type = request.GET.get("type", inform_type_prev)
@@ -634,7 +703,7 @@ def report_zones(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -646,7 +715,7 @@ def report_zones(request):
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -658,7 +727,7 @@ def report_zones(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -670,7 +739,7 @@ def report_zones(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -682,7 +751,7 @@ def report_zones(request):
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -696,7 +765,7 @@ def report_zones(request):
         # cantidad de asistentes
         components_data = (
             VisitComponents.objects.filter(
-                visited_at__gte=default_from, visited_at__lte=default_to
+                visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values("activity__id", "production_unit__zone")
             .annotate(quantity=Count("id"))
@@ -707,7 +776,7 @@ def report_zones(request):
         # cantidad de capacitaciones que se dieron
         components_data = (
             VisitComponents.objects.filter(
-                visited_at__gte=default_from, visited_at__lte=default_to
+                visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values(
                 "production_unit__zone",
@@ -746,13 +815,10 @@ def report_zones(request):
 
 def report_community(request):
     currentdate = datetime.date.today()
-    year_prev = int(request.GET.get("year_prev", currentdate.year))
-    year = int(request.GET.get("year", year_prev))
-    year_str = str(year)
-    prev_year_str = str(year - 1)
-
-    default_from = "{}-12-21".format(prev_year_str)
-    default_to = "{}-12-20".format(year_str)
+    default_from = "{}-01-01".format(currentdate.year)
+    default_to = currentdate.strftime("%Y-%m-%d")
+    from_datepicker = request.GET.get("from_datepicker", default_from)
+    to_datepicker = request.GET.get("to_datepicker", default_to)
 
     inform_type_prev = request.GET.get("type_prev", "count")
     inform_type = request.GET.get("type", inform_type_prev)
@@ -774,7 +840,7 @@ def report_community(request):
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -786,7 +852,7 @@ def report_community(request):
 
     grass_data = (
         VisitGrass.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -798,7 +864,7 @@ def report_community(request):
 
     genetic_improvement_vacuno_data = (
         VisitGeneticImprovementVacuno.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -810,7 +876,7 @@ def report_community(request):
 
     genetic_improvement_ovino_data = (
         VisitGeneticImprovementOvino.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -822,7 +888,7 @@ def report_community(request):
 
     genetic_improvement_alpaca_data = (
         VisitGeneticImprovementAlpaca.objects.filter(
-            visited_at__gte=default_from, visited_at__lte=default_to
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
         )
         .values(
             "activity",
@@ -836,7 +902,7 @@ def report_community(request):
         # cantidad de asistentes
         components_data = (
             VisitComponents.objects.filter(
-                visited_at__gte=default_from, visited_at__lte=default_to
+                visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values("activity__id", "production_unit__community")
             .annotate(quantity=Count("id"))
@@ -847,7 +913,7 @@ def report_community(request):
         # cantidad de capacitaciones que se dieron
         components_data = (
             VisitComponents.objects.filter(
-                visited_at__gte=default_from, visited_at__lte=default_to
+                visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values(
                 "production_unit__community",
