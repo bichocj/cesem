@@ -147,7 +147,7 @@ class ImportAnimals(HelperImport):
             data_visited_at = self.none_if_nat(data["FECHA"][i])
             data_visited_at = self.to_date(data_visited_at, i + 1)
 
-            data_zone = self.zero_if_nan(self.nan_if_nat(data["ZONA"][i]), True)
+            data_zone = self.nan_if_nat(data["ZONA"][i])
             data_community = self.nan_if_nat(data["COMUNIDAD"][i])
             # data['PDE-2019'][i]
             data_sector = self.nan_if_nat(data["SECTOR/IRRIGACION"][i])
@@ -172,6 +172,7 @@ class ImportAnimals(HelperImport):
             )
             data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
             try:
+                print("!!!!zona", data_zone)
                 employ_specialist = self.get_person(
                     data_employ_specialist, creates_if_none=True
                 )
@@ -201,6 +202,8 @@ class ImportAnimals(HelperImport):
                 )
 
                 if data_activity.lower() in self.vacuno_activities:
+                    print("!!!!ES VACUNO")
+                    print("!!!ZONA", data_zone)
                     try:
                         # DATA OF "MEJORAMIENTO GENETICO"
                         data_bull_name = data["NOMBRE DE TORO"][i]
