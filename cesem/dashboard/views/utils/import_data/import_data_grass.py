@@ -114,7 +114,7 @@ class ImportGrass(HelperImport):
         for i in range(rows_count):
             data_visited_at = self.none_if_nat(data["FECHA"][i])
             data_visited_at = self.to_date(data_visited_at, i + 1)
-            data_zone = self.zero_if_nan(self.nan_if_nat(data["ZONA"][i]), True)
+            data_zone = self.nan_if_nat(data["ZONA"][i])
             data_community = self.nan_if_nat(data["COMUNIDAD"][i])
             data_sector = self.nan_if_nat(data["SECTOR/IRRIGACION"][i])
             data_up_responsable_name = self.nan_if_nat(
