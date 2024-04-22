@@ -54,6 +54,65 @@ class VisitAnimalHealthPathSerializer(BasePathSerializer):
         ]
 
 
+class UpSerializer(serializers.Serializer):
+    zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
+    comunidad = serializers.StringRelatedField(
+        many=False, source="production_unit.community"
+    )
+    sector = serializers.StringRelatedField(many=False, source="production_unit.sector")
+    up_responsable = serializers.StringRelatedField(
+        many=False, source="production_unit.person_responsable"
+    )
+    cambiar_up = serializers.SerializerMethodField()
+
+    def get_cambiar_up(self, obj):        
+        return 'Cambiar UP'
+     
+
+class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):
+
+    up_miembro = serializers.StringRelatedField(many=False, source="up_member")
+    cesem_especialista = serializers.StringRelatedField(
+        many=False, source="employ_specialist"
+    )
+    cesem_responsable = serializers.StringRelatedField(
+        many=False, source="employ_responsable"
+    )
+    actividad = serializers.StringRelatedField(many=False, source="activity")
+    enfermedad_observación = serializers.StringRelatedField(
+        many=False, source="sickness_observation"
+    )
+    diagnostico = serializers.StringRelatedField(many=False, source="diagnostic")
+    up = serializers.SerializerMethodField()
+
+    def get_up(self, obj):
+        serializer = UpSerializer(instance=obj, many=False)
+        return serializer.data
+
+    @staticmethod
+    def get_path():
+        return "visits-animals"
+
+    class Meta:
+        model = VisitAnimalHealth
+        fields = [
+            "visited_at",
+            'up',
+            "up_miembro",
+            "cesem_especialista",
+            "cesem_responsable",
+            "actividad",
+            "enfermedad_observación",
+            "diagnostico",
+            "vacunos",
+            "ovinos",
+            "alpacas",
+            "llamas",
+            "canes",
+            "url",
+        ]
+
+
 class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
     queryset = (
         VisitAnimalHealth.objects.select_related("production_unit")
@@ -67,6 +126,11 @@ class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
         .all()
     )
     serializer_class = VisitAnimalHealthPathSerializer
+    serializer_details_class = VisitAnimalHealthDetailsPathSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        self.serializer_class = self.serializer_details_class
+        return super().retrieve(request, *args, **kwargs)
 
     filterset_fields = {
         "production_unit__zone__name": ["contains"],
