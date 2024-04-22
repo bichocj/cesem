@@ -764,3 +764,12 @@ class AnualPeriod(models.Model):
     class Meta:
         verbose_name = "Periodo anual"
         verbose_name_plural = "Periodo anual"
+
+
+#class CustomPermission(models.Model):
+#    class Meta:
+#        permissions = (
+#            ('can_custom_action', 'Can perform custom action'),
+#        )
+
+

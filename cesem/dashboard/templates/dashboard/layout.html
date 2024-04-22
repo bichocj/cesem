@@ -74,24 +74,26 @@
           General
         </strong>
         <ul class="nav nav-sidebar">
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'reports/weekly'|active_if_path_match:request}}"
-              href="{% url 'dashboard:report_weekly'%}">
-              Reporte Semanal
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'reports/monthly'|active_if_path_match:request}}"
-              href="{% url 'dashboard:report_monthly'%}">
-              Reporte Mensual
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'reports/yearly'|active_if_path_match:request}}"
-              href="{% url 'dashboard:report_yearly'%}">
-              Reporte Anual
-            </a>
-          </li>
+          {% if user.is_superuser %}                      
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'reports/weekly'|active_if_path_match:request}}"
+                href="{% url 'dashboard:report_weekly'%}">
+                Reporte Semanal
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'reports/monthly'|active_if_path_match:request}}"
+                href="{% url 'dashboard:report_monthly'%}">
+                Reporte Mensual
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'reports/yearly'|active_if_path_match:request}}"
+                href="{% url 'dashboard:report_yearly'%}">
+                Reporte Anual
+              </a>
+            </li>
+          {% endif %}
           <li class="nav-item">
             <a class="bd-links-link d-inline-block rounded {{'reports/zones'|active_if_path_match:request}}"
               href="{% url 'dashboard:report_zones'%}">
@@ -104,123 +106,127 @@
               Reporte Por Comunidad
             </a>
           </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'visits-grass'|active_if_path_match:request}}"
-              href="{% url 'dashboard:visits-grass-list'%}">
-              Visita de Pastos</a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'visits-animals'|active_if_path_match:request}}"
-              href="{% url 'dashboard:visits-animals-list'%}">
-              Visita Sanidad Animal</a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'visits-vacuno'|active_if_path_match:request}}"
-              href="{% url 'dashboard:visits-vacuno-list'%}">
-              Visita MG Vacuno</a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'visits-ovino'|active_if_path_match:request}}"
-              href="{% url 'dashboard:visits-ovino-list'%}">
-              Visita MG Ovino</a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'visits-alpaca'|active_if_path_match:request}}"
-              href="{% url 'dashboard:visits-alpaca-list'%}">
-              Visita MG Alpaca</a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'visits-components'|active_if_path_match:request}}"
-              href="{% url 'dashboard:visits-components-list'%}">
-              Registro componentes II y III</a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'production_units'|active_if_path_match:request}}"
-              href="{% url 'dashboard:production_units-list'%}">
-              Unidades Productivas
-            </a>
-          </li>
+          {% if user.is_superuser %}
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'visits-grass'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-grass-list'%}">
+                Visita de Pastos</a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'visits-animals'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-animals-list'%}">
+                Visita Sanidad Animal</a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'visits-vacuno'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-vacuno-list'%}">
+                Visita MG Vacuno</a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'visits-ovino'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-ovino-list'%}">
+                Visita MG Ovino</a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'visits-alpaca'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-alpaca-list'%}">
+                Visita MG Alpaca</a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'visits-components'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-components-list'%}">
+                Registro componentes II y III</a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'production_units'|active_if_path_match:request}}"
+                href="{% url 'dashboard:production_units-list'%}">
+                Unidades Productivas
+              </a>
+            </li>
+          {% endif %}
         </ul>
-        <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
-          Configuraciones
-        </strong>
-        <ul class="nav nav-sidebar">
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'people'|active_if_path_match:request}}"
-              href="{% url 'dashboard:people-list'%}">
-              Personas
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'api/zone'|active_if_path_match:request}}"
-              href="/api/zones/">
-              Zonas </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'sectors'|active_if_path_match:request}}"
-              href="/api/sectors/"> Sectores </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'communities'|active_if_path_match:request}}"
-              href="/api/communities/"> Comunidades </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'activities'|active_if_path_match:request}}"
-              href="{% url 'dashboard:activities-list' %}">
-              Actividades
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'sickness_observations'|active_if_path_match:request}}"
-              href="{% url 'dashboard:sickness_observations-list' %}">
-              Enfermedades / Observaciones
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'diagnostics'|active_if_path_match:request}}"
-              href="{% url 'dashboard:diagnostics-list' %}">
-              Diagnosticos
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'drugs'|active_if_path_match:request}}"
-              href="{% url 'dashboard:drugs-list' %}">
-              Farmacos
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'change-period/'|active_if_path_match:request}}"
-              href="{% url 'dashboard:change_anual_period' %}">
-              Modificar periodo anual
-            </a>
-          </li>
-        </ul>
-        <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
-          Subida de información
-        </strong>
-        <ul class="nav nav-sidebar">
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'import-xls/animales/'|active_if_path_match:request}}"
-              href="{% url 'dashboard:upload_file' 'animales' %}">
-              Animales
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'import-xls/pastos/'|active_if_path_match:request}}"
-              href="{% url 'dashboard:upload_file' 'pastos' %}">
-              Pastos </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'import-xls/componentes/'|active_if_path_match:request}}"
-              href="{% url 'dashboard:upload_file' 'componentes' %}">
-              Componentes II y III </a>
-          </li>
-          <li class="nav-item">
-            <a class="bd-links-link d-inline-block rounded {{'files-checksum'|active_if_path_match:request}}"
-              href="{% url 'dashboard:files-checksum-list' %}">
-              Historial </a>
-          </li>
-        </ul>
+        {% if user.is_superuser %}                      
+          <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
+            Configuraciones
+          </strong>
+          <ul class="nav nav-sidebar">
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'people'|active_if_path_match:request}}"
+                href="{% url 'dashboard:people-list'%}">
+                Personas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'api/zone'|active_if_path_match:request}}"
+                href="/api/zones/">
+                Zonas </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'sectors'|active_if_path_match:request}}"
+                href="/api/sectors/"> Sectores </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'communities'|active_if_path_match:request}}"
+                href="/api/communities/"> Comunidades </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'activities'|active_if_path_match:request}}"
+                href="{% url 'dashboard:activities-list' %}">
+                Actividades
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'sickness_observations'|active_if_path_match:request}}"
+                href="{% url 'dashboard:sickness_observations-list' %}">
+                Enfermedades / Observaciones
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'diagnostics'|active_if_path_match:request}}"
+                href="{% url 'dashboard:diagnostics-list' %}">
+                Diagnosticos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'drugs'|active_if_path_match:request}}"
+                href="{% url 'dashboard:drugs-list' %}">
+                Farmacos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'change-period/'|active_if_path_match:request}}"
+                href="{% url 'dashboard:change_anual_period' %}">
+                Modificar periodo anual
+              </a>
+            </li>
+          </ul>
+          <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
+            Subida de información
+          </strong>
+          <ul class="nav nav-sidebar">
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'import-xls/animales/'|active_if_path_match:request}}"
+                href="{% url 'dashboard:upload_file' 'animales' %}">
+                Animales
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'import-xls/pastos/'|active_if_path_match:request}}"
+                href="{% url 'dashboard:upload_file' 'pastos' %}">
+                Pastos </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'import-xls/componentes/'|active_if_path_match:request}}"
+                href="{% url 'dashboard:upload_file' 'componentes' %}">
+                Componentes II y III </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'files-checksum'|active_if_path_match:request}}"
+                href="{% url 'dashboard:files-checksum-list' %}">
+                Historial </a>
+            </li>
+          </ul>
+        {% endif %}
       </div>
       <div class=" col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         {% block body %}{% endblock %}
