@@ -13,8 +13,7 @@ class ProductionUnitPathSerializer(BasePathSerializer):
     )
     dni = serializers.StringRelatedField(many=False, source="person_responsable.dni")
     miembro = serializers.StringRelatedField(many=False, source="person_member")
-    tipologia = serializers.StringRelatedField(many=False, source="tipology")
-    es_pilot = serializers.StringRelatedField(many=False, source="is_pilot")
+    tipologia = serializers.StringRelatedField(many=False, source="tipology")    
 
     @staticmethod
     def get_path():
@@ -32,7 +31,6 @@ class ProductionUnitPathSerializer(BasePathSerializer):
             "dni",
             "miembro",
             "tipologia",
-            "es_pilot",
             "url",
         )
         extra_kwargs = {
@@ -160,8 +158,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     )
     dni = serializers.StringRelatedField(many=False, source="person_responsable.dni")
     miembro = serializers.StringRelatedField(many=False, source="person_member")
-    tipologia = serializers.StringRelatedField(many=False, source="tipology")
-    es_pilot = serializers.StringRelatedField(many=False, source="is_pilot")
+    tipologia = serializers.StringRelatedField(many=False, source="tipology")    
     suma_animales = serializers.SerializerMethodField()
     suma_pastos = serializers.SerializerMethodField()
     visitas_animales = serializers.SerializerMethodField()
@@ -289,8 +286,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "zone",
             "comunidad",
             "sector",
-            "tipologia",
-            "es_pilot",
+            "tipologia",            
             "url",
             "suma_animales",
             "suma_pastos",
