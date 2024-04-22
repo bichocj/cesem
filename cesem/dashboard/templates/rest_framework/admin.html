@@ -253,5 +253,65 @@
             });
             return false;
           });
+        
+          function updateProductionunitId(productionunitId, personName) {
+              if(productionunitId){
+                console.log('zazaza', productionunitId)
+                $('select[name="production_unit"]').val(productionunitId);
+                $('#personName').text(personName);
+                // $('#editModal [type=submit]').click();
+
+                // window.location.reload();
+              }
+          }
+
+          let popupIndex = 0;
+
+          function addPopupIndex(name) {
+              return name + "__" + (popupIndex + 1);
+          }
+          
+          function showAdminPopup(triggeringLink, name_regexp, add_popup) {
+              const name = addPopupIndex(triggeringLink.id.replace(name_regexp, ''));
+              const href = new URL(triggeringLink.href);
+              if (add_popup) {
+                  href.searchParams.set('_popup', 1);
+              }
+              const win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+              relatedWindows.push(win);
+              win.focus();
+              return false;
+          }
+          
+          function showRelatedObjectLookupPopup(triggeringLink) {
+              return showAdminPopup(triggeringLink, /^lookup_/, true);
+          }
+
+          function showRelatedObjectPopup(triggeringLink) {
+              return showAdminPopup(triggeringLink, /^(change|add|delete)_/, false);
+          }
+
+          $(function () {
+              // const tmp = window.location.href.split('/')
+              // const visitId = tmp[tmp.length - 2];
+
+              // $("td:contains('change_up_link'):last").html(`<a class="related-widget-wrapper-link change-related" data-href-template="/admin/core/productionunit/__fk__/change/?_to_field=id&amp;_popup=1" data-popup="yes" title="Cambiar Unidad de Producción seleccionados" href="/user_search?visitId=${visitId}">Cambiar UP</a>`)
+              // $("th:contains('Cambiar Up'):last").text('');
+              //$('select[name="production_unit"]').parent()
+              $('select[name="production_unit"]').parent().append('<div id="personName"></div>')
+              $('select[name="production_unit"]').parent().append('<a class="related-widget-wrapper-link change-related" data-href-template="/admin/core/productionunit/__fk__/change/?_to_field=id&amp;_popup=1" data-popup="yes" title="Cambiar Unidad de Producción seleccionados" href="/user_search">Cambiar UP</a>')
+              // $('select[name="production_unit"]').hide();
+
+              $('body').on('click', '.related-widget-wrapper-link[data-popup="yes"]', function(e) {
+                  e.preventDefault();
+                  if (this.href) {
+                      const event = $.Event('django:show-related', {href: this.href});
+                      $(this).trigger(event);
+                      if (!event.isDefaultPrevented()) {
+                          showRelatedObjectPopup(this);
+                      }
+                  }
+              });
+          });
         </script>
       {% endblock %}

@@ -52,6 +52,10 @@ def home_view(request):
     # message = "Hello"
     return render(request, "dashboard/home.html", locals())
 
+@login_required
+def user_search(request):
+    return render(request, "dashboard/user_search.html", locals())
+
 
 @login_required
 def upload_file(request, file_type):

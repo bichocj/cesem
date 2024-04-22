@@ -1,4 +1,4 @@
-from core.models import VisitAnimalHealth
+from core.models import VisitAnimalHealth, ProductionUnit
 from rest_framework import serializers, viewsets
 
 from .utils import BasePathSerializer
@@ -62,11 +62,7 @@ class UpSerializer(serializers.Serializer):
     sector = serializers.StringRelatedField(many=False, source="production_unit.sector")
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
-    )
-    cambiar_up = serializers.SerializerMethodField()
-
-    def get_cambiar_up(self, obj):        
-        return 'Cambiar UP'
+    )    
      
 
 class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):
@@ -96,6 +92,7 @@ class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):
     class Meta:
         model = VisitAnimalHealth
         fields = [
+            'production_unit',
             "visited_at",
             'up',
             "up_miembro",
@@ -131,6 +128,25 @@ class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = self.serializer_details_class
         return super().retrieve(request, *args, **kwargs)
+    
+    # def update(self, request, *args, **kwargs):
+        # import pdb; pdb.set_trace()
+        # kwargs['partial'c] = True
+        # print(request.data)
+    #    print('request.data.get(production_unit)', request.data.get('production_unit'))
+    #    kwargs['production_unit'] = request.data.get('production_unit')
+    #    return super().update(request, *args, **kwargs)
+    
+    def perform_update(self, serializer):
+        # import pdb; pdb.set_trace()
+        instance = self.get_object()  # instance before update
+        production_unit_id = self.request.data.get("production_unit", None)  # read data from request
+        production_unit = ProductionUnit.objects.get(id=production_unit_id)
+        if self.request.user.is_authenticated:
+            updated_instance = serializer.save(production_unit=production_unit)
+        else:
+            updated_instance = serializer.save()
+
 
     filterset_fields = {
         "production_unit__zone__name": ["contains"],

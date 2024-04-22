@@ -170,12 +170,16 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.AdminRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
+        "rest_framework_datatables.renderers.DatatablesRenderer",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework_datatables.pagination.DatatablesPageNumberPagination",
     "PAGE_SIZE": 50,
+    "PAGINATE_BY_PARAM": "page_size",
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.OrderingFilter",
+        "rest_framework_datatables.filters.DatatablesFilterBackend",
     ],
 }
 
@@ -228,3 +232,5 @@ LOGGING = {
         },
     },
 }
+
+#AUTH_USER_MODEL = "core.User"

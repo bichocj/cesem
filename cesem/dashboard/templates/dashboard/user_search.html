@@ -1,0 +1,116 @@
+{% load static %} {% load dashboard_extras %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Rolling Stone Top 500 albums of all time</title>
+    <meta
+      name="description"
+      content="Rolling Stone magazine's 2012 list of 500 greatest albums of all time with genres."
+    />
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css"
+    />
+  </head>
+
+  <body>
+    <div>
+      <table
+        id="albums"
+        class="table table-striped table-bordered"
+        style="width: 100%"
+      >
+        <thead>
+          <tr>
+            <th style="text-align: left">Zona</th>
+            <th style="text-align: left">Comunidad</th>
+            <th style="text-align: left">Sector</th>
+            <th style="text-align: left">Responsable</th>
+            <th style="text-align: left">Dni</th>
+            <th style="text-align: left">acción</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const visitId = urlParams.get("visitId");
+
+      function CloseMySelf(productionunitId, personName) {
+        try {
+          window.opener.updateProductionunitId(productionunitId, personName);
+        } catch (err) {}
+        window.close();
+        return false;
+      }
+
+      $(document).ready(function () {
+        $("#albums").DataTable({
+          language: {
+            decimal: "",
+            emptyTable: "No hay información",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+            infoEmpty: "Mostrando 0 to 0 of 0 Entradas",
+            infoFiltered: "(Filtrado de _MAX_ total entradas)",
+            infoPostFix: "",
+            thousands: ",",
+            lengthMenu: "Mostrar _MENU_ Entradas",
+            loadingRecords: "Cargando...",
+            processing: "Procesando...",
+            search: "Buscar:",
+            zeroRecords: "Sin resultados encontrados",
+            paginate: {
+              first: "Primero",
+              last: "Ultimo",
+              next: "Siguiente",
+              previous: "Anterior",
+            },
+          },
+          serverSide: true,
+          ajax: "/api/production_units/?format=datatables",
+          columns: [
+            {
+              data: "zona_nombre",
+              name: "zone",
+              searchable: false,
+              orderable: false,
+            },
+            {
+              data: "comunidad",
+              name: "community",
+              searchable: false,
+              orderable: false,
+            },
+            {
+              data: "sector",
+              name: "sector",
+              searchable: false,
+              orderable: false,
+            },
+            { data: "responsable", name: "person_responsable__name" },
+            { data: "dni", searchable: false, orderable: false },
+            {
+              data: "id", // can be null or undefined
+              searchable: false,
+              orderable: false,
+              render: function (data, type, row, meta) {
+                console.log({ data, type, row, meta });
+                // return `<a href="' + data + '">${row.id}</a>`;
+                return `<a href='#' onclick="return CloseMySelf(${row.id}, '${row.responsable}');">Seleccionar</a>`;
+              },
+              //  defaultContent: `<a href='#' result="refresh" onclick="return CloseMySelf(this);">Seleccionar</a>`,
+            },
+          ],
+        });
+      });
+    </script>
+  </body>
+</html>

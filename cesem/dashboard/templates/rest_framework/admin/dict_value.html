@@ -1,9 +1,10 @@
 {% load rest_framework %}
+{% load dashboard_extras %}
 <table class="table table-striped">
   <tbody>
     {% for k, v in value|items %}
       <tr>
-        <th style="width: 200px; text-align: left;"> {{ k|format_value }}</th>
+        <th style="width: 200px; text-align: left;"> {{ k|format_value|format_custom_value|title }}</th>
         <td>{{ v|format_value }}</td>
       </tr>
     {% endfor %}

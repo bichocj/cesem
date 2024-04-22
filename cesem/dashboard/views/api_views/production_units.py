@@ -11,9 +11,7 @@ class ProductionUnitPathSerializer(BasePathSerializer):
     responsable = serializers.StringRelatedField(
         many=False, source="person_responsable"
     )
-    dni = serializers.StringRelatedField(
-        many=False, source="person_responsable.dni"
-    )
+    dni = serializers.StringRelatedField(many=False, source="person_responsable.dni")
     miembro = serializers.StringRelatedField(many=False, source="person_member")
     tipologia = serializers.StringRelatedField(many=False, source="tipology")
     es_pilot = serializers.StringRelatedField(many=False, source="is_pilot")
@@ -25,6 +23,7 @@ class ProductionUnitPathSerializer(BasePathSerializer):
     class Meta:
         model = ProductionUnit
         fields = (
+            "id",
             "zona_nombre",
             "zone",
             "comunidad",
@@ -159,9 +158,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     responsable = serializers.StringRelatedField(
         many=False, source="person_responsable"
     )
-    dni = serializers.StringRelatedField(
-        many=False, source="person_responsable.dni"
-    )
+    dni = serializers.StringRelatedField(many=False, source="person_responsable.dni")
     miembro = serializers.StringRelatedField(many=False, source="person_member")
     tipologia = serializers.StringRelatedField(many=False, source="tipology")
     es_pilot = serializers.StringRelatedField(many=False, source="is_pilot")
@@ -185,8 +182,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         serializer = VisitGrassPathSerializer(instance=data, many=True)
         return serializer.data
 
-    def get_visitas_capacitaciones(self, obj):        
-        data = VisitComponents.objects.filter(production_unit__id=obj.id)        
+    def get_visitas_capacitaciones(self, obj):
+        data = VisitComponents.objects.filter(production_unit__id=obj.id)
         serializer = VisitComponentsPathSerializer(instance=data, many=True)
         return serializer.data
 
@@ -244,6 +241,28 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         return serializer.data
 
     def get_suma_animales(self, obj):
+        #         data = (
+        #            VisitGrass.objects.filter(production_unit__id=obj.id)
+        #            .annotate(
+        #                has_intens_siembra=Sum(F("planting_intention_hectares")),
+        #                anal_suelo=Sum(F("ground_analysis")),
+        #                horas_arado=Sum(F("plow_hours")),
+        #
+
+        data2 = VisitAnimalHealth.objects.filter(production_unit__id=obj.id).annotate(
+            total_vacas=Sum(F("vaca"), default=0),
+            total_vaquillonas=Sum(F("vaquillona"), default=0),
+            total_vaquillas=Sum(F("vaquilla"), default=0),
+            total_terrenos=Sum(F("terreno"), default=0),
+            total_toretes=Sum(F("torete"), default=0),
+            total_toros=Sum(F("toro"), default=0),
+            total_vacunos=Sum(F("vacunos"), default=0),
+            total_ovinos=Sum(F("ovinos"), default=0),
+            total_alpacas=Sum(F("alpacas"), default=0),
+            total_llamas=Sum(F("llamas"), default=0),
+            total_canes=Sum(F("canes"), default=0),
+        )
+
         data = VisitAnimalHealth.objects.filter(production_unit__id=obj.id).aggregate(
             total_vacas=Sum("vaca", default=0),
             total_vaquillonas=Sum("vaquillona", default=0),
