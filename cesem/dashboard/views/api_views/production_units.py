@@ -7,7 +7,7 @@ from .utils import BasePathSerializer
 class ProductionUnitPathSerializer(BasePathSerializer):
     zona_nombre = serializers.StringRelatedField(many=False, source="zone")
     comunidad = serializers.StringRelatedField(many=False, source="community")
-    sector = serializers.StringRelatedField(many=False)
+    sector_nombre = serializers.StringRelatedField(many=False, source="sector")
     responsable = serializers.StringRelatedField(
         many=False, source="person_responsable"
     )
@@ -24,17 +24,23 @@ class ProductionUnitPathSerializer(BasePathSerializer):
         fields = (
             "id",
             "zona_nombre",
-            "zone",
+            #"zone",
             "comunidad",
-            "sector",
+            #"community",
+            "sector_nombre",
+            #"sector",
             "responsable",
+            #"person_responsable",
             "dni",
             "miembro",
             "tipologia",
             "url",
         )
         extra_kwargs = {
-            "zone": {"write_only": True},
+            #"zone": {"write_only": True},
+            #"community": {"write_only": True},
+            #"sector": {"write_only": True},
+            #"person_responsable": {"write_only": True},
         }
 
 
@@ -284,7 +290,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "dni",
             "miembro",
             "zona_nombre",
-            "zone",
+            #"zone",
             "comunidad",
             "sector",
             "tipologia",
@@ -295,9 +301,10 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "visitas_pastos",
             "visitas_capacitaciones",
         )
-        extra_kwargs = {
-            "zone": {"write_only": True},
-        }
+#        extra_kwargs = {
+#            "zone": {"write_only": True},
+#            "community": {"write_only": True},
+#        }
 
 
 class ProductionUnitViewSet(viewsets.ModelViewSet):
