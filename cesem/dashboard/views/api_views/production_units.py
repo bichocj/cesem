@@ -13,7 +13,7 @@ class ProductionUnitPathSerializer(BasePathSerializer):
     )
     dni = serializers.StringRelatedField(many=False, source="person_responsable.dni")
     miembro = serializers.StringRelatedField(many=False, source="person_member")
-    tipologia = serializers.StringRelatedField(many=False, source="tipology")    
+    tipologia = serializers.StringRelatedField(many=False, source="tipology")
 
     @staticmethod
     def get_path():
@@ -91,6 +91,7 @@ class VisitGrassPathSerializer(BasePathSerializer):
             "url",
         ]
 
+
 class VisitComponentsPathSerializer(BasePathSerializer):
     fecha_visita = serializers.StringRelatedField(source="visited_at")
     especialista = serializers.StringRelatedField(source="employ_specialist")
@@ -158,7 +159,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     )
     dni = serializers.StringRelatedField(many=False, source="person_responsable.dni")
     miembro = serializers.StringRelatedField(many=False, source="person_member")
-    tipologia = serializers.StringRelatedField(many=False, source="tipology")    
+    tipologia = serializers.StringRelatedField(many=False, source="tipology")
     suma_animales = serializers.SerializerMethodField()
     suma_pastos = serializers.SerializerMethodField()
     visitas_animales = serializers.SerializerMethodField()
@@ -286,7 +287,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "zone",
             "comunidad",
             "sector",
-            "tipologia",            
+            "tipologia",
             "url",
             "suma_animales",
             "suma_pastos",
