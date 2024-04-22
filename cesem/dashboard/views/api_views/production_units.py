@@ -24,23 +24,23 @@ class ProductionUnitPathSerializer(BasePathSerializer):
         fields = (
             "id",
             "zona_nombre",
-            #"zone",
+            # "zone",
             "comunidad",
-            #"community",
+            # "community",
             "sector_nombre",
-            #"sector",
+            # "sector",
             "responsable",
-            #"person_responsable",
+            # "person_responsable",
             "dni",
             "miembro",
             "tipologia",
             "url",
         )
         extra_kwargs = {
-            #"zone": {"write_only": True},
-            #"community": {"write_only": True},
-            #"sector": {"write_only": True},
-            #"person_responsable": {"write_only": True},
+            # "zone": {"write_only": True},
+            # "community": {"write_only": True},
+            # "sector": {"write_only": True},
+            # "person_responsable": {"write_only": True},
         }
 
 
@@ -120,7 +120,7 @@ class VisitComponentsPathSerializer(BasePathSerializer):
 
 
 class SumaPastosPathSerializer(serializers.Serializer):
-    has_intens_siembra = serializers.IntegerField()
+    has_intens_siembra = serializers.DecimalField(decimal_places=2, max_digits=5)
     anal_suelo = serializers.IntegerField()
     horas_arado = serializers.IntegerField()
     horas_rastra = serializers.IntegerField()
@@ -192,81 +192,36 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         return serializer.data
 
     def get_suma_pastos(self, obj):
-        data = (
-            VisitGrass.objects.filter(production_unit__id=obj.id)
-            .annotate(
-                has_intens_siembra=Sum(F("planting_intention_hectares")),
-                anal_suelo=Sum(F("ground_analysis")),
-                horas_arado=Sum(F("plow_hours")),
-                horas_rastra=Sum(F("dredge_hours")),
-                kg_avena=Sum(F("oat_kg")),
-                kg_vicia=Sum(F("vicia_kg")),
-                kg_alfalfa=Sum(F("alfalfa_kg")),
-                kg_dacylis=Sum(F("dactylis_kg")),
-                kg_ryegrass=Sum(F("ryegrass_kg")),
-                kg_trebol=Sum(F("trebol_b_kg")),
-                fertilizante=Sum(F("fertilizer")),
-                has_siembra_avena=Sum(F("avena_planted_hectares")),
-                has_siembra_avena_vicia=Sum(F("avena_vicia_planted_hectares")),
-                has_siembra_alfalfa_dactylis=Sum(
-                    F("alfalfa_dactylis_planted_hectares")
-                ),
-                has_siembra_ryegrass_trebol=Sum(F("ryegrass_trebol_planted_hectares")),
-                rendimiento_anual=Sum(F("anual_yield")),
-                asistencia_tecnica=Sum(F("technical_assistance")),
-                capac_inst_perennes=Sum(F("technical_training_perennial")),
-                capac_inst_anual=Sum(F("technical_training_anual")),
-                capac_manejo_conserv=Sum(F("technical_training_conservation")),
-            )
-            .values(
-                "has_intens_siembra",
-                "anal_suelo",
-                "horas_arado",
-                "horas_rastra",
-                "kg_avena",
-                "kg_vicia",
-                "kg_alfalfa",
-                "kg_dacylis",
-                "kg_ryegrass",
-                "kg_trebol",
-                "fertilizante",
-                "has_siembra_avena",
-                "has_siembra_avena_vicia",
-                "has_siembra_alfalfa_dactylis",
-                "has_siembra_ryegrass_trebol",
-                "rendimiento_anual",
-                "asistencia_tecnica",
-                "capac_inst_perennes",
-                "capac_inst_anual",
-                "capac_manejo_conserv",
-            )
+        data = VisitGrass.objects.filter(production_unit__id=obj.id).aggregate(
+            has_intens_siembra=Sum("planting_intention_hectares", default=0),
+            anal_suelo=Sum("ground_analysis", default=0),
+            horas_arado=Sum("plow_hours", default=0),
+            horas_rastra=Sum("dredge_hours", default=0),
+            kg_avena=Sum("oat_kg", default=0),
+            kg_vicia=Sum("vicia_kg", default=0),
+            kg_alfalfa=Sum("alfalfa_kg", default=0),
+            kg_dacylis=Sum("dactylis_kg", default=0),
+            kg_ryegrass=Sum("ryegrass_kg", default=0),
+            kg_trebol=Sum("trebol_b_kg", default=0),
+            fertilizante=Sum("fertilizer", default=0),
+            has_siembra_avena=Sum("avena_planted_hectares", default=0),
+            has_siembra_avena_vicia=Sum("avena_vicia_planted_hectares", default=0),
+            has_siembra_alfalfa_dactylis=Sum(
+                "alfalfa_dactylis_planted_hectares", default=0
+            ),
+            has_siembra_ryegrass_trebol=Sum(
+                "ryegrass_trebol_planted_hectares", default=0
+            ),
+            rendimiento_anual=Sum("anual_yield", default=0),
+            asistencia_tecnica=Sum("technical_assistance", default=0),
+            capac_inst_perennes=Sum("technical_training_perennial", default=0),
+            capac_inst_anual=Sum("technical_training_anual", default=0),
+            capac_manejo_conserv=Sum("technical_training_conservation", default=0),
         )
-        serializer = SumaPastosPathSerializer(instance=data, many=True)
+        serializer = SumaPastosPathSerializer(instance=data, many=False)
         return serializer.data
 
     def get_suma_animales(self, obj):
-        #         data = (
-        #            VisitGrass.objects.filter(production_unit__id=obj.id)
-        #            .annotate(
-        #                has_intens_siembra=Sum(F("planting_intention_hectares")),
-        #                anal_suelo=Sum(F("ground_analysis")),
-        #                horas_arado=Sum(F("plow_hours")),
-        #
-
-        data2 = VisitAnimalHealth.objects.filter(production_unit__id=obj.id).annotate(
-            total_vacas=Sum(F("vaca"), default=0),
-            total_vaquillonas=Sum(F("vaquillona"), default=0),
-            total_vaquillas=Sum(F("vaquilla"), default=0),
-            total_terrenos=Sum(F("terreno"), default=0),
-            total_toretes=Sum(F("torete"), default=0),
-            total_toros=Sum(F("toro"), default=0),
-            total_vacunos=Sum(F("vacunos"), default=0),
-            total_ovinos=Sum(F("ovinos"), default=0),
-            total_alpacas=Sum(F("alpacas"), default=0),
-            total_llamas=Sum(F("llamas"), default=0),
-            total_canes=Sum(F("canes"), default=0),
-        )
-
         data = VisitAnimalHealth.objects.filter(production_unit__id=obj.id).aggregate(
             total_vacas=Sum("vaca", default=0),
             total_vaquillonas=Sum("vaquillona", default=0),
@@ -290,7 +245,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "dni",
             "miembro",
             "zona_nombre",
-            #"zone",
+            # "zone",
             "comunidad",
             "sector",
             "tipologia",
@@ -301,6 +256,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "visitas_pastos",
             "visitas_capacitaciones",
         )
+
+
 #        extra_kwargs = {
 #            "zone": {"write_only": True},
 #            "community": {"write_only": True},
@@ -312,8 +269,8 @@ class ProductionUnitViewSet(viewsets.ModelViewSet):
     serializer_class = ProductionUnitPathSerializer
     serializer_details_class = ProductionUnitDetailsPathSerializer
     filterset_fields = {
-        "zone__name": ["contains"],
-        "person_responsable__name": ["contains"],
+        "person_responsable__name": ["icontains"],
+        # "zone__name": ["contains"],
     }
 
     def retrieve(self, request, *args, **kwargs):

@@ -23,7 +23,7 @@ class Person(models.Model):
     title = models.IntegerField("titulo", choices=Titles.choices, blank=True, null=True)
 
     def __str__(self) -> str:
-        return ('{0} {1}').format(self.name, self.dni)
+        return self.name
 
 
 class Zone(models.Model):
