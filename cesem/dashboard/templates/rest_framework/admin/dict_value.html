@@ -3,10 +3,12 @@
 <table class="table table-striped">
   <tbody>
     {% for k, v in value|items %}
+      {% if v is not 0 %}
       <tr>
         <th style="width: 200px; text-align: left;"> {{ k|format_value|format_custom_value|title }}</th>
         <td>{{ v|format_value }}</td>
       </tr>
+      {% endif %}
     {% endfor %}
   </tbody>
 </table>
