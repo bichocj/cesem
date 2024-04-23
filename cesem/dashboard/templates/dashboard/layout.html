@@ -106,44 +106,42 @@
               Reporte Por Comunidad
             </a>
           </li>
-          {% if user.is_superuser %}
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'visits-grass'|active_if_path_match:request}}"
-                href="{% url 'dashboard:visits-grass-list'%}">
-                Visita de Pastos</a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'visits-animals'|active_if_path_match:request}}"
-                href="{% url 'dashboard:visits-animals-list'%}">
-                Visita Sanidad Animal</a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'visits-vacuno'|active_if_path_match:request}}"
-                href="{% url 'dashboard:visits-vacuno-list'%}">
-                Visita MG Vacuno</a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'visits-ovino'|active_if_path_match:request}}"
-                href="{% url 'dashboard:visits-ovino-list'%}">
-                Visita MG Ovino</a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'visits-alpaca'|active_if_path_match:request}}"
-                href="{% url 'dashboard:visits-alpaca-list'%}">
-                Visita MG Alpaca</a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'visits-components'|active_if_path_match:request}}"
-                href="{% url 'dashboard:visits-components-list'%}">
-                Registro componentes II y III</a>
-            </li>
-            <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'production_units'|active_if_path_match:request}}"
-                href="{% url 'dashboard:production_units-list'%}">
-                Unidades Productivas
-              </a>
-            </li>
-          {% endif %}
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'visits-grass'|active_if_path_match:request}}"
+              href="{% url 'dashboard:visits-grass-list'%}">
+              Visita de Pastos</a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'visits-animals'|active_if_path_match:request}}"
+              href="{% url 'dashboard:visits-animals-list'%}">
+              Visita Sanidad Animal</a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'visits-vacuno'|active_if_path_match:request}}"
+              href="{% url 'dashboard:visits-vacuno-list'%}">
+              Visita MG Vacuno</a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'visits-ovino'|active_if_path_match:request}}"
+              href="{% url 'dashboard:visits-ovino-list'%}">
+              Visita MG Ovino</a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'visits-alpaca'|active_if_path_match:request}}"
+              href="{% url 'dashboard:visits-alpaca-list'%}">
+              Visita MG Alpaca</a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'visits-components'|active_if_path_match:request}}"
+              href="{% url 'dashboard:visits-components-list'%}">
+              Registro componentes II y III</a>
+          </li>
+          <li class="nav-item">
+            <a class="bd-links-link d-inline-block rounded {{'production_units'|active_if_path_match:request}}"
+              href="{% url 'dashboard:production_units-list'%}">
+              Unidades Productivas
+            </a>
+          </li>
         </ul>
         {% if user.is_superuser %}                      
           <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
