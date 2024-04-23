@@ -1,12 +1,16 @@
 {% load rest_framework %}
 <br />
 {% load dashboard_extras %}
+<div class="mb-3 ms-2">
+  <div><strong>Cantidad</strong>: {{results|length}}</div>
+  <strong>Detalles</strong>:
+</div>
 
 <table class="table table-striped">
   <thead>
     <tr>
       {% for column in columns %}
-      <th style="text-align: left;">{{ column }}</th>
+      <th style="text-align: left;">{{ column|format_custom_value|title }}</th>
       {% endfor %}
       <th class="col-xs-1"></th>
     </tr>
