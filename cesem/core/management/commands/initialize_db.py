@@ -29,7 +29,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         df = pd.read_excel(path_initial_data)
         data = df.to_dict()
-        rows_count = len(data["N°"].keys())
+        rows_count = len(data["N"].keys())
         
         print("headers:")
         print(data.keys())
@@ -65,7 +65,7 @@ class Command(BaseCommand):
 
         df = pd.read_excel(path_members)
         data = df.to_dict()
-        rows_count = len(data["N°"].keys())
+        rows_count = len(data["N"].keys())
         
         print("headers:")
         print(data.keys())

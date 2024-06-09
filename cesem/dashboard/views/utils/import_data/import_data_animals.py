@@ -75,7 +75,7 @@ class ImportAnimals(HelperImport):
             self.drugs_names[s.name] = s
 
         self.columns_names = [
-            "N°",
+            "N",
             "MES",
             "FECHA",
             "ZONA",
@@ -85,10 +85,10 @@ class ImportAnimals(HelperImport):
             "TIPOLOGIA DE UP",
             "UP ES PILOTO?",
             "NOMBRE RESPONSABLE UP",
-            "N° DNI",
+            "N DNI",
             "SEXO RUP",
             "NOMBRE DEL INTEGRANTE DE UP",
-            "N° DNI.1",
+            "N DNI.1",
             "SEXO IUP",
             "NOMBRE DE ESPECIALISTA",
             "NOMBRE DE RESPONSABLE DE ACTIVIDAD",
@@ -134,7 +134,7 @@ class ImportAnimals(HelperImport):
     def _inner_execute(self, file, creates_if_none=True, checksum=""):
         df = pd.read_excel(file)
         data = df.to_dict()
-        rows_count = len(data["N°"].keys())
+        rows_count = len(data["N"].keys())
         visits_animals = []
         visits_ovinos = []
         visits_vacunos = []
@@ -142,7 +142,7 @@ class ImportAnimals(HelperImport):
         visits_details = []
 
         for i in range(rows_count):
-            # data['N°'][i]
+            # data['N'][i]
             # data['MES'][i] ################
             data_visited_at = self.none_if_nat(data["FECHA"][i])
             data_visited_at = self.to_date(data_visited_at, i + 1)
@@ -158,12 +158,12 @@ class ImportAnimals(HelperImport):
             data_up_responsable_name = self.nan_if_nat(
                 data["NOMBRE DEL RESPONSABLE UP"][i]
             )
-            data_up_responsable_dni = self.zero_if_nan(data["N° DNI"][i], to_int=True)
+            data_up_responsable_dni = self.zero_if_nan(data["N DNI"][i], to_int=True)
             data_up_responsable_sex = self.nan_if_nat(data["SEXO RUP"][i])
             data_up_member_name = self.nan_if_nat(
                 data["NOMBRE DEL INTEGRANTE DE UP"][i]
             )
-            data_up_member_dni = self.zero_if_nan(data["N° DNI.1"][i], to_int=True)
+            data_up_member_dni = self.zero_if_nan(data["N DNI.1"][i], to_int=True)
             data_up_member_sex = self.nan_if_nat(data["SEXO IUP"][i])
             # data['SECTOR/IRRIGACION DEL BENEFICIARIO'][i]
             data_employ_specialist = self.nan_if_nat(data["NOMBRE DE ESPECIALISTA"][i])
@@ -213,12 +213,12 @@ class ImportAnimals(HelperImport):
                         data_pajilla_type = data["TIPO PAJILLA"][i]
                         data_pajilla_origin = data["PROCEDENCIA PAJILLA"][i]
                         data_pajillas_number = self.zero_if_nan(
-                            data["N° DE PAJILLAS"][i]
+                            data["N DE PAJILLAS"][i]
                         )
 
                         data_cow_name = data["NOMBRE DE VACA"][i]
                         data_cow_race = data["RAZA DE VACA"][i]
-                        data_service_number = data["N° DE SERVICIO"][
+                        data_service_number = data["N DE SERVICIO"][
                             i
                         ]  # verificar caracter
 
@@ -226,7 +226,7 @@ class ImportAnimals(HelperImport):
                         data_empty_vacuno = self.zero_if_nan(data["VACIA"][i])
 
                         data_birthday = data["F. NACIMIENTO"][i]
-                        data_earring_number = data["N° DE ARETE"][
+                        data_earring_number = data["N DE ARETE"][
                             i
                         ]  # verificar caracter
                         data_baby_name = data["NOMBRE DE CRIA"][i]
@@ -333,7 +333,7 @@ class ImportAnimals(HelperImport):
                         data_baby_males = self.zero_if_nan(data["CRIA MACHO"][i])
                         data_baby_females = self.zero_if_nan(data["CRIA HEMBRA"][i])
                         data_baby_deaths = self.zero_if_nan(data["CRIA MUERTA"][i])
-                        data_rgc_number = data["N° RGC"][i]
+                        data_rgc_number = data["N RGC"][i]
                         data_ovinos_number = self.zero_if_nan(data["OVINOS"][i])
                         visit_ovino = VisitGeneticImprovementOvino(
                             visited_at=data_visited_at,
@@ -361,7 +361,7 @@ class ImportAnimals(HelperImport):
                         )
                         visits_ovinos.append(visit_ovino)
                         logger.info(
-                            "Registrando visita de animales N°:"
+                            "Registrando visita de animales N:"
                             + str(i + 1)
                             + ", TIPO: MG ovino"
                         )
@@ -376,18 +376,18 @@ class ImportAnimals(HelperImport):
 
                 elif data_activity.lower() in self.alpaca_activities:
                     try:
-                        data_hato_number = self.zero_if_nan(data["N° DE HATO"][i])
+                        data_hato_number = self.zero_if_nan(data["N DE HATO"][i])
                         data_hato_babies_number = self.zero_if_nan(
-                            data["N° DE CRIAS EN HATO"][i]
+                            data["N DE CRIAS EN HATO"][i]
                         )
                         data_hato_mothers_number = self.zero_if_nan(
-                            data["N° DE MADRES EN HATO"][i]
+                            data["N DE MADRES EN HATO"][i]
                         )
                         data_hato_males_number = self.zero_if_nan(
-                            data["N° DE MACHOS EN HATO"][i]
+                            data["N DE MACHOS EN HATO"][i]
                         )
                         data_female_alpaca_earring_number = data[
-                            "SELEC N° ARETE ALPACA HEMBRA"
+                            "SELEC N ARETE ALPACA HEMBRA"
                         ][i]
                         data_female_alpaca_race = data["SELEC RAZA ALPACA HEMBRA"][i]
                         data_female_alpaca_color = data["SELEC COLOR ALPACA HEMBRA"][i]
@@ -406,13 +406,13 @@ class ImportAnimals(HelperImport):
                         )
                         data_alpacas_empadradas = data["ALPACAS EMPADRADAS"][i]
                         data_alpacas_empadradas_number = self.zero_if_nan(
-                            data["N° DE ALPACAS EMPADRADAS"][i]
+                            data["N DE ALPACAS EMPADRADAS"][i]
                         )
-                        data_male_empadre_number = data["N° MACHO EMPADRE"][i]
+                        data_male_empadre_number = data["N MACHO EMPADRE"][i]
                         data_second_service_date = self.none_if_nan(
                             self.none_if_nat(data["FECHA 2DO SERVICIO"][i])
                         )
-                        data_second_service_male_number = data["N° MACHO 2DO SERVICIO"][
+                        data_second_service_male_number = data["N MACHO 2DO SERVICIO"][
                             i
                         ]
                         data_pregnant_alpaca = self.zero_if_nan(data["PREÑADA"][i])
@@ -420,7 +420,7 @@ class ImportAnimals(HelperImport):
                         data_baby_birthday = self.none_if_nan(
                             self.none_if_nat(data["F. NACIMIENTO CRIA"][i])
                         )
-                        data_baby_earring_number = data["N° ARETE CRIA"][i]
+                        data_baby_earring_number = data["N ARETE CRIA"][i]
                         data_female_baby = self.zero_if_nan(data["CRIA HEMBRA"][i])
                         data_male_baby = self.zero_if_nan(data["CRIA MACHO"][i])
                         data_mortality_baby = self.zero_if_nan(
@@ -478,7 +478,7 @@ class ImportAnimals(HelperImport):
                         )
                         visits_alpacas.append(visit_alpaca)
                         logger.info(
-                            "Registrando visita de animales N°:"
+                            "Registrando visita de animales N:"
                             + str(i + 1)
                             + ", TIPO: MG alpaca"
                         )
@@ -570,7 +570,7 @@ class ImportAnimals(HelperImport):
                         )
                         visits_animals.append(visit_animal)
                         logger.info(
-                            "Registrando visita de animales N°:"
+                            "Registrando visita de animales N:"
                             + str(i + 1)
                             + ", sanidad animal"
                         )

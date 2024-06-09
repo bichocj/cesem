@@ -38,7 +38,7 @@ class ImportComponents(HelperImport):
     def __init__(self):
         super().__init__()
         self.columns_names = [
-            "N° PARTE",
+            "N PARTE",
             "AÑO",
             "FECHA",
             "DATOS GENERALES",
@@ -46,7 +46,7 @@ class ImportComponents(HelperImport):
             "COMUNIDAD",
             "SECTOR/IRRIGACION",
             "NOMBRE RESPONSABLE UP",
-            "N° DNI",
+            "N DNI",
             "SEXO RUP",
             "EDAD RUP",
             "TECNICO DE CADENAS",
@@ -58,11 +58,11 @@ class ImportComponents(HelperImport):
     def _inner_execute(self, file, creates_if_none=True, checksum=""):
         df = pd.read_excel(file)
         data = df.to_dict()
-        rows_count = len(data["N°"].keys())
+        rows_count = len(data["N"].keys())
         visits = []
         print("data", data)
         for i in range(rows_count):
-            data_parte_number = self.zero_if_nan(data["N° PARTE"][i])
+            data_parte_number = self.zero_if_nan(data["N PARTE"][i])
             data_year = data["AÑO"][i]
             data_visited_at = data["FECHA"][i]
             data_general_data = data["DATOS GENERALES"][i]
@@ -70,7 +70,7 @@ class ImportComponents(HelperImport):
             data_community = data["COMUNIDAD"][i]
             data_sector = data["SECTOR/IRRIGACION"][i]
             data_up_responsible_name = data["NOMBRE RESPONSABLE UP"][i]
-            data_dni_responsible = data["N° DNI"][i]
+            data_dni_responsible = data["N DNI"][i]
             data_gender_responsible = data["SEXO RUP"][i]
             data_age_responsible = self.zero_if_nan(data["EDAD RUP"][i])
             data_technical_employee = data["TECNICO DE CADENAS"][i]

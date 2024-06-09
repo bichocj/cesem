@@ -55,7 +55,7 @@ class ImportGrass(HelperImport):
     def __init__(self):
         super().__init__()
         self.columns_names = [
-            "N°",
+            "N",
             "MES",  #
             "FECHA",
             "ZONA",
@@ -109,7 +109,7 @@ class ImportGrass(HelperImport):
     def _inner_execute(self, file, creates_if_none=True, checksum=""):
         df = pd.read_excel(file)
         data = df.to_dict()
-        rows_count = len(data["N°"].keys())
+        rows_count = len(data["N"].keys())
         visits = []
         for i in range(rows_count):
             data_visited_at = self.none_if_nat(data["FECHA"][i])
@@ -121,13 +121,13 @@ class ImportGrass(HelperImport):
                 data["NOMBRE DEL RESPONSABLE UP"][i]
             )
             data_up_responsable_dni = self.zero_if_nan(
-                self.nan_if_nat(data["N° DNI"][i])
+                self.nan_if_nat(data["N DNI"][i])
             )
             data_up_responsable_sex = self.nan_if_nat(data["SEXO RUP"][i])
             data_up_member_name = self.nan_if_nat(
                 data["NOMBRE DEL INTEGRANTE DE UP"][i]
             )
-            data_up_member_dni = self.zero_if_nan(self.nan_if_nat(data["N° DNI.1"][i]))
+            data_up_member_dni = self.zero_if_nan(self.nan_if_nat(data["N DNI.1"][i]))
             data_up_member_sex = self.nan_if_nat(data["SEXO IUP"][i])
             data_anual_utm_coordinates = self.nan_if_nat(
                 data["COORDENADAS UTM ANUALES"][i]
