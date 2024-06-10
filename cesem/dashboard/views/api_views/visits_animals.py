@@ -36,6 +36,7 @@ class VisitAnimalHealthPathSerializer(BasePathSerializer):
         model = VisitAnimalHealth
         fields = [
             "visited_at",
+            "production_unit",
             "zona",
             "comunidad",
             "sector",
@@ -132,7 +133,7 @@ class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
         .select_related("activity")
         .select_related("sickness_observation")
         .select_related("diagnostic")
-        .all()
+        .all().order_by('-visited_at')
     )
     serializer_class = VisitAnimalHealthPathSerializer
     serializer_details_class = VisitAnimalHealthDetailsPathSerializer

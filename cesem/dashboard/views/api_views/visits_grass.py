@@ -32,6 +32,7 @@ class VisitGrassPathSerializer(BasePathSerializer):
         model = VisitGrass
         fields = [
             "visited_at",
+            "production_unit",
             "zona",
             "comunidad",
             "sector",
@@ -143,7 +144,7 @@ class VisitGrassViewSet(viewsets.ModelViewSet):
         .select_related("production_unit__person_responsable")
         .select_related("employ_specialist", "employ_responsable", "up_member")
         .select_related("activity")
-        .all()
+        .all().order_by('-visited_at')
     )
     serializer_class = VisitGrassPathSerializer
     serializer_detail_class = VisitGrassDetailPathSerializer
