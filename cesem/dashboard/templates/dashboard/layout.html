@@ -627,6 +627,16 @@
             }
           });
         }
+        if (location.pathname.endsWith("/api/visits-grass/")) {
+          for(let i=10; i<41; i++) {
+            $(`td:nth-child(${i}),th:nth-child(${i})`).hide()
+          }
+        }
+        if (location.pathname.endsWith("/api/visits-animals/")) {
+          for(let i=16; i<23; i++) {
+            $(`td:nth-child(${i}),th:nth-child(${i})`).hide()
+          }
+        }
         if (location.pathname.includes("/api/visits-animals/") || location.pathname.includes("/api/visits-grass/")) {
           
           $(".selector-prop:contains(UP)").parent().hide();

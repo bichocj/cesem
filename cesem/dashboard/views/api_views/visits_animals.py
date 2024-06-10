@@ -35,34 +35,30 @@ class VisitAnimalHealthPathSerializer(BasePathSerializer):
     class Meta:
         model = VisitAnimalHealth
         fields = [
-            "visited_at",
-            "production_unit",
+            "visited_at",            
             "zona",
             "comunidad",
             "sector",
             "up_responsable",
-            "up_miembro",
-            
-            "employ_specialist",
-            "cesem_especialista",
-            
-            "employ_responsable",
+            "up_miembro",                    
+            "cesem_especialista",                    
             "cesem_responsable",
-            
-            "activity",
-            "actividad_",
-            
-            "sickness_observation",
+            "actividad_",                        
             "enfermedad_observación",
-            
-            "diagnostic",
             "diagnostico",
-
             "vacunos",
             "ovinos",
             "alpacas",
             "llamas",
             "canes",
+            
+            "activity",
+            "production_unit",
+            "employ_specialist",
+            "employ_responsable",
+            "sickness_observation",
+            "diagnostic",
+
             "url",
         ]
      
