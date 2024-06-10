@@ -627,6 +627,16 @@
             }
           });
         }
+        if (location.pathname.includes("/api/visits-animals/") || location.pathname.includes("/api/visits-grass/")) {
+          
+          $(".selector-prop:contains(UP)").parent().hide();
+          $(".selector-prop:contains(Actividad)").first().parent().hide();
+          $(".selector-prop:contains(Enfermedad/observación)").first().parent().hide();
+          $(".selector-prop:contains(Diagnostico)").first().parent().hide();
+          $(".selector-prop:contains(Personal responsable)").first().parent().hide();
+          $(".selector-prop:contains(Personal especialista)").first().parent().hide();
+          
+        }
         $("#from-datepicker,#to-datepicker,#from-anual-period").datetimepicker({
           locale: "es",
           allowInputToggle: false,

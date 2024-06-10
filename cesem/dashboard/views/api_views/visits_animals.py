@@ -1,4 +1,5 @@
 from core.models import VisitAnimalHealth, ProductionUnit
+from dashboard.views.api_views.helper import UpSerializer
 from rest_framework import serializers, viewsets
 
 from .utils import BasePathSerializer
@@ -21,7 +22,7 @@ class VisitAnimalHealthPathSerializer(BasePathSerializer):
     cesem_responsable = serializers.StringRelatedField(
         many=False, source="employ_responsable"
     )
-    actividad = serializers.StringRelatedField(many=False, source="activity")
+    actividad_ = serializers.StringRelatedField(many=False, source="activity")
     enfermedad_observación = serializers.StringRelatedField(
         many=False, source="sickness_observation"
     )
@@ -40,11 +41,22 @@ class VisitAnimalHealthPathSerializer(BasePathSerializer):
             "sector",
             "up_responsable",
             "up_miembro",
+            
+            "employ_specialist",
             "cesem_especialista",
+            
+            "employ_responsable",
             "cesem_responsable",
-            "actividad",
+            
+            "activity",
+            "actividad_",
+            
+            "sickness_observation",
             "enfermedad_observación",
+            
+            "diagnostic",
             "diagnostico",
+
             "vacunos",
             "ovinos",
             "alpacas",
@@ -52,17 +64,6 @@ class VisitAnimalHealthPathSerializer(BasePathSerializer):
             "canes",
             "url",
         ]
-
-
-class UpSerializer(serializers.Serializer):
-    zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
-    comunidad = serializers.StringRelatedField(
-        many=False, source="production_unit.community"
-    )
-    sector = serializers.StringRelatedField(many=False, source="production_unit.sector")
-    up_responsable = serializers.StringRelatedField(
-        many=False, source="production_unit.person_responsable"
-    )    
      
 
 class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):
@@ -74,11 +75,11 @@ class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):
     cesem_responsable = serializers.StringRelatedField(
         many=False, source="employ_responsable"
     )
-    actividad = serializers.StringRelatedField(many=False, source="activity")
-    enfermedad_observación = serializers.StringRelatedField(
+    actividad_ = serializers.StringRelatedField(many=False, source="activity")
+    enfermedad_observación_ = serializers.StringRelatedField(
         many=False, source="sickness_observation"
     )
-    diagnostico = serializers.StringRelatedField(many=False, source="diagnostic")
+    diagnostico_ = serializers.StringRelatedField(many=False, source="diagnostic")
     up = serializers.SerializerMethodField()
 
     def get_up(self, obj):
@@ -92,15 +93,26 @@ class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):
     class Meta:
         model = VisitAnimalHealth
         fields = [
-            'production_unit',
             "visited_at",
+            'production_unit',
             'up',
             "up_miembro",
+            
+            "employ_specialist",
             "cesem_especialista",
+
+            "employ_responsable",
             "cesem_responsable",
-            "actividad",
-            "enfermedad_observación",
-            "diagnostico",
+            
+            "activity",
+            "actividad_",
+
+            "sickness_observation",
+            "enfermedad_observación_",
+            
+            "diagnostic",
+            "diagnostico_",
+            
             "vacunos",
             "ovinos",
             "alpacas",
@@ -129,24 +141,11 @@ class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
         self.serializer_class = self.serializer_details_class
         return super().retrieve(request, *args, **kwargs)
     
-    # def update(self, request, *args, **kwargs):
-        # import pdb; pdb.set_trace()
-        # kwargs['partial'c] = True
-        # print(request.data)
-    #    print('request.data.get(production_unit)', request.data.get('production_unit'))
-    #    kwargs['production_unit'] = request.data.get('production_unit')
-    #    return super().update(request, *args, **kwargs)
-    
-    def perform_update(self, serializer):
-        # import pdb; pdb.set_trace()
-        instance = self.get_object()  # instance before update
-        production_unit_id = self.request.data.get("production_unit", None)  # read data from request
+    def perform_update(self, serializer):                
+        production_unit_id = self.request.data.get("production_unit", None)
         production_unit = ProductionUnit.objects.get(id=production_unit_id)
-        if self.request.user.is_authenticated:
-            updated_instance = serializer.save(production_unit=production_unit)
-        else:
-            updated_instance = serializer.save()
-
+        serializer.save(production_unit=production_unit)
+        
 
     filterset_fields = {
         "production_unit__zone__name": ["contains"],

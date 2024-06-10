@@ -266,6 +266,7 @@
           }
 
           let popupIndex = 0;
+          const relatedWindows = [];
 
           function addPopupIndex(name) {
               return name + "__" + (popupIndex + 1);
@@ -300,7 +301,7 @@
               //$('select[name="production_unit"]').parent()
               $('select[name="production_unit"]').parent().append('<div id="personName"></div>')
               $('select[name="production_unit"]').parent().append('<a class="related-widget-wrapper-link change-related" data-href-template="/admin/core/productionunit/__fk__/change/?_to_field=id&amp;_popup=1" data-popup="yes" title="Cambiar Unidad de Producción seleccionados" href="/user_search">Cambiar UP</a>')
-              // $('select[name="production_unit"]').hide();
+              $('select[name="production_unit"]').hide();
 
               $('body').on('click', '.related-widget-wrapper-link[data-popup="yes"]', function(e) {
                   e.preventDefault();

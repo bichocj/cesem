@@ -1,4 +1,5 @@
-from core.models import VisitGrass
+from core.models import ProductionUnit, VisitGrass
+from dashboard.views.api_views.helper import UpSerializer
 from rest_framework import serializers, viewsets
 
 from .utils import BasePathSerializer
@@ -21,7 +22,7 @@ class VisitGrassPathSerializer(BasePathSerializer):
     cesem_responsable = serializers.StringRelatedField(
         many=False, source="employ_responsable"
     )
-    actividad = serializers.StringRelatedField(many=False, source="activity")
+    actividad_ = serializers.StringRelatedField(many=False, source="activity")
 
     @staticmethod
     def get_path():
@@ -36,28 +37,44 @@ class VisitGrassPathSerializer(BasePathSerializer):
             "sector",
             "up_responsable",
             "up_miembro",
+            "employ_specialist",
             "cesem_especialista",
+            "employ_responsable",
             "cesem_responsable",
-            "actividad",
-            # "planting_intention_hectares",
-            # "avena_vicia_planted_hectares",
-            # "alfalfa_dactylis_planted_hectares",
-            # "ryegrass_trebol_planted_hectares",
-            # "direct_grazing",
-            # "hay",
-            # "ensilage",
-            # "bale",
-            # "perennial_grazing",
-            # "perennial_yield",
+            "activity",
+            "actividad_",
+            "planting_intention_hectares",
+            "ground_analysis",
+            "plow_hours",
+            "dredge_hours",
+            "oat_kg",
+            "vicia_kg",
+            "alfalfa_kg",
+            "dactylis_kg",
+            "ryegrass_kg",
+            "trebol_b_kg",
+            "fertilizer",
+            "avena_planted_hectares",
+            "avena_vicia_planted_hectares",
+            "alfalfa_dactylis_planted_hectares",
+            "ryegrass_trebol_planted_hectares",
+            "anual_yield",
+            "technical_assistance",
+            "direct_grazing",
+            "hay",
+            "ensilage",
+            "bale",
+            "perennial_grazing",
+            "perennial_ensilage",
+            "perennial_yield",
+            "technical_training_perennial",
+            "technical_training_anual",
+            "technical_training_conservation",
             "url",
         ]
 
 
 class VisitGrassDetailPathSerializer(BasePathSerializer):
-    zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
-    up_responsable = serializers.StringRelatedField(
-        many=False, source="production_unit.person_responsable"
-    )
     up_miembro = serializers.StringRelatedField(many=False, source="up_member")
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
@@ -65,7 +82,12 @@ class VisitGrassDetailPathSerializer(BasePathSerializer):
     cesem_responsable = serializers.StringRelatedField(
         many=False, source="employ_responsable"
     )
-    actividad = serializers.StringRelatedField(many=False, source="activity")
+    actividad_ = serializers.StringRelatedField(many=False, source="activity")
+    up = serializers.SerializerMethodField()
+
+    def get_up(self, obj):
+        serializer = UpSerializer(instance=obj, many=False)
+        return serializer.data
 
     @staticmethod
     def get_path():
@@ -75,12 +97,15 @@ class VisitGrassDetailPathSerializer(BasePathSerializer):
         model = VisitGrass
         fields = [
             "visited_at",
-            "zona",
-            "up_responsable",
+            "production_unit",
+            "up",
             "up_miembro",
+            "employ_specialist",
             "cesem_especialista",
+            "employ_responsable",
             "cesem_responsable",
-            "actividad",
+            "activity",
+            "actividad_",
             "planting_intention_hectares",
             "ground_analysis",
             "plow_hours",
@@ -122,6 +147,11 @@ class VisitGrassViewSet(viewsets.ModelViewSet):
     )
     serializer_class = VisitGrassPathSerializer
     serializer_detail_class = VisitGrassDetailPathSerializer
+
+    def perform_update(self, serializer):
+        production_unit_id = self.request.data.get("production_unit", None)
+        production_unit = ProductionUnit.objects.get(id=production_unit_id)
+        serializer.save(production_unit=production_unit)
 
     filterset_fields = {
         "production_unit__zone__name": ["contains"],
