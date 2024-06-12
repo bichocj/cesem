@@ -217,8 +217,8 @@ class ImportGrass(HelperImport):
             """
 
             try:
-                employ_responsable = self.get_person(data_employ_responsable)
-                employ_specialist = self.get_person(data_employ_specialist)
+                employ_responsable = self.get_person(data_employ_responsable, creates_if_none=False)
+                employ_specialist = self.get_person(data_employ_specialist, creates_if_none=False)
                 activity = self.get_activity(
                     data_activity, creates_if_none=False, row=i + 1
                 )
@@ -226,7 +226,7 @@ class ImportGrass(HelperImport):
                     data_up_member_name,
                     data_up_member_dni,
                     data_up_member_sex,
-                    creates_if_none=True,
+                    creates_if_none=False,
                     row=i + 1,
                 )
                 production_unit = self.get_production_unit(

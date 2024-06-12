@@ -1,1 +1,993 @@
-[{"model": "core.activity", "pk": 1, "fields": {"position": "1.2.1.1", "name": "DIAGNOSTICO Y TRATAMIENTO", "short_name": "DIAGNOSTICO Y TRATAMIENTO", "parent": 13, "um": "Atención sanitaria", "meta_2022": 100, "meta_2023": 37033, "meta_2024": 200}}, {"model": "core.activity", "pk": 2, "fields": {"position": "1.2.1.2", "name": "SEGUIMIENTO", "short_name": "SEGUIMIENTO", "parent": 13, "um": null, "meta_2022": 0, "meta_2023": 278, "meta_2024": 0}}, {"model": "core.activity", "pk": 3, "fields": {"position": "1.3.1.1", "name": "INSEMINACIÓN ARTIFICIAL EN GANADO VACUNO DE LECHE", "short_name": "", "parent": 14, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 4, "fields": {"position": "1.3.1.2", "name": "CAPACITACIÓN EN MANEJO REPRODUCTIVO DE GANADO VACUNO LECHERO", "short_name": "", "parent": 14, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 5, "fields": {"position": "1.3.1.3", "name": "ASISTENCIA TÉCNICA EN MANEJO DE GANADO VACUNO LECHERO", "short_name": "", "parent": 14, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 6, "fields": {"position": "1.3.1.4", "name": "EVALUACIÓN Y DIAGNÓSTICO DE VACAS PREÑADAS", "short_name": "", "parent": 14, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 7, "fields": {"position": "1.3.1.5", "name": "REGISTRO DE CRIAS NACIDAS DE VACUNO", "short_name": "", "parent": 14, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 8, "fields": {"position": "1.3.1.6", "name": "EVALUACIÓN DE VACAS CON PROBLEMAS REPRODUCTIVOS", "short_name": "", "parent": 14, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 9, "fields": {"position": "1.3.1.7", "name": "SEGUIMIENTO DE VACAS CON PROBLEMAS REPRODUCTIVOS", "short_name": "", "parent": 14, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 10, "fields": {"position": "1.3.1.8", "name": "SINCRONIZACIÓN DE CELO", "short_name": "", "parent": 14, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 11, "fields": {"position": "1.3", "name": "MEJORAMIENTO GENETICO", "short_name": "", "parent": 32, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 12, "fields": {"position": "1.2", "name": "SANIDAD ANIMAL", "short_name": "", "parent": 32, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 13, "fields": {"position": "1.2.1", "name": "ATENCIONES SANITARIAS", "short_name": "", "parent": 12, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 14, "fields": {"position": "1.3.1", "name": "MEJORAMIENTO GENETICO DE VACUNOS", "short_name": "", "parent": 11, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 15, "fields": {"position": "1.3.2", "name": "MEJORAMIENTO GENETIVO DE OVINOS", "short_name": "", "parent": 11, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 16, "fields": {"position": "1.3.2.1", "name": "INSEMINACIÓN ARTIFICIAL DE OVINOS", "short_name": "", "parent": 15, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 17, "fields": {"position": "1.3.2.2", "name": "CURSO TALLER EN MANEJO DE OVINOS", "short_name": "", "parent": 15, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 18, "fields": {"position": "1.3.2.3", "name": "SELECCIÓN, IDENTIFICACIÓN Y PREPARACIÓN DE OVINOS PARA IA", "short_name": "", "parent": 15, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 19, "fields": {"position": "1.3.2.4", "name": "ASISTENCIA TÉCNICA EN PRODUCCIÓN DE GANADO OVINO CORRIEDALE", "short_name": "", "parent": 15, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 20, "fields": {"position": "1.3.2.5", "name": "EVALUACIÓN Y DIAGNÓSTICO DE BORREGAS INSEMINADAS", "short_name": "", "parent": 15, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 21, "fields": {"position": "1.3.2.6", "name": "SINCRONIZACIÓN DE CELO DE OVINOS PARA IA", "short_name": "", "parent": 15, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 22, "fields": {"position": "1.3.2.7", "name": "REGISTRO DE CRÍAS NACIDAS DE OVINO", "short_name": "", "parent": 15, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 23, "fields": {"position": "1.3.2.8", "name": "ACTIVIDADES COMPLEMENTARIAS", "short_name": "", "parent": 15, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 24, "fields": {"position": "1.3.3", "name": "MEJORAMIENTO GENETICO DE ALPACAS", "short_name": "", "parent": 11, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 25, "fields": {"position": "1.3.3.1", "name": "EMPADRE CONTROLADO DE ALPACAS", "short_name": "", "parent": 24, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 26, "fields": {"position": "1.3.3.2", "name": "CURSO TALLER EN MANEJO DE ALPACAS", "short_name": "", "parent": 24, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 27, "fields": {"position": "1.3.3.3", "name": "EVALUACIÓN Y DIAGNÓSTICO DE ALPACAS PREÑADAS", "short_name": "", "parent": 24, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 28, "fields": {"position": "1.3.3.4", "name": "ASISTENCIA TÉCNICA EN BUENAS PRÁCTICAS DE MANEJO DE ALPACAS", "short_name": "", "parent": 24, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 29, "fields": {"position": "1.3.3.5", "name": "CARACTERIZACIÓN FENOTÍPICA DE HATOS ALPAQUEROS", "short_name": "", "parent": 24, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 30, "fields": {"position": "1.3.3.6", "name": "SELECCIÓN DE ALPACAS PARA EMPADRE CONTROLADO", "short_name": "", "parent": 24, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 31, "fields": {"position": "1.3.3.7", "name": "EVALUACIÓN DE PROGENIE DE ALPACAS HUACAYA Y SURI", "short_name": "", "parent": 24, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 32, "fields": {"position": "1", "name": "COMPONENTE I: MEJORAMIENTO DE LA CAPACIDAD PRODUCTIVA DE LAS UNIDADES PRODUCTIVAS FAMILIARES", "short_name": "", "parent": null, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 33, "fields": {"position": "1.1", "name": "INSTALACIÓN DE PASTOS CULTIVADOS", "short_name": "", "parent": 32, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 34, "fields": {"position": "1.1.1", "name": "INSTALACIÓN DE PASTOS CULTIVADOS ANUALES", "short_name": "", "parent": 33, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 35, "fields": {"position": "1.1.1.1", "name": "INSTALACIÓN DE PARCELAS DE AVENA FORRAJERA ASOCIADO CON VICIA", "short_name": "", "parent": 34, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 36, "fields": {"position": "1.1.1.2", "name": "INSTALACIÓN DE PARCELAS DE AVENA FORRAJERA", "short_name": "", "parent": 34, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 37, "fields": {"position": "1.1.1.3", "name": "ENTREGA DE SEMILLA DE AVENA TAYCO", "short_name": "", "parent": 34, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 38, "fields": {"position": "1.1.1.4", "name": "ENTREGA DE SEMILLA DE VICIA", "short_name": "", "parent": 34, "um": "", "meta_2022": 100, "meta_2023": 120, "meta_2024": 130}}, {"model": "core.activity", "pk": 39, "fields": {"position": "1.1.1.5", "name": "ENTREGA DE FERTILIZANTE NITROGENADO", "short_name": "", "parent": 34, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 40, "fields": {"position": "1.1.1.6", "name": "PREPARACIÓN DE TERRENO PARA SIEMBRA DEL CULTIVO ANUAL", "short_name": "", "parent": 34, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 41, "fields": {"position": "1.1.2", "name": "INSTALACIÓN DE PASTOS CULTIVADOS PERENNES", "short_name": "", "parent": 33, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 42, "fields": {"position": "1.1.2.1", "name": "INSTALACIÓN DE ALFALA + DACTYLIS", "short_name": "", "parent": 41, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 43, "fields": {"position": "1.1.2.2", "name": "INSTALACIÓN DE RYEGRASS + TRÉBOL BLANCO", "short_name": "", "parent": 41, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 44, "fields": {"position": "1.1.2.3", "name": "ENTREGA DE SEMILLA DE ALFALFA", "short_name": "", "parent": 41, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 45, "fields": {"position": "1.1.2.4", "name": "ENTREGA DE SEMILLA DE DACTYLIS", "short_name": "", "parent": 41, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 46, "fields": {"position": "1.1.2.5", "name": "ENTREGA DE SEMILLA DE RYEGRASS", "short_name": "", "parent": 41, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 47, "fields": {"position": "1.1.2.6", "name": "ENTREGA DE SEMILLA DE TRÉBOL BLANCO", "short_name": "", "parent": 41, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 48, "fields": {"position": "1.1.2.7", "name": "ADQUISICIÓN DE FERTILIZANTE FOSFORADO", "short_name": "", "parent": 41, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 49, "fields": {"position": "1.1.2.8", "name": "PREPARACIÓN DE TERRENO PARA SIEMBRA DEL CULTIVO DE PASTOS PERENNES", "short_name": "", "parent": 41, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 50, "fields": {"position": "1.1.3", "name": "CAPACITACIÓN EN INSTALACIÓN Y COSECHA DE CULTIVOS FORRAJEROS", "short_name": "", "parent": 33, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 51, "fields": {"position": "1.1.3.1", "name": "CURSO TALLER EN INSTALACIÓN DE PASTOS ANUALES Y PERENNES", "short_name": "", "parent": 50, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 52, "fields": {"position": "1.1.3.2", "name": "CURSO TALLER EN MANEJO Y CONSERVACIÓN DE FORRAJES CULTIVADOS", "short_name": "", "parent": 50, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 53, "fields": {"position": "1.1.4", "name": "ASISTENCIA TÉCNICA - SUBACTIVIDAD", "short_name": "", "parent": 33, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 54, "fields": {"position": "1.1.4.1", "name": "ASISTENCIA TÉCNICA", "short_name": "", "parent": 53, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 55, "fields": {"position": "1.1.4.2", "name": "EVALUACIÓN DE INTENSIÓN DE SIEMBRA DE CULTIVOS ANUALES Y PERENNES", "short_name": "", "parent": 53, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 56, "fields": {"position": "1.1.4.3", "name": "EVALUACIÓN DE COSECHA DE PASTOS CULTIVADOS ANUALES Y PERENNES", "short_name": "", "parent": 53, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 57, "fields": {"position": "1.2.1.3", "name": "EMERGENCIAS VETERINARIAS", "short_name": "EMERGENCIAS VETERINARIAS", "parent": 12, "um": "Atención sanitaria", "meta_2022": 100, "meta_2023": 180, "meta_2024": 200}}, {"model": "core.activity", "pk": 58, "fields": {"position": "1.1.2.5", "name": "EVALUACIÓN DE INTENSIÓN DE SIEMBRA DE CULTIVOS ANUALES", "short_name": "", "parent": 41, "um": "Atención", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 59, "fields": {"position": "1.2.1.4", "name": "SEGUIMIENTO DE CASOS CLÍNICOS", "short_name": "", "parent": 13, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 60, "fields": {"position": "1.2.1.5", "name": "REGISTRO DE MORTALIDAD", "short_name": "", "parent": 13, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}, {"model": "core.activity", "pk": 61, "fields": {"position": "1.2.1.5", "name": "ASISTENCIA TÉCNICA EN SANIDAD ANIMAL", "short_name": "", "parent": 13, "um": "", "meta_2022": 0, "meta_2023": 0, "meta_2024": 0}}]
+[
+   {
+     "model": "core.activity",
+     "pk": 1,
+     "fields": {
+       "position": "1.2.1.1",
+       "name": "DIAGNOSTICO Y TRATAMIENTO",
+       "short_name": "DIAGNOSTICO Y TRATAMIENTO",
+       "parent": 13,
+       "sum_in_parent": true,
+       "um": "Atención sanitaria",
+       "meta_2022": 100,
+       "meta_2023": 37033,
+       "meta_2024": 200
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 2,
+     "fields": {
+       "position": "1.2.1.2",
+       "name": "SEGUIMIENTO",
+       "short_name": "SEGUIMIENTO",
+       "parent": 13,
+       "sum_in_parent": true,
+       "um": null,
+       "meta_2022": 0,
+       "meta_2023": 278,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 3,
+     "fields": {
+       "position": "1.3.1.1",
+       "name": "INSEMINACIÓN ARTIFICIAL EN GANADO VACUNO DE LECHE",
+       "short_name": "",
+       "parent": 14,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 4,
+     "fields": {
+       "position": "1.3.1.2",
+       "name": "CAPACITACIÓN EN MANEJO REPRODUCTIVO DE GANADO VACUNO LECHERO",
+       "short_name": "",
+       "parent": 14,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 5,
+     "fields": {
+       "position": "1.3.1.3",
+       "name": "ASISTENCIA TÉCNICA EN MANEJO DE GANADO VACUNO LECHERO",
+       "short_name": "",
+       "parent": 14,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 6,
+     "fields": {
+       "position": "1.3.1.4",
+       "name": "EVALUACIÓN Y DIAGNÓSTICO DE VACAS PREÑADAS",
+       "short_name": "",
+       "parent": 14,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 7,
+     "fields": {
+       "position": "1.3.1.5",
+       "name": "REGISTRO DE CRIAS NACIDAS DE VACUNO",
+       "short_name": "",
+       "parent": 14,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 8,
+     "fields": {
+       "position": "1.3.1.6",
+       "name": "EVALUACIÓN DE VACAS CON PROBLEMAS REPRODUCTIVOS",
+       "short_name": "",
+       "parent": 14,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 9,
+     "fields": {
+       "position": "1.3.1.7",
+       "name": "SEGUIMIENTO DE VACAS CON PROBLEMAS REPRODUCTIVOS",
+       "short_name": "",
+       "parent": 14,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 10,
+     "fields": {
+       "position": "1.3.1.8",
+       "name": "SINCRONIZACIÓN DE CELO",
+       "short_name": "",
+       "parent": 14,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 11,
+     "fields": {
+       "position": "1.3",
+       "name": "MEJORAMIENTO GENETICO",
+       "short_name": "",
+       "parent": 32,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 12,
+     "fields": {
+       "position": "1.2",
+       "name": "SANIDAD ANIMAL",
+       "short_name": "",
+       "parent": 32,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 13,
+     "fields": {
+       "position": "1.2.1",
+       "name": "ATENCIONES SANITARIAS",
+       "short_name": "",
+       "parent": 12,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 14,
+     "fields": {
+       "position": "1.3.1",
+       "name": "MEJORAMIENTO GENETICO DE VACUNOS",
+       "short_name": "",
+       "parent": 11,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 15,
+     "fields": {
+       "position": "1.3.2",
+       "name": "MEJORAMIENTO GENETIVO DE OVINOS",
+       "short_name": "",
+       "parent": 11,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 16,
+     "fields": {
+       "position": "1.3.2.1",
+       "name": "INSEMINACIÓN ARTIFICIAL DE OVINOS",
+       "short_name": "",
+       "parent": 15,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 17,
+     "fields": {
+       "position": "1.3.2.2",
+       "name": "CURSO TALLER EN MANEJO DE OVINOS",
+       "short_name": "",
+       "parent": 15,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 18,
+     "fields": {
+       "position": "1.3.2.3",
+       "name": "SELECCIÓN, IDENTIFICACIÓN Y PREPARACIÓN DE OVINOS PARA IA",
+       "short_name": "",
+       "parent": 15,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 19,
+     "fields": {
+       "position": "1.3.2.4",
+       "name": "ASISTENCIA TÉCNICA EN PRODUCCIÓN DE GANADO OVINO CORRIEDALE",
+       "short_name": "",
+       "parent": 15,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 20,
+     "fields": {
+       "position": "1.3.2.5",
+       "name": "EVALUACIÓN Y DIAGNÓSTICO DE BORREGAS INSEMINADAS",
+       "short_name": "",
+       "parent": 15,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 21,
+     "fields": {
+       "position": "1.3.2.6",
+       "name": "SINCRONIZACIÓN DE CELO DE OVINOS PARA IA",
+       "short_name": "",
+       "parent": 15,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 22,
+     "fields": {
+       "position": "1.3.2.7",
+       "name": "REGISTRO DE CRÍAS NACIDAS DE OVINO",
+       "short_name": "",
+       "parent": 15,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 23,
+     "fields": {
+       "position": "1.3.2.8",
+       "name": "ACTIVIDADES COMPLEMENTARIAS",
+       "short_name": "",
+       "parent": 15,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 24,
+     "fields": {
+       "position": "1.3.3",
+       "name": "MEJORAMIENTO GENETICO DE ALPACAS",
+       "short_name": "",
+       "parent": 11,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 25,
+     "fields": {
+       "position": "1.3.3.1",
+       "name": "EMPADRE CONTROLADO DE ALPACAS",
+       "short_name": "",
+       "parent": 24,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 26,
+     "fields": {
+       "position": "1.3.3.2",
+       "name": "CURSO TALLER EN MANEJO DE ALPACAS",
+       "short_name": "",
+       "parent": 24,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 27,
+     "fields": {
+       "position": "1.3.3.3",
+       "name": "EVALUACIÓN Y DIAGNÓSTICO DE ALPACAS PREÑADAS",
+       "short_name": "",
+       "parent": 24,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 28,
+     "fields": {
+       "position": "1.3.3.4",
+       "name": "ASISTENCIA TÉCNICA EN BUENAS PRÁCTICAS DE MANEJO DE ALPACAS",
+       "short_name": "",
+       "parent": 24,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 29,
+     "fields": {
+       "position": "1.3.3.5",
+       "name": "CARACTERIZACIÓN FENOTÍPICA DE HATOS ALPAQUEROS",
+       "short_name": "",
+       "parent": 24,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 30,
+     "fields": {
+       "position": "1.3.3.6",
+       "name": "SELECCIÓN DE ALPACAS PARA EMPADRE CONTROLADO",
+       "short_name": "",
+       "parent": 24,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 31,
+     "fields": {
+       "position": "1.3.3.7",
+       "name": "EVALUACIÓN DE PROGENIE DE ALPACAS HUACAYA Y SURI",
+       "short_name": "",
+       "parent": 24,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 32,
+     "fields": {
+       "position": "1",
+       "name": "COMPONENTE I: MEJORAMIENTO DE LA CAPACIDAD PRODUCTIVA DE LAS UNIDADES PRODUCTIVAS FAMILIARES",
+       "short_name": "",
+       "parent": null,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 33,
+     "fields": {
+       "position": "1.1",
+       "name": "INSTALACIÓN DE PASTOS CULTIVADOS",
+       "short_name": "",
+       "parent": 32,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 34,
+     "fields": {
+       "position": "1.1.1",
+       "name": "INSTALACIÓN DE PASTOS CULTIVADOS ANUALES",
+       "short_name": "",
+       "parent": 33,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 35,
+     "fields": {
+       "position": "1.1.1.1",
+       "name": "INSTALACIÓN DE PARCELAS DE AVENA FORRAJERA ASOCIADO CON VICIA",
+       "short_name": "",
+       "parent": 34,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 36,
+     "fields": {
+       "position": "1.1.1.2",
+       "name": "INSTALACIÓN DE PARCELAS DE AVENA FORRAJERA",
+       "short_name": "",
+       "parent": 34,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 37,
+     "fields": {
+       "position": "1.1.1.3",
+       "name": "ENTREGA DE SEMILLA DE AVENA TAYCO",
+       "short_name": "",
+       "parent": 34,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 38,
+     "fields": {
+       "position": "1.1.1.4",
+       "name": "ENTREGA DE SEMILLA DE VICIA",
+       "short_name": "",
+       "parent": 34,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 100,
+       "meta_2023": 120,
+       "meta_2024": 130
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 39,
+     "fields": {
+       "position": "1.1.1.5",
+       "name": "ENTREGA DE FERTILIZANTE NITROGENADO",
+       "short_name": "",
+       "parent": 34,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 40,
+     "fields": {
+       "position": "1.1.1.6",
+       "name": "PREPARACIÓN DE TERRENO PARA SIEMBRA DEL CULTIVO ANUAL",
+       "short_name": "",
+       "parent": 34,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 41,
+     "fields": {
+       "position": "1.1.2",
+       "name": "INSTALACIÓN DE PASTOS CULTIVADOS PERENNES",
+       "short_name": "",
+       "parent": 33,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 42,
+     "fields": {
+       "position": "1.1.2.1",
+       "name": "INSTALACIÓN DE ALFALA + DACTYLIS",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 43,
+     "fields": {
+       "position": "1.1.2.2",
+       "name": "INSTALACIÓN DE RYEGRASS + TRÉBOL BLANCO",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 44,
+     "fields": {
+       "position": "1.1.2.3",
+       "name": "ENTREGA DE SEMILLA DE ALFALFA",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 45,
+     "fields": {
+       "position": "1.1.2.4",
+       "name": "ENTREGA DE SEMILLA DE DACTYLIS",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 46,
+     "fields": {
+       "position": "1.1.2.5",
+       "name": "ENTREGA DE SEMILLA DE RYEGRASS",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 47,
+     "fields": {
+       "position": "1.1.2.6",
+       "name": "ENTREGA DE SEMILLA DE TRÉBOL BLANCO",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 48,
+     "fields": {
+       "position": "1.1.2.7",
+       "name": "ADQUISICIÓN DE FERTILIZANTE FOSFORADO",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 49,
+     "fields": {
+       "position": "1.1.2.8",
+       "name": "PREPARACIÓN DE TERRENO PARA SIEMBRA DEL CULTIVO DE PASTOS PERENNES",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 50,
+     "fields": {
+       "position": "1.1.3",
+       "name": "CAPACITACIÓN EN INSTALACIÓN Y COSECHA DE CULTIVOS FORRAJEROS",
+       "short_name": "",
+       "parent": 33,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 51,
+     "fields": {
+       "position": "1.1.3.1",
+       "name": "CURSO TALLER EN INSTALACIÓN DE PASTOS ANUALES Y PERENNES",
+       "short_name": "",
+       "parent": 50,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 52,
+     "fields": {
+       "position": "1.1.3.2",
+       "name": "CURSO TALLER EN MANEJO Y CONSERVACIÓN DE FORRAJES CULTIVADOS",
+       "short_name": "",
+       "parent": 50,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 53,
+     "fields": {
+       "position": "1.1.4",
+       "name": "ASISTENCIA TÉCNICA - SUBACTIVIDAD",
+       "short_name": "",
+       "parent": 33,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 54,
+     "fields": {
+       "position": "1.1.4.1",
+       "name": "ASISTENCIA TÉCNICA",
+       "short_name": "",
+       "parent": 53,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 55,
+     "fields": {
+       "position": "1.1.4.2",
+       "name": "EVALUACIÓN DE INTENSIÓN DE SIEMBRA DE CULTIVOS ANUALES Y PERENNES",
+       "short_name": "",
+       "parent": 53,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 56,
+     "fields": {
+       "position": "1.1.4.3",
+       "name": "EVALUACIÓN DE COSECHA DE PASTOS CULTIVADOS ANUALES Y PERENNES",
+       "short_name": "",
+       "parent": 53,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 57,
+     "fields": {
+       "position": "1.2.1.3",
+       "name": "EMERGENCIAS VETERINARIAS",
+       "short_name": "EMERGENCIAS VETERINARIAS",
+       "parent": 13,
+       "sum_in_parent": false,
+       "um": "Atención sanitaria",
+       "meta_2022": 100,
+       "meta_2023": 180,
+       "meta_2024": 200
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 58,
+     "fields": {
+       "position": "1.1.2.5",
+       "name": "EVALUACIÓN DE INTENSIÓN DE SIEMBRA DE CULTIVOS ANUALES",
+       "short_name": "",
+       "parent": 41,
+       "sum_in_parent": true,
+       "um": "Atención",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 59,
+     "fields": {
+       "position": "1.2.1.4",
+       "name": "SEGUIMIENTO DE CASOS CLÍNICOS",
+       "short_name": "",
+       "parent": 13,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 60,
+     "fields": {
+       "position": "1.2.1.5",
+       "name": "REGISTRO DE MORTALIDAD",
+       "short_name": "",
+       "parent": 13,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 61,
+     "fields": {
+       "position": "1.2.1.5",
+       "name": "ASISTENCIA TÉCNICA EN SANIDAD ANIMAL",
+       "short_name": "",
+       "parent": 13,
+       "sum_in_parent": true,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 62,
+     "fields": {
+       "position": "0",
+       "name": "BUENAS PRÁCTICAS DE ORDEÑO I",
+       "short_name": "",
+       "parent": null,
+       "sum_in_parent": false,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 63,
+     "fields": {
+       "position": "0",
+       "name": "MERCADO Y PRODUCTO",
+       "short_name": "",
+       "parent": null,
+       "sum_in_parent": false,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 64,
+     "fields": {
+       "position": "2.1.1",
+       "name": "DIAGNOSTICO TRATAMIENTO",
+       "short_name": "",
+       "parent": null,
+       "sum_in_parent": false,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+     "model": "core.activity",
+     "pk": 65,
+     "fields": {
+       "position": "2.1.1",
+       "name": "EMERGENCIA",
+       "short_name": "",
+       "parent": null,
+       "sum_in_parent": false,
+       "um": "",
+       "meta_2022": 0,
+       "meta_2023": 0,
+       "meta_2024": 0
+     }
+   },
+   {
+    "model": "core.activity",
+    "pk": 31,
+    "fields": {
+      "position": "1.3.3.7",
+      "name": "CAPACITACIÓN EN SELECCIÓN DE REPRODUCTORES",
+      "short_name": "",
+      "parent": 24,
+      "sum_in_parent": true,
+      "um": "",
+      "meta_2022": 0,
+      "meta_2023": 0,
+      "meta_2024": 0
+    }
+   }
+]
+   

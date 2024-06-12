@@ -172,18 +172,17 @@ class ImportAnimals(HelperImport):
             )
             data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
             try:
-                print("!!!!zona", data_zone)
                 employ_specialist = self.get_person(
-                    data_employ_specialist, creates_if_none=True
+                    data_employ_specialist, creates_if_none=False
                 )
                 employ_responsable = self.get_person(
-                    data_employ_responsable, creates_if_none=True
+                    data_employ_responsable, creates_if_none=False
                 )
                 up_member = self.get_person(
                     data_up_member_name,
                     data_up_member_dni,
                     data_up_member_sex,
-                    creates_if_none=True,
+                    creates_if_none=False,
                     row=i + 1,
                 )
                 activity = self.get_activity(

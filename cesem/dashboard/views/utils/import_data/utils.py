@@ -254,7 +254,7 @@ class HelperImport:
                 data_up_responsable_name,
                 data_up_responsable_dni,
                 data_up_responsable_sex,
-                creates_if_none=True,
+                creates_if_none=False,
                 row=row,
             )
         else:
