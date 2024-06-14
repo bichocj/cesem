@@ -23,14 +23,15 @@ class ProductionUnitPathSerializer(BasePathSerializer):
         model = ProductionUnit
         fields = (
             "id",
+            "zone",
+            "community",
+            "sector",
+            "person_responsable",
+            
             "zona_nombre",
-            # "zone",
             "comunidad",
-            # "community",
             "sector_nombre",
-            # "sector",
             "responsable",
-            # "person_responsable",
             "dni",
             "miembro",
             "tipologia",
@@ -158,8 +159,8 @@ class SumaAnimalesPathSerializer(serializers.Serializer):
 
 class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     zona_nombre = serializers.StringRelatedField(many=False, source="zone")
-    comunidad = serializers.StringRelatedField(many=False, source="community")
-    sector = serializers.StringRelatedField(many=False)
+    comunidad_nombre = serializers.StringRelatedField(many=False, source="community")
+    sector_nombre = serializers.StringRelatedField(many=False, source="sector")
     responsable = serializers.StringRelatedField(
         many=False, source="person_responsable"
     )
@@ -241,13 +242,18 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     class Meta:
         model = ProductionUnit
         fields = (
+            "id",
+            "zone",
+            "community",
+            "sector",
+            "person_responsable",
+
             "responsable",
             "dni",
             "miembro",
             "zona_nombre",
-            # "zone",
-            "comunidad",
-            "sector",
+            "comunidad_nombre",
+            "sector_nombre",
             "tipologia",
             "url",
             "suma_animales",
@@ -270,7 +276,7 @@ class ProductionUnitViewSet(viewsets.ModelViewSet):
     serializer_details_class = ProductionUnitDetailsPathSerializer
     filterset_fields = {
         "person_responsable__name": ["icontains"],
-        # "zone__name": ["contains"],
+        # "zone__name": ["icontains"],
     }
 
     def retrieve(self, request, *args, **kwargs):

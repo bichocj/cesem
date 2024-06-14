@@ -15,7 +15,6 @@ class VisitGrassPathSerializer(BasePathSerializer):
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
     )
-    up_miembro = serializers.StringRelatedField(many=False, source="up_member")
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
     )
@@ -36,7 +35,7 @@ class VisitGrassPathSerializer(BasePathSerializer):
             "comunidad",
             "sector",
             "up_responsable",
-            "up_miembro",
+            "up_member_name",
             "cesem_especialista",
             "cesem_responsable",
             "actividad_",
@@ -76,7 +75,6 @@ class VisitGrassPathSerializer(BasePathSerializer):
 
 
 class VisitGrassDetailPathSerializer(BasePathSerializer):
-    up_miembro = serializers.StringRelatedField(many=False, source="up_member")
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
     )
@@ -100,7 +98,7 @@ class VisitGrassDetailPathSerializer(BasePathSerializer):
             "visited_at",
             "production_unit",
             "up",
-            "up_miembro",
+            "up_member_name",
             "employ_specialist",
             "cesem_especialista",
             "employ_responsable",
@@ -142,7 +140,7 @@ class VisitGrassViewSet(viewsets.ModelViewSet):
         VisitGrass.objects.select_related("production_unit")
         .select_related("production_unit__zone")
         .select_related("production_unit__person_responsable")
-        .select_related("employ_specialist", "employ_responsable", "up_member")
+        .select_related("employ_specialist", "employ_responsable")
         .select_related("activity")
         .all().order_by('-visited_at')
     )
@@ -155,12 +153,12 @@ class VisitGrassViewSet(viewsets.ModelViewSet):
         serializer.save(production_unit=production_unit)
 
     filterset_fields = {
-        "production_unit__zone__name": ["contains"],
-        "production_unit__person_responsable__name": ["contains"],
-        "up_member__name": ["contains"],
-        "employ_specialist__name": ["contains"],
-        "employ_responsable__name": ["contains"],
-        "activity__name": ["contains"],
+        "production_unit__zone__name": ["icontains"],
+        "production_unit__person_responsable__name": ["icontains"],
+        "up_member_name": ["icontains"],
+        "employ_specialist__name": ["icontains"],
+        "employ_responsable__name": ["icontains"],
+        "activity__name": ["icontains"],
     }
 
     def retrieve(self, request, *args, **kwargs):

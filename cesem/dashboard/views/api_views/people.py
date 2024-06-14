@@ -11,14 +11,13 @@ class PersonPathSerializer(BasePathSerializer):
 
     class Meta:
         model = Person
-        fields = ["name", "last_name", "dni", "url"]
+        fields = ["name",  "dni", "url"]
 
 
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonPathSerializer
     filterset_fields = {
-        "name": ["contains"],
-        "last_name": ["contains"],
-        "dni": ["contains"],
+        "name": ["icontains"],
+        "dni": ["icontains"],
     }

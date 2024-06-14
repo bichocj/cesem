@@ -14,7 +14,6 @@ class VisitGeneticImprovementVacunoPathSerializer(BasePathSerializer):
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
     )
-    up_miembro = serializers.StringRelatedField(many=False, source="up_member")
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
     )
@@ -35,7 +34,7 @@ class VisitGeneticImprovementVacunoPathSerializer(BasePathSerializer):
             "comunidad",
             "sector",
             "up_responsable",
-            "up_miembro",
+            "up_member_name",
             "cesem_especialista",
             "cesem_responsable",
             "actividad",
@@ -70,7 +69,6 @@ class VisitGeneticImprovementVacunoViewSet(viewsets.ModelViewSet):
         VisitGeneticImprovementVacuno.objects.select_related("production_unit")
         .select_related("production_unit__zone")
         .select_related("production_unit__person_responsable")
-        .select_related("up_member")
         .select_related("employ_specialist", "employ_responsable")
         .select_related("activity")
         .all()
@@ -78,10 +76,10 @@ class VisitGeneticImprovementVacunoViewSet(viewsets.ModelViewSet):
     serializer_class = VisitGeneticImprovementVacunoPathSerializer
 
     filterset_fields = {
-        "production_unit__zone__name": ["contains"],
-        "production_unit__person_responsable__name": ["contains"],
-        "up_member__name": ["contains"],
-        "employ_specialist__name": ["contains"],
-        "employ_responsable__name": ["contains"],
-        "activity__name": ["contains"],
+        "production_unit__zone__name": ["icontains"],
+        "production_unit__person_responsable__name": ["icontains"],
+        "up_member_name": ["icontains"],
+        "employ_specialist__name": ["icontains"],
+        "employ_responsable__name": ["icontains"],
+        "activity__name": ["icontains"],
     }

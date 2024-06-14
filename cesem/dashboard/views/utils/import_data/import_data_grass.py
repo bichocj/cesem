@@ -127,8 +127,8 @@ class ImportGrass(HelperImport):
             data_up_member_name = self.nan_if_nat(
                 data["NOMBRE DEL INTEGRANTE DE UP"][i]
             )
-            data_up_member_dni = self.zero_if_nan(self.nan_if_nat(data["N DNI.1"][i]))
-            data_up_member_sex = self.nan_if_nat(data["SEXO IUP"][i])
+            data_up_member_dni = self.zero_if_nan(self.nan_if_nat(data["N DNI.1"][i]))            
+            data_up_member_sex = self.get_sex(self.nan_if_nat(data["SEXO IUP"][i]))
             data_anual_utm_coordinates = self.nan_if_nat(
                 data["COORDENADAS UTM ANUALES"][i]
             )
@@ -222,13 +222,6 @@ class ImportGrass(HelperImport):
                 activity = self.get_activity(
                     data_activity, creates_if_none=False, row=i + 1
                 )
-                up_member = self.get_person(
-                    data_up_member_name,
-                    data_up_member_dni,
-                    data_up_member_sex,
-                    creates_if_none=False,
-                    row=i + 1,
-                )
                 production_unit = self.get_production_unit(
                     data_zone,
                     data_community,
@@ -255,7 +248,9 @@ class ImportGrass(HelperImport):
                     VisitGrass(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
-                        up_member=up_member,
+                        up_member_name=data_up_member_name,
+                        up_member_dni=data_up_member_dni,
+                        sex=data_up_member_sex,
                         utm_coordenate=data_anual_utm_coordinates,
                         producer_classification=data_producer_classification,
                         employ_specialist=employ_specialist,

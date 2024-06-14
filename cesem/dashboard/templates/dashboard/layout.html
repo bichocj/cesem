@@ -637,15 +637,27 @@
             $(`td:nth-child(${i}),th:nth-child(${i})`).hide()
           }
         }
-        if (location.pathname.includes("/api/visits-animals/") || location.pathname.includes("/api/visits-grass/")) {
-          
-          $(".selector-prop:contains(UP)").parent().hide();
+        if (location.pathname.includes("/api/visits-animals/") || location.pathname.includes("/api/visits-grass/")) {          
+          $(".selector-prop:contains(UP)").first().parent().hide();
           $(".selector-prop:contains(Actividad)").first().parent().hide();
           $(".selector-prop:contains(Enfermedad/observación)").first().parent().hide();
           $(".selector-prop:contains(Diagnostico)").first().parent().hide();
           $(".selector-prop:contains(Personal responsable)").first().parent().hide();
           $(".selector-prop:contains(Personal especialista)").first().parent().hide();
-          
+        }
+        if (location.pathname.endsWith("/api/production_units/")) {
+          $(`td:nth-child(${1}),th:nth-child(${1})`).hide();
+          $(`td:nth-child(${2}),th:nth-child(${2})`).hide();
+          $(`td:nth-child(${3}),th:nth-child(${3})`).hide();
+          $(`td:nth-child(${4}),th:nth-child(${4})`).hide();
+          $(`td:nth-child(${5}),th:nth-child(${5})`).hide();
+        }
+        if (location.pathname.includes("/api/production_units/")) {
+          $(".selector-prop:contains(ID)").first().parent().hide();
+          $(".selector-prop:contains(Zona)").first().parent().hide();
+          $(".selector-prop:contains(Comunidad)").first().parent().hide();
+          $(".selector-prop:contains(Sector)").first().parent().hide();
+          $(".selector-prop:contains(Up. responsable)").first().parent().hide();
         }
         $("#from-datepicker,#to-datepicker,#from-anual-period").datetimepicker({
           locale: "es",

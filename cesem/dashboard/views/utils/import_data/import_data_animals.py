@@ -164,7 +164,7 @@ class ImportAnimals(HelperImport):
                 data["NOMBRE DEL INTEGRANTE DE UP"][i]
             )
             data_up_member_dni = self.zero_if_nan(data["N DNI.1"][i], to_int=True)
-            data_up_member_sex = self.nan_if_nat(data["SEXO IUP"][i])
+            data_up_member_sex = self.get_sex(self.nan_if_nat(data["SEXO IUP"][i]))
             # data['SECTOR/IRRIGACION DEL BENEFICIARIO'][i]
             data_employ_specialist = self.nan_if_nat(data["NOMBRE DE ESPECIALISTA"][i])
             data_employ_responsable = self.nan_if_nat(
@@ -177,13 +177,6 @@ class ImportAnimals(HelperImport):
                 )
                 employ_responsable = self.get_person(
                     data_employ_responsable, creates_if_none=False
-                )
-                up_member = self.get_person(
-                    data_up_member_name,
-                    data_up_member_dni,
-                    data_up_member_sex,
-                    creates_if_none=False,
-                    row=i + 1,
                 )
                 activity = self.get_activity(
                     data_activity, creates_if_none=False, row=i + 1
@@ -265,7 +258,9 @@ class ImportAnimals(HelperImport):
                         visit_vacuno = VisitGeneticImprovementVacuno(
                             visited_at=data_visited_at,
                             production_unit=production_unit,
-                            up_member=up_member,
+                            up_member_name=data_up_member_name,
+                            up_member_dni=data_up_member_dni,
+                            sex=data_up_member_sex,
                             employ_specialist=employ_specialist,
                             employ_responsable=employ_responsable,
                             activity=activity,
@@ -337,7 +332,9 @@ class ImportAnimals(HelperImport):
                         visit_ovino = VisitGeneticImprovementOvino(
                             visited_at=data_visited_at,
                             production_unit=production_unit,
-                            up_member=up_member,
+                            up_member_name=data_up_member_name,
+                            up_member_dni=data_up_member_dni,
+                            sex=data_up_member_sex,
                             employ_specialist=employ_specialist,
                             employ_responsable=employ_responsable,
                             activity=activity,
@@ -440,7 +437,9 @@ class ImportAnimals(HelperImport):
                         visit_alpaca = VisitGeneticImprovementAlpaca(
                             visited_at=data_visited_at,
                             production_unit=production_unit,
-                            up_member=up_member,
+                            up_member_name=data_up_member_name,
+                            up_member_dni=data_up_member_dni,
+                            sex=data_up_member_sex,
                             employ_specialist=employ_specialist,
                             employ_responsable=employ_responsable,
                             activity=activity,
@@ -548,7 +547,9 @@ class ImportAnimals(HelperImport):
                         visit_animal = VisitAnimalHealth(
                             visited_at=data_visited_at,
                             production_unit=production_unit,
-                            up_member=up_member,
+                            up_member_name=data_up_member_name,
+                            up_member_dni=data_up_member_dni,
+                            sex=data_up_member_sex,
                             employ_specialist=employ_specialist,
                             employ_responsable=employ_responsable,
                             activity=activity,

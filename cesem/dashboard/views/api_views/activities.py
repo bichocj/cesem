@@ -78,7 +78,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
     serializer_class = ActivityPathSerializer
     serializer_details_class = ActivityDetailsPathSerializer
     filterset_fields = {
-        "name": ["contains"],        
+        "name": ["icontains"],        
     }
 
     def retrieve(self, request, *args, **kwargs):

@@ -9,6 +9,7 @@ from core.models import (
     Sector,
     ProductionUnit,
     FilesChecksum,
+    Sexs,
 )
 
 
@@ -92,12 +93,16 @@ class HelperImport:
         if val == "nan":
             return None
 
+    def get_sex(self, val):
+        sex_data = Sexs.MALE
+        if val == "F":
+            sex_data = Sexs.FEMALE
+        return sex_data
+    
     def get_person(self, name, dni=None, sex=None, creates_if_none=True, row=0):
         sex_data = None
         name = str(name).strip()
-        sex_data = Person.Sexs.MALE
-        if sex == "F":
-            sex_data = Person.Sexs.FEMALE
+        sex_data = self.get_sex(sex)
 
         person = None
         if not str(dni).isnumeric():
@@ -138,9 +143,9 @@ class HelperImport:
     ):
         sex_data = None
         name = str(name).strip()
-        sex_data = Person.Sexs.MALE
+        sex_data = Sexs.MALE
         if sex == "F":
-            sex_data = Person.Sexs.FEMALE
+            sex_data = Sexs.FEMALE
 
         person = None
         if not str(dni).isnumeric():

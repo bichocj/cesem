@@ -1,11 +1,10 @@
 from django.db import models
 
-
-class Person(models.Model):
-    class Sexs(models.IntegerChoices):
+class Sexs(models.IntegerChoices):
         FEMALE = 0, ("femenino")
         MALE = 1, ("masculino")
 
+class Person(models.Model):    
     class Titles(models.IntegerChoices):
         tec = 0, ("tec.")
         mvz = 1, ("mvz.")
@@ -18,7 +17,6 @@ class Person(models.Model):
 
     dni = models.IntegerField("dni", null=True, blank=True)
     name = models.CharField("nombres", max_length=50)
-    last_name = models.CharField("apellidos", max_length=50, blank=True, null=True)
     sex = models.IntegerField("sexo", choices=Sexs.choices, blank=True, null=True)
     title = models.IntegerField("titulo", choices=Titles.choices, blank=True, null=True)
 
@@ -188,14 +186,9 @@ class VisitGrass(models.Model):
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_grass",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
-    )
+    up_member_name = models.CharField("UP integrante", max_length=50, default="", blank=True, null=True)
+    up_member_dni = models.CharField("N dni", max_length=20, default="", blank=True, null=True)
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     utm_coordenate = models.CharField(
         "coordenadas UTM anuales", max_length=30, null=True, blank=True
     )
@@ -397,14 +390,9 @@ class VisitAnimalHealth(models.Model):
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
-    )
+    up_member_name = models.CharField("UP integrante", max_length=50, default="", blank=True, null=True)
+    up_member_dni = models.CharField("N dni", max_length=20, default="", blank=True, null=True)
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
@@ -469,14 +457,9 @@ class VisitGeneticImprovementVacuno(models.Model):
         blank=True,
         null=True,
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal_vacuno",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
-    )
+    up_member_name = models.CharField("UP integrante", max_length=50, default="", blank=True, null=True)
+    up_member_dni = models.CharField("N dni", max_length=20, default="", blank=True, null=True)
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
@@ -546,14 +529,9 @@ class VisitGeneticImprovementOvino(models.Model):
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal_ovino",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
-    )
+    up_member_name = models.CharField("UP integrante", max_length=50, default="", blank=True, null=True)
+    up_member_dni = models.CharField("N dni", max_length=20, default="", blank=True, null=True)
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
@@ -608,14 +586,9 @@ class VisitGeneticImprovementAlpaca(models.Model):
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal_alpaca",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
-    )
+    up_member_name = models.CharField("UP integrante", max_length=50, default="", blank=True, null=True)
+    up_member_dni = models.CharField("N dni", max_length=20, default="", blank=True, null=True)
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,

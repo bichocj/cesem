@@ -62,10 +62,10 @@ class VisitComponentsViewSet(viewsets.ModelViewSet):
     serializer_class = VisitComponentsPathSerializer
 
     filterset_fields = {
-        "production_unit__zone__name": ["contains"],
-        "production_unit__person_responsable__name": ["contains"],
-        "specialist_employee__name": ["contains"],
-        "technical_employee__name": ["contains"],
-        "trainer_employee__name": ["contains"],
-        "activity__name": ["contains"],
+        "production_unit__zone__name": ["icontains"],
+        "production_unit__person_responsable__name": ["icontains"],
+        "specialist_employee__name": ["icontains"],
+        "technical_employee__name": ["icontains"],
+        "trainer_employee__name": ["icontains"],
+        "activity__name": ["icontains"],
     }
