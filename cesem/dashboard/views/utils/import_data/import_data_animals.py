@@ -52,8 +52,7 @@ class ImportAnimals(HelperImport):
     alpaca_activities = [
         "empadre controlado de alpacas",
         "selección de alpacas para empadre controlado",
-        "capacitación en selección de reproductores",
-        "curso taller en manejo de alpacas",
+        "curso taller en selección de reproductores y manejo de alpacas",
         "asistencia técnica en buenas prácticas de manejo de alpacas",
         "caracterización fenotípica de hatos alpaqueros",
         "evaluación y diagnóstico de alpacas preñadas",
