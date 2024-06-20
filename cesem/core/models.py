@@ -115,7 +115,7 @@ class Activity(models.Model):
 
 
 class SicknessObservation(models.Model):
-    name = models.CharField("nombre", max_length=50)
+    name = models.CharField("nombre", max_length=100)
 
     class Meta:
         verbose_name = "enfermedad/observación"
@@ -127,7 +127,7 @@ class SicknessObservation(models.Model):
 
 class Diagnostic(models.Model):
     name = models.CharField(
-        "observación", max_length=50
+        "observación", max_length=100
     )  # the name 'name' allow us an easy sync in sync_masters func
 
     class Meta:
