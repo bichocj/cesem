@@ -174,7 +174,7 @@ REST_FRAMEWORK = {
     ],
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "DEFAULT_PAGINATION_CLASS": "rest_framework_datatables.pagination.DatatablesPageNumberPagination",
-    "PAGE_SIZE": 50,
+    "PAGE_SIZE": 100,
     "PAGINATE_BY_PARAM": "page_size",
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",

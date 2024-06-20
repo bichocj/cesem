@@ -103,6 +103,8 @@ class HelperImport:
         sex_data = None
         name = str(name).strip()
         sex_data = self.get_sex(sex)
+        if type(dni) is float:
+            dni = int(dni)
 
         person = None
         if not str(dni).isnumeric():

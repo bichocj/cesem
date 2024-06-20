@@ -288,7 +288,7 @@ class ImportAnimals(HelperImport):
                             checksum=checksum,
                         )
                         visits_vacunos.append(visit_vacuno)
-                    except e:
+                    except Exception as e:
                         msg = (
                             "la actividad "
                             + str(data_activity)
@@ -360,7 +360,7 @@ class ImportAnimals(HelperImport):
                             + str(i + 1)
                             + ", TIPO: MG ovino"
                         )
-                    except e:
+                    except Exception as e:
                         msg = (
                             "la actividad "
                             + data_activity
@@ -479,7 +479,7 @@ class ImportAnimals(HelperImport):
                             + str(i + 1)
                             + ", TIPO: MG alpaca"
                         )
-                    except e:
+                    except Exception as e:
                         msg = (
                             "la actividad "
                             + str(data_activity)
