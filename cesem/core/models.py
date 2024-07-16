@@ -144,7 +144,7 @@ class Drug(models.Model):
         ml = 0, ("ml.")
         gr = 1, ("gr.")
 
-    name = models.CharField("nombre", max_length=50)
+    name = models.CharField("nombre", max_length=100)
     um = models.CharField("unidad de medida", max_length=100)
     # , choices=UnitMeasurement.choices, default=0
 

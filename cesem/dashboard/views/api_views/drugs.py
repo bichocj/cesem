@@ -10,7 +10,7 @@ class DrugPathSerializer(BasePathSerializer):
     
     class Meta:
         model = Drug
-        fields = ['name', 'um', 'price', 'url']
+        fields = ['name', 'um', 'url']
         
 
 class DrugViewSet(viewsets.ModelViewSet):
