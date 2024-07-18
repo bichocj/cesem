@@ -153,7 +153,10 @@ class VisitGrassViewSet(viewsets.ModelViewSet):
         serializer.save(production_unit=production_unit)
 
     filterset_fields = {
+        "visited_at": ["exact"],
         "production_unit__zone__name": ["icontains"],
+        "production_unit__community__name": ["icontains"],
+        "production_unit__sector__name": ["icontains"],
         "production_unit__person_responsable__name": ["icontains"],
         "up_member_name": ["icontains"],
         "employ_specialist__name": ["icontains"],

@@ -276,7 +276,10 @@ class ProductionUnitViewSet(viewsets.ModelViewSet):
     serializer_details_class = ProductionUnitDetailsPathSerializer
     filterset_fields = {
         "person_responsable__name": ["icontains"],
-        # "zone__name": ["icontains"],
+        "person_responsable__dni": ["icontains"],
+        "zone__name": ["icontains"],
+        "community__name": ["icontains"],
+        "sector__name": ["icontains"],
     }
 
     def retrieve(self, request, *args, **kwargs):

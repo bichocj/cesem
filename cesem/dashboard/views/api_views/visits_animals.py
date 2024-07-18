@@ -141,12 +141,20 @@ class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
         
 
     filterset_fields = {
+        "visited_at": ["exact"],
         "production_unit__zone__name": ["icontains"],
+        "production_unit__community__name": ["icontains"],
+        "production_unit__sector__name": ["icontains"],
         "production_unit__person_responsable__name": ["icontains"],
         "up_member_name": ["icontains"],
         "employ_specialist__name": ["icontains"],
         "employ_responsable__name": ["icontains"],
         "activity__name": ["icontains"],
         "sickness_observation__name": ["icontains"],
-        "diagnostic__name": ["icontains"],
+        "diagnostic__name": ["icontains"],        
+        "vacunos": ["exact"],
+        "ovinos": ["exact"],
+        "alpacas": ["exact"],
+        "llamas": ["exact"],
+        "canes": ["exact"],
     }
