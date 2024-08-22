@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 from core.models import (
     Activity,
     VisitAnimalHealth,
+    VisitAnimalDeworming,
     Zone,
     VisitGrass,
     Community,
@@ -91,6 +92,10 @@ alpaca_quantity_var_sum = Sum(
     + F("female_baby")
 )
 
+deworming_quantity_var_sum = Sum(
+    F("total")
+)
+
 
 def get_weekly_data(from_datepicker, to_datepicker, inform_type):
     animal_health_quantity_var = Count("id")
@@ -98,6 +103,8 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    # deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
 
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
@@ -105,6 +112,7 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -151,6 +159,15 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
         .order_by("visited_at")
     )
 
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .values("activity__id", "visited_at")
+        .annotate(quantity=deworming_quantity_var)
+        .order_by("visited_at")
+    )
+
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
@@ -184,6 +201,7 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            deworming_data,
             components_data,
         )
     )
@@ -333,12 +351,16 @@ def get_monthly_data(default_from, default_to, periods, inform_type):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    # deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -402,6 +424,19 @@ def get_monthly_data(default_from, default_to, periods, inform_type):
             "month",
         )
         .annotate(quantity=alpaca_quantity_var)
+        .order_by("activity__id", "month")
+    )
+
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=default_from, visited_at__lte=default_to
+        )
+        .annotate(month=Case(*whens))
+        .values(
+            "activity__id",
+            "month",
+        )
+        .annotate(quantity=deworming_quantity_var)
         .order_by("activity__id", "month")
     )
 
@@ -443,6 +478,7 @@ def get_monthly_data(default_from, default_to, periods, inform_type):
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
             components_data,
+            deworming_data,
         )
     )
     return data
@@ -475,6 +511,9 @@ def get_yearly_data(default_from, default_to, inform_type):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    
+    # deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
 
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
@@ -482,6 +521,7 @@ def get_yearly_data(default_from, default_to, inform_type):
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -548,6 +588,19 @@ def get_yearly_data(default_from, default_to, inform_type):
         )
     )
 
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=default_from, visited_at__lte=default_to
+        )
+        .values(
+            "activity__id",
+        )
+        .annotate(quantity=deworming_quantity_var)
+        .order_by(
+            "activity__id",
+        )
+    )
+
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
@@ -582,6 +635,7 @@ def get_yearly_data(default_from, default_to, inform_type):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            deworming_data,
             components_data,
         )
     )
@@ -694,12 +748,16 @@ def report_zones(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    # deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -761,6 +819,18 @@ def report_zones(request):
         .order_by("production_unit__zone")
     )
 
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .values(
+            "activity",
+            "production_unit__zone",
+        )
+        .annotate(quantity=deworming_quantity_var)
+        .order_by("production_unit__zone")
+    )
+
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
@@ -793,6 +863,7 @@ def report_zones(request):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            deworming_data,
             components_data,
         )
     )
@@ -831,12 +902,16 @@ def report_community(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    #deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -897,6 +972,18 @@ def report_community(request):
         .annotate(quantity=alpaca_quantity_var)
         .order_by("production_unit__community")
     )
+    
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .values(
+            "activity",
+            "production_unit__community",
+        )
+        .annotate(quantity=deworming_quantity_var)
+        .order_by("production_unit__community")
+    )
 
     if inform_type == "sum":
         # cantidad de asistentes
@@ -931,6 +1018,7 @@ def report_community(request):
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
             components_data,
+            deworming_data,
         )
     )
     activities_data = {}

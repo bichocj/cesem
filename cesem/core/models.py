@@ -486,24 +486,19 @@ class VisitAnimalDeworming(models.Model):
     v_dewormed = models.IntegerField("vacunos desparasitados", default=0)
     v_no_dewormed = models.IntegerField("vacunos no desparasitados", default=0)
     v_total = models.IntegerField("total vacunos", default=0)
-    
     o_race = models.CharField("ovinos raza", max_length=50, default="", blank=True, null=True)
     o_dewormed = models.IntegerField("ovinos desparasitados", default=0)
     o_no_dewormed = models.IntegerField("ovinos no desparasitados", default=0)
     o_total = models.IntegerField("total ovinos", default=0)
-    
     a_race = models.CharField("alpacas raza", max_length=50, default="", blank=True, null=True)
     a_dewormed = models.IntegerField("alpacas desparasitados", default=0)
     a_no_dewormed = models.IntegerField("alpacas no desparasitados", default=0)
     a_total = models.IntegerField("total alpacas", default=0)
-    
     l_race = models.CharField("llamas raza", max_length=50, default="", blank=True, null=True)
     l_dewormed = models.IntegerField("llamas desparasitados", default=0)
     l_no_dewormed = models.IntegerField("llamas no desparasitados", default=0)
     l_total = models.IntegerField("total llamas", default=0)
-
     c_total = models.IntegerField("total canes", default=0)
-    
     total = models.IntegerField("total", default=0)
 
     created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
