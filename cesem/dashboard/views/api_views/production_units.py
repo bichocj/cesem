@@ -1,6 +1,12 @@
 from rest_framework import viewsets, serializers
 from django.db.models import F, Sum
-from core.models import ProductionUnit, VisitAnimalHealth, VisitGrass, VisitComponents
+from core.models import (
+    ProductionUnit,
+    VisitAnimalHealth,
+    VisitGrass,
+    VisitComponents,
+    VisitAnimalDeworming,
+)
 from .utils import BasePathSerializer
 
 
@@ -27,7 +33,6 @@ class ProductionUnitPathSerializer(BasePathSerializer):
             "community",
             "sector",
             "person_responsable",
-            
             "zona_nombre",
             "comunidad",
             "sector_nombre",
@@ -143,6 +148,15 @@ class SumaPastosPathSerializer(serializers.Serializer):
     capac_manejo_conserv = serializers.IntegerField()
 
 
+class SumaDesparasitadosPathSerializer(serializers.Serializer):
+    total_vacunos = serializers.IntegerField()
+    total_ovinos = serializers.IntegerField()
+    total_llamas = serializers.IntegerField()
+    total_alpacas = serializers.IntegerField()
+    total_canes = serializers.IntegerField()
+    total = serializers.IntegerField()
+
+
 class SumaAnimalesPathSerializer(serializers.Serializer):
     total_vacas = serializers.IntegerField()
     total_vaquillonas = serializers.IntegerField()
@@ -167,7 +181,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     dni = serializers.StringRelatedField(many=False, source="person_responsable.dni")
     miembro = serializers.StringRelatedField(many=False, source="person_member")
     tipologia = serializers.StringRelatedField(many=False, source="tipology")
-    suma_animales = serializers.SerializerMethodField()
+    suma_sanidad_animales = serializers.SerializerMethodField()
+    suma_animales_desparasitados = serializers.SerializerMethodField()
     suma_pastos = serializers.SerializerMethodField()
     visitas_animales = serializers.SerializerMethodField()
     visitas_pastos = serializers.SerializerMethodField()
@@ -222,7 +237,7 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         serializer = SumaPastosPathSerializer(instance=data, many=False)
         return serializer.data
 
-    def get_suma_animales(self, obj):
+    def get_suma_sanidad_animales(self, obj):
         data = VisitAnimalHealth.objects.filter(production_unit__id=obj.id).aggregate(
             total_vacas=Sum("vaca", default=0),
             total_vaquillonas=Sum("vaquillona", default=0),
@@ -239,6 +254,20 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         serializer = SumaAnimalesPathSerializer(instance=data, many=False)
         return serializer.data
 
+    def get_suma_animales_desparasitados(self, obj):
+        data = VisitAnimalDeworming.objects.filter(
+            production_unit__id=obj.id
+        ).aggregate(
+            total=Sum("total", default=0),
+            total_vacunos=Sum("v_dewormed", default=0),
+            total_ovinos=Sum("o_dewormed", default=0),
+            total_llamas=Sum("l_dewormed", default=0),
+            total_alpacas=Sum("a_dewormed", default=0),
+            total_canes=Sum("c_total", default=0),
+        )
+        serializer = SumaDesparasitadosPathSerializer(instance=data, many=False)
+        return serializer.data
+
     class Meta:
         model = ProductionUnit
         fields = (
@@ -247,7 +276,6 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "community",
             "sector",
             "person_responsable",
-
             "responsable",
             "dni",
             "miembro",
@@ -256,7 +284,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "sector_nombre",
             "tipologia",
             "url",
-            "suma_animales",
+            "suma_sanidad_animales",
+            "suma_animales_desparasitados",
             "suma_pastos",
             "visitas_animales",
             "visitas_pastos",

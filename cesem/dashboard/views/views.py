@@ -16,6 +16,10 @@ from .api_views.visits_animals import (
     VisitAnimalHealthViewSet,
     VisitAnimalHealthPathSerializer,
 )
+from .api_views.visits_dewormed import (    
+    VisitAnimalDewormingViewSet,
+    VisitAnimalDewormedPathSerializer
+)
 from .api_views.visits_vacuno import (
     VisitGeneticImprovementVacunoViewSet,
     VisitGeneticImprovementVacunoPathSerializer,
@@ -104,6 +108,7 @@ def change_anual_period(request):
 
 people_path = PersonPathSerializer.get_path()
 visit_path = VisitAnimalHealthPathSerializer.get_path()
+deworming_path = VisitAnimalDewormedPathSerializer.get_path()
 visit_grass_path = VisitGrassPathSerializer.get_path()
 diagnistic_path = DiagnosticPathSerializer.get_path()
 sickness_observations_path = SicknessObservationPathSerializer.get_path()
@@ -128,6 +133,7 @@ router.register(r"%s" % SectorPathSerializer.get_path(), SectorViewSet)
 router.register(r"%s" % communities_path, CommunityViewSet, basename=communities_path)
 router.register(r"%s" % activities_path, ActivityViewSet, basename=activities_path)
 router.register(r"%s" % visit_path, VisitAnimalHealthViewSet, basename=visit_path)
+router.register(r"%s" % deworming_path, VisitAnimalDewormingViewSet, basename=deworming_path)
 router.register(r"%s" % visit_grass_path, VisitGrassViewSet, basename=visit_grass_path)
 router.register(r"%s" % diagnistic_path, DiagnosticViewSet, basename=diagnistic_path)
 router.register(

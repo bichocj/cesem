@@ -401,6 +401,14 @@
             </li>
             <li class="nav-item">
               <a
+                class="bd-links-link d-inline-block rounded {{'visits-desparasitacion'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-desparasitacion-list'%}"
+              >
+              Visita Campaña Desparacitación</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
                 class="bd-links-link d-inline-block rounded {{'visits-vacuno'|active_if_path_match:request}}"
                 href="{% url 'dashboard:visits-vacuno-list'%}"
               >
