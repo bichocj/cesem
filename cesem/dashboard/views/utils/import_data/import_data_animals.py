@@ -33,6 +33,9 @@ class ImportAnimals(HelperImport):
     dewormed_activities = [
         "desparasitación interna",
     ]
+    sales_activities = [
+        "campaña de entrega de sales minerales",
+    ]
     vacuno_activities = [
         "inseminación artificial en ganado vacuno de leche",
         "capacitación en manejo reproductivo de ganado vacuno lechero",
@@ -568,6 +571,34 @@ class ImportAnimals(HelperImport):
                             checksum=checksum,
                         )
                         visits_dewormed.append(visit_dewormed)
+                    except Exception as e:
+                        msg = (
+                            "la actividad "
+                            + str(data_activity)
+                            + " requiere la columna "
+                            + str(e)
+                        )
+                        raise ValueError(msg)
+                elif data_activity.lower() in self.sales_activities:
+                    try:
+                        data_vacunos = self.zero_if_nan(data["VACUNOS"][i], to_int=True)
+                        data_ovinos = self.zero_if_nan(data["OVINOS"][i], to_int=True)
+
+                        visit_animal = VisitAnimalHealth(
+                            visited_at=data_visited_at,
+                            production_unit=production_unit,
+                            up_member_name=data_up_member_name,
+                            up_member_dni=data_up_member_dni,
+                            sex=data_up_member_sex,
+                            employ_specialist=employ_specialist,
+                            employ_responsable=employ_responsable,
+                            activity=activity,
+                            ovinos=data_ovinos,
+                            vacunos=data_vacunos,
+                            checksum=checksum,
+                        )
+                        visits_animals.append(visit_animal)
+                        
                     except Exception as e:
                         msg = (
                             "la actividad "
