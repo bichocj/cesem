@@ -2,6 +2,7 @@ from django.contrib import admin
 from core.models import (
     Activity,
     Person,
+    VisitAnimalDeworming,
     VisitAnimalHealth,
     VisitAnimalHealthDetails,
     VisitGrass,
@@ -17,7 +18,7 @@ from core.models import (
     VisitGeneticImprovementOvino,
     VisitComponents,
     ProductionUnit,
-    AnualPeriod
+    AnualPeriod,
 )
 
 
@@ -65,6 +66,7 @@ class VisitAdmin(admin.ModelAdmin):
     ]
 
 
+admin.site.register(VisitAnimalDeworming)
 admin.site.register(VisitGeneticImprovementVacuno)
 admin.site.register(VisitGeneticImprovementOvino)
 admin.site.register(VisitGeneticImprovementAlpaca)
