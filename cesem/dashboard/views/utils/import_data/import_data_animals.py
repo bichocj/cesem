@@ -533,7 +533,7 @@ class ImportAnimals(HelperImport):
                         )
                         data_l_total = self.zero_if_nan(data["TOTAL LLAMAS"][i])
                         data_c_total = self.zero_if_nan(data["CANES DESPARACITADOS"][i])
-                        data_total = self.zero_if_nan(data["TOTAL DESPARASITADOS"][i])
+                        data_total = self.zero_if_nan(data["TOTAL VACUNOS, OVINOS, ALPACAS Y LLAMAS DESPARASITADAS"][i])
 
                         visit_dewormed = VisitAnimalDeworming(
                             visited_at=data_visited_at,
@@ -584,6 +584,18 @@ class ImportAnimals(HelperImport):
                         data_vacunos = self.zero_if_nan(data["VACUNOS"][i], to_int=True)
                         data_ovinos = self.zero_if_nan(data["OVINOS"][i], to_int=True)
 
+                        data_sickness_observation = self.nan_if_nat(
+                            data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
+                        )
+                        data_diagnostic = self.nan_if_nat(data["DIAGNOSTICO"][i])
+
+                        sickness_observation = self.get_sickness_observation(
+                            data_sickness_observation, creates_if_none
+                        )
+                        diagnostic = self.get_diagnostic(
+                            data_diagnostic, creates_if_none
+                        )
+
                         visit_animal = VisitAnimalHealth(
                             visited_at=data_visited_at,
                             production_unit=production_unit,
@@ -593,6 +605,8 @@ class ImportAnimals(HelperImport):
                             employ_specialist=employ_specialist,
                             employ_responsable=employ_responsable,
                             activity=activity,
+                            sickness_observation=sickness_observation,
+                            diagnostic=diagnostic,
                             ovinos=data_ovinos,
                             vacunos=data_vacunos,
                             checksum=checksum,
