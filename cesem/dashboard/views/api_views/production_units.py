@@ -1,6 +1,12 @@
 from rest_framework import viewsets, serializers
 from django.db.models import F, Sum
-from core.models import ProductionUnit, VisitAnimalHealth, VisitGrass, VisitComponents
+from core.models import (
+    ProductionUnit,
+    VisitAnimalHealth,
+    VisitGrass,
+    VisitComponent2,
+    VisitComponent3,
+)
 from .utils import BasePathSerializer
 
 
@@ -27,7 +33,6 @@ class ProductionUnitPathSerializer(BasePathSerializer):
             "community",
             "sector",
             "person_responsable",
-            
             "zona_nombre",
             "comunidad",
             "sector_nombre",
@@ -99,7 +104,7 @@ class VisitGrassPathSerializer(BasePathSerializer):
         ]
 
 
-class VisitComponentsPathSerializer(BasePathSerializer):
+class VisitComponent2PathSerializer(BasePathSerializer):
     fecha_visita = serializers.StringRelatedField(source="visited_at")
     especialista = serializers.StringRelatedField(source="employ_specialist")
     responsable = serializers.StringRelatedField(source="employ_responsable")
@@ -107,7 +112,28 @@ class VisitComponentsPathSerializer(BasePathSerializer):
 
     @staticmethod
     def get_path():
-        return "visits-components"
+        return "visits-component-2"
+
+    class Meta:
+        model = VisitGrass
+        fields = [
+            "fecha_visita",
+            "especialista",
+            "responsable",
+            "actividad",
+            "url",
+        ]
+
+
+class VisitComponent3PathSerializer(BasePathSerializer):
+    fecha_visita = serializers.StringRelatedField(source="visited_at")
+    especialista = serializers.StringRelatedField(source="employ_specialist")
+    responsable = serializers.StringRelatedField(source="employ_responsable")
+    actividad = serializers.StringRelatedField(source="activity")
+
+    @staticmethod
+    def get_path():
+        return "visits-component-3"
 
     class Meta:
         model = VisitGrass
@@ -187,9 +213,14 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
         serializer = VisitGrassPathSerializer(instance=data, many=True)
         return serializer.data
 
-    def get_visitas_capacitaciones(self, obj):
-        data = VisitComponents.objects.filter(production_unit__id=obj.id)
-        serializer = VisitComponentsPathSerializer(instance=data, many=True)
+    def get_visitas_componente_2(self, obj):
+        data = VisitComponent2.objects.filter(production_unit__id=obj.id)
+        serializer = VisitComponent2PathSerializer(instance=data, many=True)
+        return serializer.data
+
+    def get_visitas_componente_3(self, obj):
+        data = VisitComponent3.objects.filter(production_unit__id=obj.id)
+        serializer = VisitComponent3PathSerializer(instance=data, many=True)
         return serializer.data
 
     def get_suma_pastos(self, obj):
@@ -247,7 +278,6 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "community",
             "sector",
             "person_responsable",
-
             "responsable",
             "dni",
             "miembro",
@@ -260,7 +290,8 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
             "suma_pastos",
             "visitas_animales",
             "visitas_pastos",
-            "visitas_capacitaciones",
+            "visitas_componente_2",
+            "visitas_componente_3",
         )
 
 
