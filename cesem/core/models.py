@@ -173,6 +173,7 @@ class ProductionUnit(models.Model):
     tipology = models.IntegerField("tipología de UP", default=0)
     is_pilot = models.BooleanField("UP es piloto?", default=False)
     is_official = models.BooleanField("es oficial?", default=True)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "Unidad de Producción"
@@ -385,6 +386,7 @@ class VisitGrass(models.Model):
         null=True,
         blank=True,
     )
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita pastos"
@@ -425,9 +427,15 @@ class VisitAnimalHealth(models.Model):
         SicknessObservation,
         on_delete=models.CASCADE,
         verbose_name="enfermedad/observación",
+        blank=True,
+        null=True,
     )
     diagnostic = models.ForeignKey(
-        Diagnostic, on_delete=models.CASCADE, verbose_name="diagnostico"
+        Diagnostic,
+        on_delete=models.CASCADE,
+        verbose_name="diagnostico",
+        blank=True,
+        null=True,
     )
     vaca = models.IntegerField("vaca", default=0)
     vaquillona = models.IntegerField("vaquillona", default=0)
@@ -440,6 +448,7 @@ class VisitAnimalHealth(models.Model):
     alpacas = models.IntegerField("alpacas", default=0)
     llamas = models.IntegerField("llamas", default=0)
     canes = models.IntegerField("canes", default=0)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita sanidad animal"
@@ -455,6 +464,80 @@ class VisitAnimalHealthDetails(models.Model):
     class Meta:
         verbose_name = "visita sanidad animal - detalle"
         verbose_name_plural = "visitas sanidad animal - detalles"
+
+
+class VisitAnimalDeworming(models.Model):
+    checksum = models.CharField(max_length=100, default="")
+    visited_at = models.DateField(
+        "fecha de visita", blank=True, null=True
+    )  # Because current XLS doesn't have all dates
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    up_member_name = models.CharField(
+        "UP integrante", max_length=50, default="", blank=True, null=True
+    )
+    up_member_dni = models.CharField(
+        "N dni", max_length=20, default="", blank=True, null=True
+    )
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
+    employ_specialist = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_specialist_deworming",
+        verbose_name="personal especialista",
+    )
+    employ_responsable = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_responsable_deworming",
+        verbose_name="personal responsable",
+    )
+    activity = models.ForeignKey(
+        Activity, on_delete=models.CASCADE, verbose_name="actividad"
+    )
+    sickness_observation = models.ForeignKey(
+        SicknessObservation,
+        on_delete=models.CASCADE,
+        verbose_name="enfermedad/observación",
+    )
+    diagnostic = models.ForeignKey(
+        Diagnostic, on_delete=models.CASCADE, verbose_name="diagnostico"
+    )
+
+    v_race = models.CharField(
+        "vacunos raza", max_length=50, default="", blank=True, null=True
+    )
+    v_dewormed = models.IntegerField("vacunos desparasitados", default=0)
+    v_no_dewormed = models.IntegerField("vacunos no desparasitados", default=0)
+    v_total = models.IntegerField("total vacunos", default=0)
+    o_race = models.CharField(
+        "ovinos raza", max_length=50, default="", blank=True, null=True
+    )
+    o_dewormed = models.IntegerField("ovinos desparasitados", default=0)
+    o_no_dewormed = models.IntegerField("ovinos no desparasitados", default=0)
+    o_total = models.IntegerField("total ovinos", default=0)
+    a_race = models.CharField(
+        "alpacas raza", max_length=50, default="", blank=True, null=True
+    )
+    a_dewormed = models.IntegerField("alpacas desparasitados", default=0)
+    a_no_dewormed = models.IntegerField("alpacas no desparasitados", default=0)
+    a_total = models.IntegerField("total alpacas", default=0)
+    l_race = models.CharField(
+        "llamas raza", max_length=50, default="", blank=True, null=True
+    )
+    l_dewormed = models.IntegerField("llamas desparasitados", default=0)
+    l_no_dewormed = models.IntegerField("llamas no desparasitados", default=0)
+    l_total = models.IntegerField("total llamas", default=0)
+    c_total = models.IntegerField("total canes", default=0)
+    total = models.IntegerField("total", default=0)
+
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
+
+    class Meta:
+        verbose_name = "visita vacunacion"
+        verbose_name_plural = "visitas vacunacion"
+        ordering = ("visited_at", "production_unit")
 
 
 class VisitGeneticImprovementVacuno(models.Model):
@@ -531,6 +614,7 @@ class VisitGeneticImprovementVacuno(models.Model):
         "asis tec manejo ganado vacuno lechero", default=0
     )
     vacunos_number = models.IntegerField("cant vacunos", default=0)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita MG vacuno"
@@ -592,6 +676,7 @@ class VisitGeneticImprovementOvino(models.Model):
     )
     ovinos_number = models.IntegerField("cant ovinos", default=0)
     rgc_number = models.CharField("nº RGC", max_length=30, null=True, blank=True)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita MG ovino"
@@ -687,6 +772,7 @@ class VisitGeneticImprovementAlpaca(models.Model):
     technical_assistance_attendance = models.IntegerField(
         "asist tec buenas prácticas manejo alpacas", default=0
     )
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita MG alpaca"
@@ -777,6 +863,8 @@ class VisitComponent3(models.Model):
         Activity, on_delete=models.CASCADE, verbose_name="actividad"
     )
     quantity = models.IntegerField("cantidad", default=0)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
+
 
     class Meta:
         verbose_name = "visita componente iii"
