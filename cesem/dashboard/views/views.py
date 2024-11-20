@@ -5,7 +5,8 @@ from rest_framework import routers
 
 from .utils.import_data.import_data_animals import ImportAnimals
 from .utils.import_data.import_data_grass import ImportGrass
-from .utils.import_data.import_data_components import ImportComponents
+from .utils.import_data.import_data_component_2 import ImportComponent2
+from .utils.import_data.import_data_component_3 import ImportComponent3
 from .api_views.people import PersonViewSet, PersonPathSerializer
 from .api_views.users import UserViewSet, UserPathSerializer
 from .api_views.zones import ZoneViewSet, ZonePathSerializer
@@ -34,9 +35,13 @@ from .api_views.visits_alpaca import (
 )
 
 from .api_views.visits_grass import VisitGrassViewSet, VisitGrassPathSerializer
-from .api_views.visits_components import (
-    VisitComponentsViewSet,
-    VisitComponentsPathSerializer,
+from .api_views.visits_component_2 import (
+    VisitComponent2ViewSet,
+    VisitComponent2PathSerializer,
+)
+from .api_views.visits_component_3 import (
+    VisitComponent3ViewSet,
+    VisitComponent3PathSerializer,
 )
 from .api_views.diagnostics import DiagnosticViewSet, DiagnosticPathSerializer
 from .api_views.sickness_observations import (
@@ -51,10 +56,12 @@ from .api_views.production_units import (
 from .api_views.files_checksum import FilesChecksumPathSerializer, FilesChecksumViewSet
 from core.models import AnualPeriod
 
+
 @login_required
 def home_view(request):
     # message = "Hello"
     return render(request, "dashboard/home.html", locals())
+
 
 @login_required
 def user_search(request):
@@ -70,13 +77,16 @@ def upload_file(request, file_type):
                 importer = ImportAnimals()
             elif file_type == "pastos":
                 importer = ImportGrass()
-            elif file_type == "componentes":
-                importer = ImportComponents()
+            elif file_type == "componente2":
+                importer = ImportComponent2()
+            elif file_type == "componente3":
+                importer = ImportComponent3()
             rows = importer.execute(excel_file, True)
             message_success = "Se registraron {} filas".format(str(rows))
         except Exception as e:
             message_error = str(e)
     return render(request, "dashboard/import_visits.html", locals())
+
 
 @login_required
 def change_anual_period(request):
@@ -85,23 +95,28 @@ def change_anual_period(request):
 
     # verificando si el from se trata de una fecha que solo existe en bisiesto
     if from_anual_period.month == 2 and from_anual_period.day == 29:
-        to_anual_period = datetime.date(from_anual_period.year+1, 2, 28)
+        to_anual_period = datetime.date(from_anual_period.year + 1, 2, 28)
     else:
-        to_anual_period = from_anual_period.replace(year=from_anual_period.year+1) - datetime.timedelta(days=1)
-    
+        to_anual_period = from_anual_period.replace(
+            year=from_anual_period.year + 1
+        ) - datetime.timedelta(days=1)
+
     if "POST" == request.method:
         from_anual_period_str = request.POST.get("from_anual_period")
-        from_anual_period = datetime.datetime.strptime(from_anual_period_str, '%Y-%m-%d').date()
+        from_anual_period = datetime.datetime.strptime(
+            from_anual_period_str, "%Y-%m-%d"
+        ).date()
 
         from_anual_period_object.date_from = from_anual_period
         from_anual_period_object.save()
 
         # verificando si el from se trata de una fecha que solo existe en bisiesto
         if from_anual_period.month == 2 and from_anual_period.day == 29:
-            to_anual_period = datetime.date(from_anual_period.year+1, 2, 28)
+            to_anual_period = datetime.date(from_anual_period.year + 1, 2, 28)
         else:
-            to_anual_period = from_anual_period.replace(year=from_anual_period.year+1) - datetime.timedelta(days=1)
-        
+            to_anual_period = from_anual_period.replace(
+                year=from_anual_period.year + 1
+            ) - datetime.timedelta(days=1)
 
     return render(request, "dashboard/anual_period.html", locals())
 
@@ -120,7 +135,8 @@ files_checksum_path = FilesChecksumPathSerializer.get_path()
 visit_vacuno_path = VisitGeneticImprovementVacunoPathSerializer.get_path()
 visit_ovino_path = VisitGeneticImprovementOvinoPathSerializer.get_path()
 visit_alpaca_path = VisitGeneticImprovementAlpacaPathSerializer.get_path()
-visit_components_path = VisitComponentsPathSerializer.get_path()
+visit_component_2_path = VisitComponent2PathSerializer.get_path()
+visit_component_3_path = VisitComponent3PathSerializer.get_path()
 
 router = routers.DefaultRouter()
 router.register(
@@ -164,7 +180,12 @@ router.register(
     basename=visit_alpaca_path,
 )
 router.register(
-    r"%s" % visit_components_path,
-    VisitComponentsViewSet,
-    basename=visit_components_path,
+    r"%s" % visit_component_2_path,
+    VisitComponent2ViewSet,
+    basename=visit_component_2_path,
+)
+router.register(
+    r"%s" % visit_component_3_path,
+    VisitComponent3ViewSet,
+    basename=visit_component_3_path,
 )

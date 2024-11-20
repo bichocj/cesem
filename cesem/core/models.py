@@ -779,9 +779,9 @@ class VisitGeneticImprovementAlpaca(models.Model):
         verbose_name_plural = "visitas MG alpacas"
 
 
-class VisitComponents(models.Model):
+class VisitComponent2(models.Model):
     parte_number = models.IntegerField("nro. parte", default=0)
-    year = models.CharField("año", max_length=10, null=True, blank=True)
+    month_f = models.CharField("mes", max_length=10, null=True, blank=True)
     visited_at = models.DateField("fecha de visita", blank=True, null=True)
     general_data = models.CharField(
         "datos generales", max_length=10, null=True, blank=True
@@ -793,7 +793,7 @@ class VisitComponents(models.Model):
     technical_employee = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
-        related_name="technical_employee",
+        related_name="technical_employee_c2",
         verbose_name="técnico de cadenas",
         null=True,
         blank=True,
@@ -801,7 +801,7 @@ class VisitComponents(models.Model):
     specialist_employee = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
-        related_name="specialist_employee",
+        related_name="specialist_employee_c2",
         verbose_name="especialista de cadenas",
         null=True,
         blank=True,
@@ -809,7 +809,7 @@ class VisitComponents(models.Model):
     trainer_employee = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
-        related_name="trainer_employee",
+        related_name="trainer_employee_c2",
         verbose_name="capacitador",
         null=True,
         blank=True,
@@ -818,17 +818,57 @@ class VisitComponents(models.Model):
         Activity, on_delete=models.CASCADE, verbose_name="actividad"
     )
     quantity = models.IntegerField("cantidad", default=0)
-    certificate_delivery = models.IntegerField(
-        "entrega de certificados gestión empresarial", default=0
-    )
-    pedagogical_process = models.IntegerField(
-        "procesos pedagógicos equipo cesem", default=0
-    )
-    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
-        verbose_name = "visita componente ii y iii"
-        verbose_name_plural = "visitas componentes ii y iii"
+        verbose_name = "visita componente ii"
+        verbose_name_plural = "visitas componente ii"
+
+
+class VisitComponent3(models.Model):
+    parte_number = models.IntegerField("nro. parte", default=0)
+    month_f = models.CharField("mes", max_length=10, null=True, blank=True)
+    visited_at = models.DateField("fecha de visita", blank=True, null=True)
+    general_data = models.CharField(
+        "datos generales", max_length=10, null=True, blank=True
+    )
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    age = models.IntegerField("edad RUP", default=0)
+    technical_employee = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="technical_employee_c3",
+        verbose_name="técnico de cadenas",
+        null=True,
+        blank=True,
+    )
+    specialist_employee = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="specialist_employee_c3",
+        verbose_name="especialista de cadenas",
+        null=True,
+        blank=True,
+    )
+    trainer_employee = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="trainer_employee_c3",
+        verbose_name="capacitador",
+        null=True,
+        blank=True,
+    )
+    activity = models.ForeignKey(
+        Activity, on_delete=models.CASCADE, verbose_name="actividad"
+    )
+    quantity = models.IntegerField("cantidad", default=0)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
+
+
+    class Meta:
+        verbose_name = "visita componente iii"
+        verbose_name_plural = "visitas componente iii"
 
 
 class FilesChecksum(models.Model):
