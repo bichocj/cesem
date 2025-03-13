@@ -17,9 +17,9 @@ from .api_views.visits_animals import (
     VisitAnimalHealthViewSet,
     VisitAnimalHealthPathSerializer,
 )
-from .api_views.visits_dewormed import (    
+from .api_views.visits_dewormed import (
     VisitAnimalDewormingViewSet,
-    VisitAnimalDewormedPathSerializer
+    VisitAnimalDewormedPathSerializer,
 )
 from .api_views.visits_vacuno import (
     VisitGeneticImprovementVacunoViewSet,
@@ -83,6 +83,8 @@ def upload_file(request, file_type):
                 importer = ImportComponent3()
             rows = importer.execute(excel_file, True)
             message_success = "Se registraron {} filas".format(str(rows))
+        except KeyError as e:
+            message_error = f"No se encontró el campo {e}, compruebe que en el Excel no tenga espacios en blanco"
         except Exception as e:
             message_error = str(e)
     return render(request, "dashboard/import_visits.html", locals())
@@ -149,7 +151,9 @@ router.register(r"%s" % SectorPathSerializer.get_path(), SectorViewSet)
 router.register(r"%s" % communities_path, CommunityViewSet, basename=communities_path)
 router.register(r"%s" % activities_path, ActivityViewSet, basename=activities_path)
 router.register(r"%s" % visit_path, VisitAnimalHealthViewSet, basename=visit_path)
-router.register(r"%s" % deworming_path, VisitAnimalDewormingViewSet, basename=deworming_path)
+router.register(
+    r"%s" % deworming_path, VisitAnimalDewormingViewSet, basename=deworming_path
+)
 router.register(r"%s" % visit_grass_path, VisitGrassViewSet, basename=visit_grass_path)
 router.register(r"%s" % diagnistic_path, DiagnosticViewSet, basename=diagnistic_path)
 router.register(

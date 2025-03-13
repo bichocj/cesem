@@ -6,7 +6,6 @@ from core.models import (
     VisitGrass,
     VisitComponent2,
     VisitComponent3,
-    VisitComponents,
     VisitAnimalDeworming,
 )
 from .utils import BasePathSerializer
@@ -209,7 +208,9 @@ class ProductionUnitDetailsPathSerializer(BasePathSerializer):
     suma_pastos = serializers.SerializerMethodField()
     visitas_animales = serializers.SerializerMethodField()
     visitas_pastos = serializers.SerializerMethodField()
-    visitas_capacitaciones = serializers.SerializerMethodField()
+
+    visitas_componente_2 = serializers.SerializerMethodField()
+    visitas_componente_3 = serializers.SerializerMethodField()
 
     @staticmethod
     def get_path():
