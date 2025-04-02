@@ -48,14 +48,14 @@ class ActivityDetailsPathSerializer(BasePathSerializer):
     actividad_superior_nombre = serializers.StringRelatedField(
         many=False, source="parent"
     )
-    importar_excel_como_ = serializers.SerializerMethodField()
+    importar_excel_como = serializers.SerializerMethodField()
 
     def get_actividad_superior_posicion(self, obj):
         if obj.parent:
             return obj.parent.position
         return ""
     
-    def get_importar_excel_como_(self, obj):
+    def get_importar_excel_como(self, obj):
         return obj.get_import_in_display() if obj.import_in is not None else None
 
     @staticmethod
