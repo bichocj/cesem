@@ -5,6 +5,12 @@ class Sexs(models.IntegerChoices):
     FEMALE = 0, ("femenino")
     MALE = 1, ("masculino")
 
+class ImportIn(models.IntegerChoices):
+    DEWORMING = 0, ("desparasitación")
+    SALES = 1, ("sales")
+    VACUNO = 2, ("vacunos")
+    OVINO = 3, ("ovino")
+    ALPACA = 4, ("alpaca")
 
 class Person(models.Model):
     class Titles(models.IntegerChoices):
@@ -107,7 +113,8 @@ class Activity(models.Model):
         verbose_name="actividad superior",
     )
     sum_in_parent = models.BooleanField("sumar en resumen", default=True)
-    um = models.CharField("unidad de medida", null=True, blank=True, max_length=50)
+    um = models.CharField("unidad de medida", null=True, blank=True, max_length=50)     
+    import_in = models.IntegerField("importar excel como", choices=ImportIn.choices, blank=True, null=True)
     meta_2022 = models.IntegerField("meta 2022", default=0)
     meta_2023 = models.IntegerField("meta 2023", default=0)
     meta_2024 = models.IntegerField("meta 2024", default=0)

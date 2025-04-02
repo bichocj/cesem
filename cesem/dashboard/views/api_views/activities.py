@@ -5,11 +5,16 @@ from .utils import BasePathSerializer
 
 class ActivityPathSerializer(BasePathSerializer):
     superior = serializers.SerializerMethodField()
+    importar_excel_como = serializers.SerializerMethodField()
 
     def get_superior(self, obj):
         if obj.parent:
             return obj.parent.position
         return ""
+    
+    def get_importar_excel_como(self, obj):
+        return obj.get_import_in_display() if obj.import_in is not None else None
+
 
     @staticmethod
     def get_path():
@@ -28,6 +33,8 @@ class ActivityPathSerializer(BasePathSerializer):
             "meta_2022",
             "meta_2023",
             "meta_2024",
+            "import_in",
+            "importar_excel_como",
             "url",
         )
         extra_kwargs = {
@@ -41,11 +48,15 @@ class ActivityDetailsPathSerializer(BasePathSerializer):
     actividad_superior_nombre = serializers.StringRelatedField(
         many=False, source="parent"
     )
+    importar_excel_como_ = serializers.SerializerMethodField()
 
     def get_actividad_superior_posicion(self, obj):
         if obj.parent:
             return obj.parent.position
         return ""
+    
+    def get_importar_excel_como_(self, obj):
+        return obj.get_import_in_display() if obj.import_in is not None else None
 
     @staticmethod
     def get_path():
@@ -65,6 +76,8 @@ class ActivityDetailsPathSerializer(BasePathSerializer):
             "meta_2022",
             "meta_2023",
             "meta_2024",
+            "import_in",
+            "importar_excel_como",
             "url",
         )
         extra_kwargs = {

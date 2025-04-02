@@ -15,6 +15,7 @@ from core.models import (
     VisitGeneticImprovementVacuno,
     VisitGeneticImprovementOvino,
     VisitGeneticImprovementAlpaca,
+    ImportIn
 )
 import pandas as pd
 from .utils import HelperImport
@@ -100,6 +101,11 @@ class ImportAnimals(HelperImport):
             "NOMBRE DE RESPONSABLE DE ACTIVIDAD",
             "ACTIVIDAD REALIZADA",
         ]
+        
+        activities = Activity.objects.filter(import_in__isnull=False)
+        for a in activities:
+            if a.import_in == ImportIn.DEWORMING:
+                self.dewormed_activities.append(a.name.lower())
 
     def get_diagnostic(self, name, creates_if_none):
         diagnostic = None
@@ -178,6 +184,7 @@ class ImportAnimals(HelperImport):
                 data["NOMBRE DE RESPONSABLE DE ACTIVIDAD"][i]
             )
             data_activity = self.nan_if_nat(data["ACTIVIDAD REALIZADA"][i])
+
             try:
                 employ_specialist = self.get_person(
                     data_employ_specialist, creates_if_none=False
@@ -533,7 +540,9 @@ class ImportAnimals(HelperImport):
                         )
                         data_l_total = self.zero_if_nan(data["TOTAL LLAMAS"][i])
                         data_c_total = self.zero_if_nan(data["CANES DESPARACITADOS"][i])
-                        data_total = self.zero_if_nan(data["TOTAL VACUNOS, OVINOS, ALPACAS Y LLAMAS DESPARASITADAS"][i])
+                        
+                        data_total = data_v_total + data_o_total + data_a_total + data_l_total + data_c_total
+
 
                         visit_dewormed = VisitAnimalDeworming(
                             visited_at=data_visited_at,
