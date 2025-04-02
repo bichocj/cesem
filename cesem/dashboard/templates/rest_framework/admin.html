@@ -62,10 +62,13 @@
             <div class="content-main">
               <div class="page-header">
                 {% if style == 'list' %}
-                <h2 style="display: inline;">{{view|get_model_name_plural}} </h2>
+                <h2 style="display: inline;" id="table_page_title">{{view|get_model_name_plural}}</h2>
                 {% else %}
                 <div >
-                  <a href="{{view|get_home_path}}"><h2 style="display: inline;"> {{view|get_model_name_plural}} </h2> </a>  <h2 style="display: inline;">&nbsp/&nbsp{{view|get_model_name }} </h2>
+                  <a href="{{view|get_home_path}}">
+                    <h2 style="display: inline;" id="table_page_title"> {{view|get_model_name_plural}} </h2>
+                  </a>  
+                    <h2 style="display: inline;" id="table_page_subtitle">&nbsp/&nbsp{{view|get_model_name }} </h2>
                 </div>
                 {%  endif %}
                 

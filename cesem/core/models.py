@@ -456,6 +456,7 @@ class VisitAnimalHealth(models.Model):
     llamas = models.IntegerField("llamas", default=0)
     canes = models.IntegerField("canes", default=0)
     created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
+    is_sal = models.BooleanField('es sal', default=False)
 
     class Meta:
         verbose_name = "visita sanidad animal"

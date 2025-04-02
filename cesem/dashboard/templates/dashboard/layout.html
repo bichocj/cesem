@@ -160,6 +160,14 @@
             </li>
             <li class="nav-item">
               <a
+                class="bd-links-link d-inline-block rounded {{'visits-sales'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-sales-list'%}"
+              >
+                Visita Sales</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
                 class="bd-links-link d-inline-block rounded {{'visits-vacuno'|active_if_path_match:request}}"
                 href="{% url 'dashboard:visits-vacuno-list'%}"
               >
@@ -413,6 +421,14 @@
                 href="{% url 'dashboard:visits-animals-list'%}"
               >
                 Visita Sanidad Animal</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="bd-links-link d-inline-block rounded {{'visits-sales'|active_if_path_match:request}}"
+                href="{% url 'dashboard:visits-sales-list'%}"
+              >
+                Visita Sales</a
               >
             </li>
             <li class="nav-item">
@@ -698,6 +714,10 @@
           $(".selector-prop:contains(Comunidad)").first().parent().hide();
           $(".selector-prop:contains(Sector)").first().parent().hide();
           $(".selector-prop:contains(Up. responsable)").first().parent().hide();
+        }
+        if (location.pathname.includes("/api/visits-sales/")) {
+          $("#table_page_title").text('Visitas Sales');
+          $("#table_page_subtitle").text(' / Visita Sales');
         }
         $("#from-datepicker,#to-datepicker,#from-anual-period").datetimepicker({
           locale: "es",

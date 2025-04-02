@@ -619,6 +619,7 @@ class ImportAnimals(HelperImport):
                             ovinos=data_ovinos,
                             vacunos=data_vacunos,
                             checksum=checksum,
+                            is_sal=True
                         )
                         visits_animals.append(visit_animal)
                         
