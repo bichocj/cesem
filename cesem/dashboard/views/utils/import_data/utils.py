@@ -124,20 +124,12 @@ class HelperImport:
                     person = Person.objects.create(name=name, dni=dni, sex=sex_data)
                     self.people_names[name] = person
                 else:
-                    msg = (
-                        "En la columna " + column_name + ", la persona " + name + " no esta entre las personas registradas"
-                    )
+                    msg = "En la columna " + column_name + ", la persona " + name + " no esta entre las personas registradas"                    
                     if str(dni).isnumeric():
-                        msg = (
-                            "En la columna " + column_name +
-                            ", la persona "
-                            + name
-                            + " con dni "
-                            + str(dni)
-                            + " no esta entre las personas registradas"
-                        )
+                        msg = "En la columna " + column_name + ", la persona " + name + " con dni " + str(dni) + " no esta entre las personas registradas"
                     if row > 0:
                         msg += ", fila " + str(row)
+                    
                     raise Exception(msg)
         return person
 
@@ -268,6 +260,7 @@ class HelperImport:
         else:
             up_responsable = self.get_person(
                 data_up_responsable_name,
+                "NOMBRE DEL RESPONSABLE UP",
                 data_up_responsable_dni,
                 data_up_responsable_sex,
                 creates_if_none=False,
