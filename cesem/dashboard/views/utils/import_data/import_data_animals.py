@@ -106,7 +106,7 @@ class ImportAnimals(HelperImport):
         for a in activities:
             if a.import_in == ImportIn.DEWORMING:
                 self.dewormed_activities.append(a.name.lower())
-            if a.import_in == ImportIn.SALE:
+            if a.import_in == ImportIn.SALES:
                 self.sales_activities.append(a.name.lower())
             if a.import_in == ImportIn.VACUNO:
                 self.vacuno_activities.append(a.name.lower())
@@ -114,7 +114,7 @@ class ImportAnimals(HelperImport):
                 self.ovino_activities.append(a.name.lower())
             if a.import_in == ImportIn.ALPACA:
                 self.alpaca_activities.append(a.name.lower())
-                
+
 
     def get_diagnostic(self, name, creates_if_none):
         diagnostic = None
