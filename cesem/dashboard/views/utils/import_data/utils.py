@@ -99,7 +99,7 @@ class HelperImport:
             sex_data = Sexs.FEMALE
         return sex_data
     
-    def get_person(self, name, dni=None, sex=None, creates_if_none=True, row=0):
+    def get_person(self, name, column_name, dni=None, sex=None, creates_if_none=True, row=0):
         sex_data = None
         name = str(name).strip()
         sex_data = self.get_sex(sex)
@@ -125,11 +125,12 @@ class HelperImport:
                     self.people_names[name] = person
                 else:
                     msg = (
-                        "La persona " + name + " no esta entre las personas registradas"
+                        "En la columna " + column_name + ", la persona " + name + " no esta entre las personas registradas"
                     )
                     if str(dni).isnumeric():
                         msg = (
-                            "La persona "
+                            "En la columna " + column_name +
+                            ", la persona "
                             + name
                             + " con dni "
                             + str(dni)

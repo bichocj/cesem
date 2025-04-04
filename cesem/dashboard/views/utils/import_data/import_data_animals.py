@@ -196,10 +196,10 @@ class ImportAnimals(HelperImport):
 
             try:
                 employ_specialist = self.get_person(
-                    data_employ_specialist, creates_if_none=False
+                    data_employ_specialist, "NOMBRE DE ESPECIALISTA",  creates_if_none=False
                 )
                 employ_responsable = self.get_person(
-                    data_employ_responsable, creates_if_none=False
+                    data_employ_responsable, "NOMBRE DE RESPONSABLE DE ACTIVIDAD", creates_if_none=False
                 )
                 activity = self.get_activity(
                     data_activity, creates_if_none=False, row=i + 1

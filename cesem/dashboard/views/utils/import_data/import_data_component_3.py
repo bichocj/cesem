@@ -84,13 +84,13 @@ class ImportComponent3(HelperImport):
 
             try:
                 technical_employee = self.get_person(
-                    data_technical_employee, creates_if_none=False
+                    data_technical_employee, "TECNICO DE CADENAS", creates_if_none=False
                 )
                 specialist_employee = self.get_person(
-                    data_specialist_employee, creates_if_none=False
+                    data_specialist_employee, "ESPECIALISTA DE CADENAS", creates_if_none=False
                 )
                 trainer_employee = self.get_person(
-                    data_trainer_employee, creates_if_none=False
+                    data_trainer_employee, "CAPACITADOR", creates_if_none=False
                 )
                 activity = self.get_activity(
                     data_activity, creates_if_none=False, row=i + 1
