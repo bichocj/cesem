@@ -187,7 +187,6 @@ class ImportAnimals(HelperImport):
             )
             data_up_member_dni = self.zero_if_nan(data["N DNI.1"][i], to_int=True)
             data_up_member_sex = self.get_sex(self.nan_if_nat(data["SEXO IUP"][i]))
-            # data['SECTOR/IRRIGACION DEL BENEFICIARIO'][i]
             data_employ_specialist = self.nan_if_nat(data["NOMBRE DE ESPECIALISTA"][i])
             data_employ_responsable = self.nan_if_nat(
                 data["NOMBRE DE RESPONSABLE DE ACTIVIDAD"][i]
@@ -597,10 +596,11 @@ class ImportAnimals(HelperImport):
                             + str(e)
                         )
                         raise ValueError(msg)
+                
                 elif data_activity.lower() in self.sales_activities:
                     try:
-                        data_vacunos = self.zero_if_nan(data["VACUNOS"][i], to_int=True)
-                        data_ovinos = self.zero_if_nan(data["OVINOS"][i], to_int=True)
+                        data_vacunos = self.zero_if_nan(data["TOTAL VACUNOS"][i], to_int=True)
+                        data_ovinos = self.zero_if_nan(data["TOTAL OVINOS"][i], to_int=True)
 
                         data_sickness_observation = self.nan_if_nat(
                             data["ENFERMEDAD/TRANSTORNO/OBSERVACION"][i]
