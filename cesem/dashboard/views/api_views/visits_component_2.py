@@ -1,11 +1,11 @@
-from core.models import VisitGeneticImprovementOvino
+from core.models import VisitComponent2
 from rest_framework import serializers, viewsets
 
 from .utils import BasePathSerializer
 from .zones import ZonePathSerializer
 
 
-class VisitGeneticImprovementOvinoPathSerializer(BasePathSerializer):
+class VisitComponent2PathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
     comunidad = serializers.StringRelatedField(
         many=False, source="production_unit.community"
@@ -14,58 +14,50 @@ class VisitGeneticImprovementOvinoPathSerializer(BasePathSerializer):
     up_responsable = serializers.StringRelatedField(
         many=False, source="production_unit.person_responsable"
     )
-    cesem_especialista = serializers.StringRelatedField(
-        many=False, source="employ_specialist"
+    tecnico_cadenas = serializers.StringRelatedField(
+        many=False, source="technical_employee"
     )
-    cesem_responsable = serializers.StringRelatedField(
-        many=False, source="employ_responsable"
+    especialista_cadenas = serializers.StringRelatedField(
+        many=False, source="specialist_employee"
     )
+    capacitador = serializers.StringRelatedField(many=False, source="trainer_employee")
     actividad = serializers.StringRelatedField(many=False, source="activity")
 
     @staticmethod
     def get_path():
-        return "visits-ovino"
+        return "visits-component-2"
 
     class Meta:
-        model = VisitGeneticImprovementOvino
+        model = VisitComponent2
         fields = [
             "visited_at",
+            "parte_number",
+            "month_f",
+            "general_data",
             "zona",
             "comunidad",
             "sector",
             "up_responsable",
-            "up_member_name",
-            "cesem_especialista",
-            "cesem_responsable",
+            "age",
+            "tecnico_cadenas",
+            "especialista_cadenas",
+            "capacitador",
             "actividad",
-            "selected_ovines",
-            "synchronized_ovines",
-            "inseminated_sheeps_corriedale",
-            "inseminated_sheeps_criollas",
-            "pregnant",
-            "empty",
-            "not_evaluated",
-            "baby_males",
-            "baby_females",
-            "baby_deaths",
-            "course_male_attendance",
-            "course_female_attendance",
-            "technical_assistance_attendance",
-            "ovinos_number",
+            "quantity",
             "url",
         ]
 
 
-class VisitGeneticImprovementOvinoViewSet(viewsets.ModelViewSet):
+class VisitComponent2ViewSet(viewsets.ModelViewSet):
     queryset = (
-        VisitGeneticImprovementOvino.objects.select_related("production_unit")
+        VisitComponent2.objects.select_related("production_unit")
         .select_related("production_unit__zone")
         .select_related("production_unit__person_responsable")
-        .select_related("employ_specialist", "employ_responsable")
+        .select_related("specialist_employee", "technical_employee", "trainer_employee")
         .select_related("activity")
         .all()
     )
-    serializer_class = VisitGeneticImprovementOvinoPathSerializer
+    serializer_class = VisitComponent2PathSerializer
 
     filterset_fields = {
         "visited_at": ["exact"],
@@ -73,8 +65,8 @@ class VisitGeneticImprovementOvinoViewSet(viewsets.ModelViewSet):
         "production_unit__community__name": ["icontains"],
         "production_unit__sector__name": ["icontains"],
         "production_unit__person_responsable__name": ["icontains"],
-        "up_member_name": ["icontains"],
-        "employ_specialist__name": ["icontains"],
-        "employ_responsable__name": ["icontains"],
+        "specialist_employee__name": ["icontains"],
+        "technical_employee__name": ["icontains"],
+        "trainer_employee__name": ["icontains"],
         "activity__name": ["icontains"],
     }

@@ -1,11 +1,11 @@
-from core.models import VisitComponents
+from core.models import VisitComponent2, VisitComponent3
 from rest_framework import serializers, viewsets
 
 from .utils import BasePathSerializer
 from .zones import ZonePathSerializer
 
 
-class VisitComponentsPathSerializer(BasePathSerializer):
+class VisitComponent3PathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
     comunidad = serializers.StringRelatedField(
         many=False, source="production_unit.community"
@@ -25,14 +25,14 @@ class VisitComponentsPathSerializer(BasePathSerializer):
 
     @staticmethod
     def get_path():
-        return "visits-components"
+        return "visits-component-3"
 
     class Meta:
-        model = VisitComponents
+        model = VisitComponent3
         fields = [
             "visited_at",
             "parte_number",
-            "year",
+            "month_f",
             "general_data",
             "zona",
             "comunidad",
@@ -44,28 +44,29 @@ class VisitComponentsPathSerializer(BasePathSerializer):
             "capacitador",
             "actividad",
             "quantity",
-            "certificate_delivery",
-            "pedagogical_process",
             "url",
         ]
 
 
-class VisitComponentsViewSet(viewsets.ModelViewSet):
+class VisitComponent3ViewSet(viewsets.ModelViewSet):
     queryset = (
-        VisitComponents.objects.select_related("production_unit")
+        VisitComponent2.objects.select_related("production_unit")
         .select_related("production_unit__zone")
         .select_related("production_unit__person_responsable")
         .select_related("specialist_employee", "technical_employee", "trainer_employee")
         .select_related("activity")
         .all()
     )
-    serializer_class = VisitComponentsPathSerializer
+    serializer_class = VisitComponent3PathSerializer
 
     filterset_fields = {
-        "production_unit__zone__name": ["contains"],
-        "production_unit__person_responsable__name": ["contains"],
-        "specialist_employee__name": ["contains"],
-        "technical_employee__name": ["contains"],
-        "trainer_employee__name": ["contains"],
-        "activity__name": ["contains"],
+        "visited_at": ["exact"],
+        "production_unit__zone__name": ["icontains"],
+        "production_unit__community__name": ["icontains"],
+        "production_unit__sector__name": ["icontains"],
+        "production_unit__person_responsable__name": ["icontains"],
+        "specialist_employee__name": ["icontains"],
+        "technical_employee__name": ["icontains"],
+        "trainer_employee__name": ["icontains"],
+        "activity__name": ["icontains"],
     }

@@ -52,6 +52,12 @@ body {
     border-top: 5px solid rgba(112.520718,44.062154,249.437846, 1) !important;
 }
 
+@media (min-width: 768px) {
+    .navbar-nav {
+        display: none !important;
+    }
+}
+
 .navbar-brand {
     font-weight: 600 !important;
     color: #fff !important;

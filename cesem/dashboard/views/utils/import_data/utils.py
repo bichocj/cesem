@@ -9,6 +9,7 @@ from core.models import (
     Sector,
     ProductionUnit,
     FilesChecksum,
+    Sexs,
 )
 
 
@@ -92,12 +93,18 @@ class HelperImport:
         if val == "nan":
             return None
 
-    def get_person(self, name, dni=None, sex=None, creates_if_none=True, row=0):
+    def get_sex(self, val):
+        sex_data = Sexs.MALE
+        if val == "F":
+            sex_data = Sexs.FEMALE
+        return sex_data
+    
+    def get_person(self, name, column_name, dni=None, sex=None, creates_if_none=True, row=0):
         sex_data = None
         name = str(name).strip()
-        sex_data = Person.Sexs.MALE
-        if sex == "F":
-            sex_data = Person.Sexs.FEMALE
+        sex_data = self.get_sex(sex)
+        if type(dni) is float:
+            dni = int(dni)
 
         person = None
         if not str(dni).isnumeric():
@@ -117,19 +124,12 @@ class HelperImport:
                     person = Person.objects.create(name=name, dni=dni, sex=sex_data)
                     self.people_names[name] = person
                 else:
-                    msg = (
-                        "La persona " + name + " no esta entre las personas registradas"
-                    )
+                    msg = "En la columna " + column_name + ", la persona " + name + " no esta entre las personas registradas"                    
                     if str(dni).isnumeric():
-                        msg = (
-                            "La persona "
-                            + name
-                            + " con dni "
-                            + str(dni)
-                            + " no esta entre las personas registradas"
-                        )
+                        msg = "En la columna " + column_name + ", la persona " + name + " con dni " + str(dni) + " no esta entre las personas registradas"
                     if row > 0:
                         msg += ", fila " + str(row)
+                    
                     raise Exception(msg)
         return person
 
@@ -138,9 +138,9 @@ class HelperImport:
     ):
         sex_data = None
         name = str(name).strip()
-        sex_data = Person.Sexs.MALE
+        sex_data = Sexs.MALE
         if sex == "F":
-            sex_data = Person.Sexs.FEMALE
+            sex_data = Sexs.FEMALE
 
         person = None
         if not str(dni).isnumeric():
@@ -254,12 +254,13 @@ class HelperImport:
                 data_up_responsable_name,
                 data_up_responsable_dni,
                 data_up_responsable_sex,
-                creates_if_none=True,
+                creates_if_none=False,
                 row=row,
             )
         else:
             up_responsable = self.get_person(
                 data_up_responsable_name,
+                "NOMBRE DEL RESPONSABLE UP",
                 data_up_responsable_dni,
                 data_up_responsable_sex,
                 creates_if_none=False,

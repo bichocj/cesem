@@ -1,6 +1,6 @@
 import os
 from django.conf import settings
-from core.models import VisitComponents, Zone, Community, Activity, Sector
+from core.models import VisitComponent2, Zone, Community, Activity, Sector
 import pandas as pd
 
 from .utils import HelperImport
@@ -32,66 +32,66 @@ mapping_activities = {
 }
 
 
-class ImportComponents(HelperImport):
+class ImportComponent2(HelperImport):
     help = "import xls data"
 
     def __init__(self):
         super().__init__()
         self.columns_names = [
-            "N° PARTE",
-            "AÑO",
+            "N",
+            "MES",
             "FECHA",
             "DATOS GENERALES",
             "ZONA",
             "COMUNIDAD",
             "SECTOR/IRRIGACION",
-            "NOMBRE RESPONSABLE UP",
-            "N° DNI",
+            "NOMBRE DEL RESPONSABLE UP",
+            "N DNI",
             "SEXO RUP",
             "EDAD RUP",
             "TECNICO DE CADENAS",
             "ESPECIALISTA DE CADENAS",
-            "CAPACITADOR(A)",
+            "CAPACITADOR",
             "ACTIVIDAD REALIZADA",
         ]
 
     def _inner_execute(self, file, creates_if_none=True, checksum=""):
         df = pd.read_excel(file)
         data = df.to_dict()
-        rows_count = len(data["N°"].keys())
+        rows_count = len(data["N"].keys())
         visits = []
-        print("data", data)
         for i in range(rows_count):
-            data_parte_number = self.zero_if_nan(data["N° PARTE"][i])
-            data_year = data["AÑO"][i]
+            data_parte_number = self.zero_if_nan(data["N"][i])
+            data_month = data["MES"][i]
             data_visited_at = data["FECHA"][i]
             data_general_data = data["DATOS GENERALES"][i]
             data_zone = data["ZONA"][i]
             data_community = data["COMUNIDAD"][i]
             data_sector = data["SECTOR/IRRIGACION"][i]
-            data_up_responsible_name = data["NOMBRE RESPONSABLE UP"][i]
-            data_dni_responsible = data["N° DNI"][i]
+            data_up_responsible_name = data["NOMBRE DEL RESPONSABLE UP"][i]
+            data_dni_responsible = data["N DNI"][i]
             data_gender_responsible = data["SEXO RUP"][i]
             data_age_responsible = self.zero_if_nan(data["EDAD RUP"][i])
             data_technical_employee = data["TECNICO DE CADENAS"][i]
             data_specialist_employee = data["ESPECIALISTA DE CADENAS"][i]
-            data_trainer_employee = data["CAPACITADOR(A)"][i]
+            data_trainer_employee = data["CAPACITADOR"][i]
             data_activity = data["ACTIVIDAD REALIZADA"][i]
-            data_certificate_delivery = self.zero_if_nan(
-                data["ADICIONAL 01: ENTREGA DE CERTIFICADOS - GESTION EMPRESARIAL"][i]
-            )
-            data_pedagogical_process = self.zero_if_nan(
-                data["ADICIONAL 02: PROCESOS PEDAGÓGICOS EQUIPO CESEM"][i]
-            )
 
-            data_quantity = self.zero_if_nan(
-                data[mapping_activities.get(data_activity.lower())][i]
-            )
+            # data_quantity = self.zero_if_nan(
+            #    data[mapping_activities.get(data_activity.lower())][i]
+            # )
+            data_quantity = 1
 
             try:
-                technical_employee = self.get_person(data_technical_employee)
-                specialist_employee = self.get_person(data_specialist_employee)
-                trainer_employee = self.get_person(data_trainer_employee)
+                technical_employee = self.get_person(
+                    data_technical_employee, "TECNICO DE CADENAS", creates_if_none=False
+                )
+                specialist_employee = self.get_person(
+                    data_specialist_employee, "ESPECIALISTA DE CADENAS", creates_if_none=False
+                )
+                trainer_employee = self.get_person(
+                    data_trainer_employee, "CAPACITADOR", creates_if_none=False
+                )
                 activity = self.get_activity(
                     data_activity, creates_if_none=False, row=i + 1
                 )
@@ -107,9 +107,9 @@ class ImportComponents(HelperImport):
                 )
 
                 visits.append(
-                    VisitComponents(
+                    VisitComponent2(
                         parte_number=data_parte_number,
-                        year=data_year,
+                        month_f=data_month,
                         visited_at=data_visited_at,
                         general_data=data_general_data,
                         production_unit=production_unit,
@@ -119,8 +119,6 @@ class ImportComponents(HelperImport):
                         trainer_employee=trainer_employee,
                         activity=activity,
                         quantity=data_quantity,
-                        certificate_delivery=data_certificate_delivery,
-                        pedagogical_process=data_pedagogical_process,
                     )
                 )
                 logger.info("Procesando registro de componentes Nº: " + str(i + 1))
@@ -150,5 +148,5 @@ class ImportComponents(HelperImport):
             except Exception as e:
                 msg = "fila " + str(i + 1) + " " + str(e)
                 raise ValueError(msg)
-        VisitComponents.objects.bulk_create(visits)
+        VisitComponent2.objects.bulk_create(visits)
         return len(visits)

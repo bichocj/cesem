@@ -20,3 +20,6 @@ flyctl ssh console --app bold-snowflake-842-db
 ### Secret Values
 The secret env vars values are in bichocj > google drive > secrets > cesem
 
+
+export data with
+$ python -Xutf8 manage.py dumpdata core.activity --indent 2 > init-data.json

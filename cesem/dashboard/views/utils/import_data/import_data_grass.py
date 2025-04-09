@@ -55,7 +55,7 @@ class ImportGrass(HelperImport):
     def __init__(self):
         super().__init__()
         self.columns_names = [
-            "N°",
+            "N",
             "MES",  #
             "FECHA",
             "ZONA",
@@ -109,7 +109,7 @@ class ImportGrass(HelperImport):
     def _inner_execute(self, file, creates_if_none=True, checksum=""):
         df = pd.read_excel(file)
         data = df.to_dict()
-        rows_count = len(data["N°"].keys())
+        rows_count = len(data["N"].keys())
         visits = []
         for i in range(rows_count):
             data_visited_at = self.none_if_nat(data["FECHA"][i])
@@ -121,14 +121,14 @@ class ImportGrass(HelperImport):
                 data["NOMBRE DEL RESPONSABLE UP"][i]
             )
             data_up_responsable_dni = self.zero_if_nan(
-                self.nan_if_nat(data["N° DNI"][i])
+                self.nan_if_nat(data["N DNI"][i])
             )
             data_up_responsable_sex = self.nan_if_nat(data["SEXO RUP"][i])
             data_up_member_name = self.nan_if_nat(
                 data["NOMBRE DEL INTEGRANTE DE UP"][i]
             )
-            data_up_member_dni = self.zero_if_nan(self.nan_if_nat(data["N° DNI.1"][i]))
-            data_up_member_sex = self.nan_if_nat(data["SEXO IUP"][i])
+            data_up_member_dni = self.zero_if_nan(self.nan_if_nat(data["N DNI.1"][i]))            
+            data_up_member_sex = self.get_sex(self.nan_if_nat(data["SEXO IUP"][i]))
             data_anual_utm_coordinates = self.nan_if_nat(
                 data["COORDENADAS UTM ANUALES"][i]
             )
@@ -217,17 +217,10 @@ class ImportGrass(HelperImport):
             """
 
             try:
-                employ_responsable = self.get_person(data_employ_responsable)
-                employ_specialist = self.get_person(data_employ_specialist)
+                employ_responsable = self.get_person(data_employ_responsable, "NOMBRE DE RESPONSABLE", creates_if_none=False)
+                employ_specialist = self.get_person(data_employ_specialist, "NOMBRE DE RESPONSABLE DE ACTIVIDAD", creates_if_none=False)
                 activity = self.get_activity(
                     data_activity, creates_if_none=False, row=i + 1
-                )
-                up_member = self.get_person(
-                    data_up_member_name,
-                    data_up_member_dni,
-                    data_up_member_sex,
-                    creates_if_none=True,
-                    row=i + 1,
                 )
                 production_unit = self.get_production_unit(
                     data_zone,
@@ -255,7 +248,9 @@ class ImportGrass(HelperImport):
                     VisitGrass(
                         visited_at=data_visited_at,
                         production_unit=production_unit,
-                        up_member=up_member,
+                        up_member_name=data_up_member_name,
+                        up_member_dni=data_up_member_dni,
+                        sex=data_up_member_sex,
                         utm_coordenate=data_anual_utm_coordinates,
                         producer_classification=data_producer_classification,
                         employ_specialist=employ_specialist,

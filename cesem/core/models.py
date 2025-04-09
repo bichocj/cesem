@@ -1,11 +1,18 @@
 from django.db import models
 
 
-class Person(models.Model):
-    class Sexs(models.IntegerChoices):
-        FEMALE = 0, ("femenino")
-        MALE = 1, ("masculino")
+class Sexs(models.IntegerChoices):
+    FEMALE = 0, ("femenino")
+    MALE = 1, ("masculino")
 
+class ImportIn(models.IntegerChoices):
+    DEWORMING = 0, ("desparasitación")
+    SALES = 1, ("sales")
+    VACUNO = 2, ("vacunos")
+    OVINO = 3, ("ovino")
+    ALPACA = 4, ("alpaca")
+
+class Person(models.Model):
     class Titles(models.IntegerChoices):
         tec = 0, ("tec.")
         mvz = 1, ("mvz.")
@@ -18,7 +25,6 @@ class Person(models.Model):
 
     dni = models.IntegerField("dni", null=True, blank=True)
     name = models.CharField("nombres", max_length=50)
-    last_name = models.CharField("apellidos", max_length=50, blank=True, null=True)
     sex = models.IntegerField("sexo", choices=Sexs.choices, blank=True, null=True)
     title = models.IntegerField("titulo", choices=Titles.choices, blank=True, null=True)
 
@@ -107,7 +113,8 @@ class Activity(models.Model):
         verbose_name="actividad superior",
     )
     sum_in_parent = models.BooleanField("sumar en resumen", default=True)
-    um = models.CharField("unidad de medida", null=True, blank=True, max_length=50)
+    um = models.CharField("unidad de medida", null=True, blank=True, max_length=50)     
+    import_in = models.IntegerField("importar excel como", choices=ImportIn.choices, blank=True, null=True)
     meta_2022 = models.IntegerField("meta 2022", default=0)
     meta_2023 = models.IntegerField("meta 2023", default=0)
     meta_2024 = models.IntegerField("meta 2024", default=0)
@@ -117,7 +124,7 @@ class Activity(models.Model):
 
 
 class SicknessObservation(models.Model):
-    name = models.CharField("nombre", max_length=50)
+    name = models.CharField("nombre", max_length=100)
 
     class Meta:
         verbose_name = "enfermedad/observación"
@@ -129,7 +136,7 @@ class SicknessObservation(models.Model):
 
 class Diagnostic(models.Model):
     name = models.CharField(
-        "observación", max_length=50
+        "observación", max_length=100
     )  # the name 'name' allow us an easy sync in sync_masters func
 
     class Meta:
@@ -146,7 +153,7 @@ class Drug(models.Model):
         ml = 0, ("ml.")
         gr = 1, ("gr.")
 
-    name = models.CharField("nombre", max_length=50)
+    name = models.CharField("nombre", max_length=100)
     um = models.CharField("unidad de medida", max_length=100)
     # , choices=UnitMeasurement.choices, default=0
 
@@ -173,11 +180,15 @@ class ProductionUnit(models.Model):
     tipology = models.IntegerField("tipología de UP", default=0)
     is_pilot = models.BooleanField("UP es piloto?", default=False)
     is_official = models.BooleanField("es oficial?", default=True)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "Unidad de Producción"
         verbose_name_plural = "Unidades de Producción"
-        ordering = ("zone", "person_responsable")
+        ordering = (
+            "person_responsable__name",
+            "zone",
+        )
 
 
 class VisitGrass(models.Model):
@@ -188,14 +199,13 @@ class VisitGrass(models.Model):
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_grass",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
+    up_member_name = models.CharField(
+        "UP integrante", max_length=50, default="", blank=True, null=True
     )
+    up_member_dni = models.CharField(
+        "N dni", max_length=20, default="", blank=True, null=True
+    )
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     utm_coordenate = models.CharField(
         "coordenadas UTM anuales", max_length=30, null=True, blank=True
     )
@@ -383,6 +393,7 @@ class VisitGrass(models.Model):
         null=True,
         blank=True,
     )
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita pastos"
@@ -397,14 +408,13 @@ class VisitAnimalHealth(models.Model):
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
+    up_member_name = models.CharField(
+        "UP integrante", max_length=50, default="", blank=True, null=True
     )
+    up_member_dni = models.CharField(
+        "N dni", max_length=20, default="", blank=True, null=True
+    )
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
@@ -424,9 +434,15 @@ class VisitAnimalHealth(models.Model):
         SicknessObservation,
         on_delete=models.CASCADE,
         verbose_name="enfermedad/observación",
+        blank=True,
+        null=True,
     )
     diagnostic = models.ForeignKey(
-        Diagnostic, on_delete=models.CASCADE, verbose_name="diagnostico"
+        Diagnostic,
+        on_delete=models.CASCADE,
+        verbose_name="diagnostico",
+        blank=True,
+        null=True,
     )
     vaca = models.IntegerField("vaca", default=0)
     vaquillona = models.IntegerField("vaquillona", default=0)
@@ -439,6 +455,8 @@ class VisitAnimalHealth(models.Model):
     alpacas = models.IntegerField("alpacas", default=0)
     llamas = models.IntegerField("llamas", default=0)
     canes = models.IntegerField("canes", default=0)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
+    is_sal = models.BooleanField('es sal', default=False)
 
     class Meta:
         verbose_name = "visita sanidad animal"
@@ -456,6 +474,80 @@ class VisitAnimalHealthDetails(models.Model):
         verbose_name_plural = "visitas sanidad animal - detalles"
 
 
+class VisitAnimalDeworming(models.Model):
+    checksum = models.CharField(max_length=100, default="")
+    visited_at = models.DateField(
+        "fecha de visita", blank=True, null=True
+    )  # Because current XLS doesn't have all dates
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    up_member_name = models.CharField(
+        "UP integrante", max_length=50, default="", blank=True, null=True
+    )
+    up_member_dni = models.CharField(
+        "N dni", max_length=20, default="", blank=True, null=True
+    )
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
+    employ_specialist = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_specialist_deworming",
+        verbose_name="personal especialista",
+    )
+    employ_responsable = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="employ_responsable_deworming",
+        verbose_name="personal responsable",
+    )
+    activity = models.ForeignKey(
+        Activity, on_delete=models.CASCADE, verbose_name="actividad"
+    )
+    sickness_observation = models.ForeignKey(
+        SicknessObservation,
+        on_delete=models.CASCADE,
+        verbose_name="enfermedad/observación",
+    )
+    diagnostic = models.ForeignKey(
+        Diagnostic, on_delete=models.CASCADE, verbose_name="diagnostico"
+    )
+
+    v_race = models.CharField(
+        "vacunos raza", max_length=50, default="", blank=True, null=True
+    )
+    v_dewormed = models.IntegerField("vacunos desparasitados", default=0)
+    v_no_dewormed = models.IntegerField("vacunos no desparasitados", default=0)
+    v_total = models.IntegerField("total vacunos", default=0)
+    o_race = models.CharField(
+        "ovinos raza", max_length=50, default="", blank=True, null=True
+    )
+    o_dewormed = models.IntegerField("ovinos desparasitados", default=0)
+    o_no_dewormed = models.IntegerField("ovinos no desparasitados", default=0)
+    o_total = models.IntegerField("total ovinos", default=0)
+    a_race = models.CharField(
+        "alpacas raza", max_length=50, default="", blank=True, null=True
+    )
+    a_dewormed = models.IntegerField("alpacas desparasitados", default=0)
+    a_no_dewormed = models.IntegerField("alpacas no desparasitados", default=0)
+    a_total = models.IntegerField("total alpacas", default=0)
+    l_race = models.CharField(
+        "llamas raza", max_length=50, default="", blank=True, null=True
+    )
+    l_dewormed = models.IntegerField("llamas desparasitados", default=0)
+    l_no_dewormed = models.IntegerField("llamas no desparasitados", default=0)
+    l_total = models.IntegerField("total llamas", default=0)
+    c_total = models.IntegerField("total canes", default=0)
+    total = models.IntegerField("total", default=0)
+
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
+
+    class Meta:
+        verbose_name = "visita vacunacion"
+        verbose_name_plural = "visitas vacunacion"
+        ordering = ("visited_at", "production_unit")
+
+
 class VisitGeneticImprovementVacuno(models.Model):
     checksum = models.CharField(max_length=100, default="")
     visited_at = models.DateField(
@@ -468,14 +560,13 @@ class VisitGeneticImprovementVacuno(models.Model):
         blank=True,
         null=True,
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal_vacuno",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
+    up_member_name = models.CharField(
+        "UP integrante", max_length=50, default="", blank=True, null=True
     )
+    up_member_dni = models.CharField(
+        "N dni", max_length=20, default="", blank=True, null=True
+    )
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
@@ -531,6 +622,7 @@ class VisitGeneticImprovementVacuno(models.Model):
         "asis tec manejo ganado vacuno lechero", default=0
     )
     vacunos_number = models.IntegerField("cant vacunos", default=0)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita MG vacuno"
@@ -545,14 +637,13 @@ class VisitGeneticImprovementOvino(models.Model):
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal_ovino",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
+    up_member_name = models.CharField(
+        "UP integrante", max_length=50, default="", blank=True, null=True
     )
+    up_member_dni = models.CharField(
+        "N dni", max_length=20, default="", blank=True, null=True
+    )
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
@@ -593,6 +684,7 @@ class VisitGeneticImprovementOvino(models.Model):
     )
     ovinos_number = models.IntegerField("cant ovinos", default=0)
     rgc_number = models.CharField("nº RGC", max_length=30, null=True, blank=True)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita MG ovino"
@@ -607,14 +699,13 @@ class VisitGeneticImprovementAlpaca(models.Model):
     production_unit = models.ForeignKey(
         ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
     )
-    up_member = models.ForeignKey(
-        Person,
-        on_delete=models.CASCADE,
-        related_name="person_member_animal_alpaca",
-        verbose_name="up. integrante",
-        null=True,
-        blank=True,
+    up_member_name = models.CharField(
+        "UP integrante", max_length=50, default="", blank=True, null=True
     )
+    up_member_dni = models.CharField(
+        "N dni", max_length=20, default="", blank=True, null=True
+    )
+    sex = models.IntegerField("sexo IUP", choices=Sexs.choices, blank=True, null=True)
     employ_specialist = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
@@ -689,15 +780,16 @@ class VisitGeneticImprovementAlpaca(models.Model):
     technical_assistance_attendance = models.IntegerField(
         "asist tec buenas prácticas manejo alpacas", default=0
     )
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "visita MG alpaca"
         verbose_name_plural = "visitas MG alpacas"
 
 
-class VisitComponents(models.Model):
+class VisitComponent2(models.Model):
     parte_number = models.IntegerField("nro. parte", default=0)
-    year = models.CharField("año", max_length=10, null=True, blank=True)
+    month_f = models.CharField("mes", max_length=10, null=True, blank=True)
     visited_at = models.DateField("fecha de visita", blank=True, null=True)
     general_data = models.CharField(
         "datos generales", max_length=10, null=True, blank=True
@@ -709,7 +801,7 @@ class VisitComponents(models.Model):
     technical_employee = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
-        related_name="technical_employee",
+        related_name="technical_employee_c2",
         verbose_name="técnico de cadenas",
         null=True,
         blank=True,
@@ -717,7 +809,7 @@ class VisitComponents(models.Model):
     specialist_employee = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
-        related_name="specialist_employee",
+        related_name="specialist_employee_c2",
         verbose_name="especialista de cadenas",
         null=True,
         blank=True,
@@ -725,7 +817,7 @@ class VisitComponents(models.Model):
     trainer_employee = models.ForeignKey(
         Person,
         on_delete=models.CASCADE,
-        related_name="trainer_employee",
+        related_name="trainer_employee_c2",
         verbose_name="capacitador",
         null=True,
         blank=True,
@@ -734,16 +826,57 @@ class VisitComponents(models.Model):
         Activity, on_delete=models.CASCADE, verbose_name="actividad"
     )
     quantity = models.IntegerField("cantidad", default=0)
-    certificate_delivery = models.IntegerField(
-        "entrega de certificados gestión empresarial", default=0
-    )
-    pedagogical_process = models.IntegerField(
-        "procesos pedagógicos equipo cesem", default=0
-    )
 
     class Meta:
-        verbose_name = "visita componente ii y iii"
-        verbose_name_plural = "visitas componentes ii y iii"
+        verbose_name = "visita componente ii"
+        verbose_name_plural = "visitas componente ii"
+
+
+class VisitComponent3(models.Model):
+    parte_number = models.IntegerField("nro. parte", default=0)
+    month_f = models.CharField("mes", max_length=10, null=True, blank=True)
+    visited_at = models.DateField("fecha de visita", blank=True, null=True)
+    general_data = models.CharField(
+        "datos generales", max_length=10, null=True, blank=True
+    )
+    production_unit = models.ForeignKey(
+        ProductionUnit, on_delete=models.CASCADE, verbose_name="UP"
+    )
+    age = models.IntegerField("edad RUP", default=0)
+    technical_employee = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="technical_employee_c3",
+        verbose_name="técnico de cadenas",
+        null=True,
+        blank=True,
+    )
+    specialist_employee = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="specialist_employee_c3",
+        verbose_name="especialista de cadenas",
+        null=True,
+        blank=True,
+    )
+    trainer_employee = models.ForeignKey(
+        Person,
+        on_delete=models.CASCADE,
+        related_name="trainer_employee_c3",
+        verbose_name="capacitador",
+        null=True,
+        blank=True,
+    )
+    activity = models.ForeignKey(
+        Activity, on_delete=models.CASCADE, verbose_name="actividad"
+    )
+    quantity = models.IntegerField("cantidad", default=0)
+    created_at = models.DateTimeField("f. creación", auto_created=True, auto_now=True)
+
+
+    class Meta:
+        verbose_name = "visita componente iii"
+        verbose_name_plural = "visitas componente iii"
 
 
 class FilesChecksum(models.Model):
@@ -760,6 +893,14 @@ class FilesChecksum(models.Model):
 
 class AnualPeriod(models.Model):
     date_from = models.DateField("fecha de inicio de periodo")
+
     class Meta:
         verbose_name = "Periodo anual"
         verbose_name_plural = "Periodo anual"
+
+
+# class CustomPermission(models.Model):
+#    class Meta:
+#        permissions = (
+#            ('can_custom_action', 'Can perform custom action'),
+#        )

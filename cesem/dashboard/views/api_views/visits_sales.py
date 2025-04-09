@@ -6,7 +6,7 @@ from .utils import BasePathSerializer
 from .zones import ZonePathSerializer
 
 
-class VisitAnimalHealthPathSerializer(BasePathSerializer):
+class VisitSalesPathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
     comunidad = serializers.StringRelatedField(
         many=False, source="production_unit.community"
@@ -29,7 +29,7 @@ class VisitAnimalHealthPathSerializer(BasePathSerializer):
 
     @staticmethod
     def get_path():
-        return "visits-animals"
+        return "visits-sales"
 
     class Meta:
         model = VisitAnimalHealth
@@ -62,7 +62,7 @@ class VisitAnimalHealthPathSerializer(BasePathSerializer):
         ]
      
 
-class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):    
+class VisitSalesDetailsPathSerializer(BasePathSerializer):    
     cesem_especialista = serializers.StringRelatedField(
         many=False, source="employ_specialist"
     )
@@ -82,7 +82,7 @@ class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):
 
     @staticmethod
     def get_path():
-        return "visits-animals"
+        return "visits-sales"
 
     class Meta:
         model = VisitAnimalHealth
@@ -116,7 +116,7 @@ class VisitAnimalHealthDetailsPathSerializer(BasePathSerializer):
         ]
 
 
-class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
+class VisitSalesViewSet(viewsets.ModelViewSet):
     queryset = (
         VisitAnimalHealth.objects.select_related("production_unit")
         .select_related("production_unit__zone")
@@ -125,10 +125,10 @@ class VisitAnimalHealthViewSet(viewsets.ModelViewSet):
         .select_related("activity")
         .select_related("sickness_observation")
         .select_related("diagnostic")
-        .filter(is_sal=False).order_by('-visited_at')
+        .filter(is_sal=True).order_by('-visited_at')
     )
-    serializer_class = VisitAnimalHealthPathSerializer
-    serializer_details_class = VisitAnimalHealthDetailsPathSerializer
+    serializer_class = VisitSalesPathSerializer
+    serializer_details_class = VisitSalesDetailsPathSerializer
 
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = self.serializer_details_class

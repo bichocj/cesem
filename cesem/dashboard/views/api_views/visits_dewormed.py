@@ -1,11 +1,11 @@
-from core.models import VisitGeneticImprovementVacuno
+from core.models import VisitAnimalDeworming
 from rest_framework import serializers, viewsets
 
 from .utils import BasePathSerializer
 from .zones import ZonePathSerializer
 
 
-class VisitGeneticImprovementVacunoPathSerializer(BasePathSerializer):
+class VisitAnimalDewormedPathSerializer(BasePathSerializer):
     zona = serializers.StringRelatedField(many=False, source="production_unit.zone")
     comunidad = serializers.StringRelatedField(
         many=False, source="production_unit.community"
@@ -24,10 +24,10 @@ class VisitGeneticImprovementVacunoPathSerializer(BasePathSerializer):
 
     @staticmethod
     def get_path():
-        return "visits-vacuno"
+        return "visits-desparasitacion"
 
     class Meta:
-        model = VisitGeneticImprovementVacuno
+        model = VisitAnimalDeworming
         fields = [
             "visited_at",
             "zona",
@@ -38,42 +38,38 @@ class VisitGeneticImprovementVacunoPathSerializer(BasePathSerializer):
             "cesem_especialista",
             "cesem_responsable",
             "actividad",
-            "bull_name",
-            "bull_race",
-            "pajilla_type",
-            "pajilla_origin",
-            "pajillas_number",
-            "cow_name",
-            "cow_race",
-            "service_number",
-            "pregnant",
-            "empty",
-            "birthday",
-            "earring_number",
-            "baby_name",
-            "male",
-            "female",
-            "death",
-            "baby_bull_name",
-            "baby_cow_name",
-            "male_attendance",
-            "female_attendance",
-            "technical_assistance_attendance",
-            "vacunos_number",
+            "v_race",
+            "v_dewormed",
+            "v_no_dewormed",
+            "v_total",
+            "o_race",
+            "o_dewormed",
+            "o_no_dewormed",
+            "o_total",
+            "a_race",
+            "a_dewormed",
+            "a_no_dewormed",
+            "a_total",
+            "l_race",
+            "l_dewormed",
+            "l_no_dewormed",
+            "l_total",
+            "c_total",
+            "total",
             "url",
         ]
 
 
-class VisitGeneticImprovementVacunoViewSet(viewsets.ModelViewSet):
+class VisitAnimalDewormingViewSet(viewsets.ModelViewSet):
     queryset = (
-        VisitGeneticImprovementVacuno.objects.select_related("production_unit")
+        VisitAnimalDeworming.objects.select_related("production_unit")
         .select_related("production_unit__zone")
         .select_related("production_unit__person_responsable")
         .select_related("employ_specialist", "employ_responsable")
         .select_related("activity")
         .all()
     )
-    serializer_class = VisitGeneticImprovementVacunoPathSerializer
+    serializer_class = VisitAnimalDewormedPathSerializer
 
     filterset_fields = {
         "visited_at": ["exact"],

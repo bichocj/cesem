@@ -6,7 +6,7 @@
       {% if key in details %}
         {% if not view|get_is_hidden:key %}
         <tr>
-          <th class="text-right" style="width: 200px;">{{ view|get_column_label:key }}</th>
+          <th class="text-left selector-prop" style="width: 200px;">{{ view|get_column_label:key }}</th>
           <td {{ value|add_nested_class }}>{{ value|format_custom_value }}</td>
         </tr>
         {% endif %} 

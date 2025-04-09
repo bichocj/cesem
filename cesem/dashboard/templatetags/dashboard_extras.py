@@ -278,4 +278,4 @@ def format_custom_value(value):
             )
         elif "\n" in value:
             return mark_safe("<pre>%s</pre>" % escape(value))
-    return str(value)
+    return str(value).replace('_', ' ')

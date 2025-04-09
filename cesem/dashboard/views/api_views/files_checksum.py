@@ -32,5 +32,6 @@ class FilesChecksumViewSet(viewsets.ReadOnlyModelViewSet, mixins.DestroyModelMix
         models.VisitGeneticImprovementVacuno.objects.filter(checksum=checksum).delete()
         models.VisitGeneticImprovementOvino.objects.filter(checksum=checksum).delete()
         models.VisitGeneticImprovementAlpaca.objects.filter(checksum=checksum).delete()
+        models.VisitAnimalDeworming.objects.filter(checksum=checksum).delete()
         instance.delete()
         

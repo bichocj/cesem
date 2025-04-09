@@ -18,19 +18,19 @@
 
           <!-- Content -->
           <div id="content">
-            {% if post_form %}
+            {% if post_form and user.is_superuser %}
               <button type="button" class="button-form btn btn-primary" data-toggle="modal" data-target="#createModal">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Crear
               </button>
             {% endif %}
 
-            {% if put_form %}
+            {% if put_form and user.is_superuser %}
               <button type="button" class="button-form btn btn-primary" data-toggle="modal" data-target="#editModal">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Editar
               </button>
             {% endif %}
 
-            {% if delete_form %}
+            {% if delete_form and user.is_superuser %}
               <form class="button-form" action="{{ request.get_full_path }}" data-method="DELETE" id="delete_form">
                 <button class="btn btn-danger" id="delete_btn_form">
                   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <span id="delete_btn_label">Eliminar</span>
@@ -62,10 +62,13 @@
             <div class="content-main">
               <div class="page-header">
                 {% if style == 'list' %}
-                <h2 style="display: inline;">{{view|get_model_name_plural}} </h2>
+                <h2 style="display: inline;" id="table_page_title">{{view|get_model_name_plural}}</h2>
                 {% else %}
                 <div >
-                  <a href="{{view|get_home_path}}"><h2 style="display: inline;"> {{view|get_model_name_plural}} </h2> </a>  <h2 style="display: inline;">&nbsp/&nbsp{{view|get_model_name }} </h2>
+                  <a href="{{view|get_home_path}}">
+                    <h2 style="display: inline;" id="table_page_title"> {{view|get_model_name_plural}} </h2>
+                  </a>  
+                    <h2 style="display: inline;" id="table_page_subtitle">&nbsp/&nbsp{{view|get_model_name }} </h2>
                 </div>
                 {%  endif %}
                 
@@ -252,6 +255,67 @@
               }
             });
             return false;
+          });
+        
+          function updateProductionunitId(productionunitId, personName) {
+              if(productionunitId){
+                console.log('zazaza', productionunitId)
+                $('select[name="production_unit"]').val(productionunitId);
+                $('#personName').text(personName);
+                // $('#editModal [type=submit]').click();
+
+                // window.location.reload();
+              }
+          }
+
+          let popupIndex = 0;
+          const relatedWindows = [];
+
+          function addPopupIndex(name) {
+              return name + "__" + (popupIndex + 1);
+          }
+          
+          function showAdminPopup(triggeringLink, name_regexp, add_popup) {
+              const name = addPopupIndex(triggeringLink.id.replace(name_regexp, ''));
+              const href = new URL(triggeringLink.href);
+              if (add_popup) {
+                  href.searchParams.set('_popup', 1);
+              }
+              const win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+              relatedWindows.push(win);
+              win.focus();
+              return false;
+          }
+          
+          function showRelatedObjectLookupPopup(triggeringLink) {
+              return showAdminPopup(triggeringLink, /^lookup_/, true);
+          }
+
+          function showRelatedObjectPopup(triggeringLink) {
+              return showAdminPopup(triggeringLink, /^(change|add|delete)_/, false);
+          }
+
+          $(function () {
+              // const tmp = window.location.href.split('/')
+              // const visitId = tmp[tmp.length - 2];
+
+              // $("td:contains('change_up_link'):last").html(`<a class="related-widget-wrapper-link change-related" data-href-template="/admin/core/productionunit/__fk__/change/?_to_field=id&amp;_popup=1" data-popup="yes" title="Cambiar Unidad de Producción seleccionados" href="/user_search?visitId=${visitId}">Cambiar UP</a>`)
+              // $("th:contains('Cambiar Up'):last").text('');
+              //$('select[name="production_unit"]').parent()
+              $('select[name="production_unit"]').parent().append('<div id="personName"></div>')
+              $('select[name="production_unit"]').parent().append('<a class="related-widget-wrapper-link change-related" data-href-template="/admin/core/productionunit/__fk__/change/?_to_field=id&amp;_popup=1" data-popup="yes" title="Cambiar Unidad de Producción seleccionados" href="/user_search">Cambiar UP</a>')
+              $('select[name="production_unit"]').hide();
+
+              $('body').on('click', '.related-widget-wrapper-link[data-popup="yes"]', function(e) {
+                  e.preventDefault();
+                  if (this.href) {
+                      const event = $.Event('django:show-related', {href: this.href});
+                      $(this).trigger(event);
+                      if (!event.isDefaultPrevented()) {
+                          showRelatedObjectPopup(this);
+                      }
+                  }
+              });
           });
         </script>
       {% endblock %}

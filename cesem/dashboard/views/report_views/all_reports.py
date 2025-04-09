@@ -4,14 +4,15 @@ from dateutil.relativedelta import relativedelta
 from core.models import (
     Activity,
     VisitAnimalHealth,
+    VisitAnimalDeworming,
     Zone,
     VisitGrass,
     Community,
     VisitGeneticImprovementVacuno,
     VisitGeneticImprovementOvino,
     VisitGeneticImprovementAlpaca,
-    VisitComponents,
-    AnualPeriod
+    VisitComponent2,
+    AnualPeriod,
 )
 from django.db.models import F, Sum, Case, When, Value, Q, Count, CharField
 from django.db.models.functions import ExtractWeek, Round, ExtractYear, Concat
@@ -91,6 +92,10 @@ alpaca_quantity_var_sum = Sum(
     + F("female_baby")
 )
 
+deworming_quantity_var_sum = Sum(
+    F("total")
+)
+
 
 def get_weekly_data(from_datepicker, to_datepicker, inform_type):
     animal_health_quantity_var = Count("id")
@@ -98,6 +103,8 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    # deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
 
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
@@ -105,6 +112,7 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -151,10 +159,19 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
         .order_by("visited_at")
     )
 
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .values("activity__id", "visited_at")
+        .annotate(quantity=deworming_quantity_var)
+        .order_by("visited_at")
+    )
+
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values("id", "activity__id", "visited_at")
@@ -165,15 +182,22 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
     else:
         # cantidad de capacitaciones que se dieron
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
-            .annotate(location_concat=Concat(F('production_unit__zone'), F('production_unit__community'), F('production_unit__sector'), output_field=CharField()))
+            .annotate(
+                location_concat=Concat(
+                    F("production_unit__zone"),
+                    F("production_unit__community"),
+                    F("production_unit__sector"),
+                    output_field=CharField(),
+                )
+            )
             .values(
                 "visited_at",
                 "activity__id",
             )
-            .annotate(quantity=Count('location_concat', distinct=True))
+            .annotate(quantity=Count("location_concat", distinct=True))
             .order_by("visited_at")
         )
 
@@ -184,6 +208,7 @@ def get_weekly_data(from_datepicker, to_datepicker, inform_type):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            deworming_data,
             components_data,
         )
     )
@@ -200,7 +225,7 @@ def get_weeks_number(from_week_year, to_week_year):
         week_from_iter = week_from if year == year_from else 1
         week_to_iter = week_to if year == year_to else get_last_week_of_year(year)
         for week in range(week_from_iter, week_to_iter + 1):
-            weeks_number[(week, year)]= ""
+            weeks_number[(week, year)] = ""
 
     # todas las semanas existentes dentro del from y el to
     return weeks_number
@@ -221,19 +246,19 @@ def get_activities_data(data, activities):
     """
     Format:
     {
-        'activity_key':{ 
+        'activity_key':{
             ('week', 'year'): value
         },
-        'activity_key':{ 
-			('week', 'year'): value
-		}
+        'activity_key':{
+                        ('week', 'year'): value
+                }
     }
     """
     activities_data = {}
     for d in data:
-        activity_id = d.get('activity__id')
-        visited_at = d.get('visited_at')
-        quantity = d.get('quantity')
+        activity_id = d.get("activity__id")
+        visited_at = d.get("visited_at")
+        quantity = d.get("quantity")
         year, week, _ = visited_at.isocalendar()
 
         if activity_id in activities_data:
@@ -256,10 +281,12 @@ def get_anual_period():
     from_anual_period = from_anual_period_object.date_from
 
     if from_anual_period.month == 2 and from_anual_period.day == 29:
-        to_anual_period = datetime.date(from_anual_period.year+1, 2, 28)
+        to_anual_period = datetime.date(from_anual_period.year + 1, 2, 28)
     else:
-        to_anual_period = from_anual_period.replace(year=from_anual_period.year+1) - datetime.timedelta(days=1)
-    
+        to_anual_period = from_anual_period.replace(
+            year=from_anual_period.year + 1
+        ) - datetime.timedelta(days=1)
+
     return from_anual_period, to_anual_period
 
 
@@ -280,38 +307,46 @@ def get_current_period(year, from_anual_period, to_anual_period):
         default_from = datetime.date(year, 2, 28)
     else:
         default_from = datetime.date(year, month_from_period, day_from_period)
-    
+
     if month_from_period == 1 and day_from_period == 1:
         default_to_year = year
     else:
         default_to_year = year + 1
-    
+
     # para el caso de que alguna de las fechas haya sido 29 pero no exista en el año actual
-    if day_to_period == 29 and month_to_period == 2 and not calendar.isleap(default_to_year):
+    if (
+        day_to_period == 29
+        and month_to_period == 2
+        and not calendar.isleap(default_to_year)
+    ):
         default_to = datetime.date(default_to_year, 2, 28)
     else:
         default_to = datetime.date(default_to_year, month_to_period, day_to_period)
-    
-    return default_from.strftime('%Y-%m-%d'), default_to.strftime('%Y-%m-%d')
+
+    return default_from.strftime("%Y-%m-%d"), default_to.strftime("%Y-%m-%d")
 
 
 def generate_period_list(from_date, to_date):
     # Convertir las fechas de entrada a objetos datetime.date
-    from_date_obj = datetime.datetime.strptime(from_date, '%Y-%m-%d').date()
-    to_date_obj = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
+    from_date_obj = datetime.datetime.strptime(from_date, "%Y-%m-%d").date()
+    to_date_obj = datetime.datetime.strptime(to_date, "%Y-%m-%d").date()
 
     periods = []
 
     current_from = from_date_obj
-    current_to = (from_date_obj  + relativedelta(months=1)) - datetime.timedelta(days=1)
+    current_to = (from_date_obj + relativedelta(months=1)) - datetime.timedelta(days=1)
     for i in range(12):
-        periods.append({
-            "month": i+1,
-            "from_p": current_from.strftime('%Y-%m-%d'),
-            "to_p": current_to.strftime('%Y-%m-%d')
-        })
+        periods.append(
+            {
+                "month": i + 1,
+                "from_p": current_from.strftime("%Y-%m-%d"),
+                "to_p": current_to.strftime("%Y-%m-%d"),
+            }
+        )
         current_from = current_to + datetime.timedelta(days=1)
-        current_to = (current_from  + relativedelta(months=1)) - datetime.timedelta(days=1)
+        current_to = (current_from + relativedelta(months=1)) - datetime.timedelta(
+            days=1
+        )
 
     return periods
 
@@ -333,12 +368,16 @@ def get_monthly_data(default_from, default_to, periods, inform_type):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    # deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -405,10 +444,23 @@ def get_monthly_data(default_from, default_to, periods, inform_type):
         .order_by("activity__id", "month")
     )
 
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=default_from, visited_at__lte=default_to
+        )
+        .annotate(month=Case(*whens))
+        .values(
+            "activity__id",
+            "month",
+        )
+        .annotate(quantity=deworming_quantity_var)
+        .order_by("activity__id", "month")
+    )
+
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=default_from, visited_at__lte=default_to
             )
             .annotate(month=Case(*whens))
@@ -420,7 +472,7 @@ def get_monthly_data(default_from, default_to, periods, inform_type):
     else:
         # cantidad de capacitaciones que se dieron
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=default_from, visited_at__lte=default_to
             )
             .annotate(month=Case(*whens))
@@ -443,6 +495,7 @@ def get_monthly_data(default_from, default_to, periods, inform_type):
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
             components_data,
+            deworming_data,
         )
     )
     return data
@@ -458,7 +511,9 @@ def get_monthly_activities_data(data, activities):
 
         if activity_key not in activities_data:
             activities_data[activity_key] = {}
-        if activities_data[activity_key].get(month_key): #este caso se ha agregado porque en componentes se vio el caso que habian 2 valores para la misma celda, por tanto se sumarán
+        if activities_data[activity_key].get(
+            month_key
+        ):  # este caso se ha agregado porque en componentes se vio el caso que habian 2 valores para la misma celda, por tanto se sumarán
             activities_data[activity_key][month_key] += value
         else:
             activities_data[activity_key][month_key] = value
@@ -475,6 +530,9 @@ def get_yearly_data(default_from, default_to, inform_type):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    
+    # deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
 
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
@@ -482,6 +540,7 @@ def get_yearly_data(default_from, default_to, inform_type):
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -548,10 +607,23 @@ def get_yearly_data(default_from, default_to, inform_type):
         )
     )
 
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=default_from, visited_at__lte=default_to
+        )
+        .values(
+            "activity__id",
+        )
+        .annotate(quantity=deworming_quantity_var)
+        .order_by(
+            "activity__id",
+        )
+    )
+
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=default_from, visited_at__lte=default_to
             )
             .values("activity__id")
@@ -562,7 +634,7 @@ def get_yearly_data(default_from, default_to, inform_type):
     else:
         # cantidad de capacitaciones que se dieron
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=default_from, visited_at__lte=default_to
             )
             .values(
@@ -582,6 +654,7 @@ def get_yearly_data(default_from, default_to, inform_type):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            deworming_data,
             components_data,
         )
     )
@@ -593,8 +666,10 @@ def get_yearly_activities_data(data, activities):
     for s in data:
         activity_key = s.get("activity__id")
         value = s.get("quantity")
-        if activities_data.get(activity_key): #este caso se ha agregado porque en componentes se vio el caso que habian 2 valores para la misma celda, por tanto se sumarán
-            activities_data[activity_key] += value    
+        if activities_data.get(
+            activity_key
+        ):  # este caso se ha agregado porque en componentes se vio el caso que habian 2 valores para la misma celda, por tanto se sumarán
+            activities_data[activity_key] += value
         else:
             activities_data[activity_key] = value
 
@@ -608,10 +683,12 @@ def get_yearly_activities_data(data, activities):
                         sub_activity_data[sub_activity.id] = 0
                     at = activities.get(id=activity_key)
                     if at.sum_in_parent:
-                        sub_activity_data[sub_activity.id] += activities_data[activity_key]
-    
+                        sub_activity_data[sub_activity.id] += activities_data[
+                            activity_key
+                        ]
+
     activities_data.update(sub_activity_data)
-    
+
     return activities_data
 
 
@@ -630,7 +707,9 @@ def report_weekly(request):
 
     data = get_weekly_data(from_datepicker, to_datepicker, inform_type)
     activities_data = get_activities_data(data, activities)
-    weeks_number = get_weeks_number(get_week_year_of(from_datepicker), get_week_year_of(to_datepicker))
+    weeks_number = get_weeks_number(
+        get_week_year_of(from_datepicker), get_week_year_of(to_datepicker)
+    )
 
     return render(request, "dashboard/report_weekly.html", locals())
 
@@ -642,7 +721,9 @@ def report_monthly(request):
     year_prev = int(request.GET.get("year_prev", from_anual_period.year))
     year = int(request.GET.get("year", year_prev))
     year_str = str(year)
-    default_from, default_to = get_current_period(year, from_anual_period, to_anual_period)
+    default_from, default_to = get_current_period(
+        year, from_anual_period, to_anual_period
+    )
 
     inform_type_prev = request.GET.get("type_prev", "count")
     inform_type = request.GET.get("type", inform_type_prev)
@@ -664,7 +745,9 @@ def report_yearly(request):
     year = int(request.GET.get("year", year_prev))
     year_str = str(year)
 
-    default_from, default_to = get_current_period(year, from_anual_period, to_anual_period)
+    default_from, default_to = get_current_period(
+        year, from_anual_period, to_anual_period
+    )
 
     inform_type_prev = request.GET.get("type_prev", "count")
     inform_type = request.GET.get("type", inform_type_prev)
@@ -694,12 +777,16 @@ def report_zones(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    # deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -761,10 +848,22 @@ def report_zones(request):
         .order_by("production_unit__zone")
     )
 
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .values(
+            "activity",
+            "production_unit__zone",
+        )
+        .annotate(quantity=deworming_quantity_var)
+        .order_by("production_unit__zone")
+    )
+
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values("activity__id", "production_unit__zone")
@@ -775,7 +874,7 @@ def report_zones(request):
     else:
         # cantidad de capacitaciones que se dieron
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values(
@@ -793,6 +892,7 @@ def report_zones(request):
             genetic_improvement_vacuno_data,
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
+            deworming_data,
             components_data,
         )
     )
@@ -831,12 +931,16 @@ def report_community(request):
     vacuno_quantity_var = Count("id")
     ovino_quantity_var = Count("id")
     alpaca_quantity_var = Count("id")
+    #deworming_quantity_var = Count("id")
+    deworming_quantity_var = deworming_quantity_var_sum
+
     if inform_type == "sum":
         animal_health_quantity_var = animal_health_quantity_var_sum
         grass_quantity_var = grass_quantity_var_sum
         vacuno_quantity_var = vacuno_quantity_var_sum
         ovino_quantity_var = ovino_quantity_var_sum
         alpaca_quantity_var = alpaca_quantity_var_sum
+        deworming_quantity_var = deworming_quantity_var_sum
 
     animals_data = (
         VisitAnimalHealth.objects.filter(
@@ -897,11 +1001,23 @@ def report_community(request):
         .annotate(quantity=alpaca_quantity_var)
         .order_by("production_unit__community")
     )
+    
+    deworming_data = (
+        VisitAnimalDeworming.objects.filter(
+            visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
+        )
+        .values(
+            "activity",
+            "production_unit__community",
+        )
+        .annotate(quantity=deworming_quantity_var)
+        .order_by("production_unit__community")
+    )
 
     if inform_type == "sum":
         # cantidad de asistentes
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values("activity__id", "production_unit__community")
@@ -912,7 +1028,7 @@ def report_community(request):
     else:
         # cantidad de capacitaciones que se dieron
         components_data = (
-            VisitComponents.objects.filter(
+            VisitComponent2.objects.filter(
                 visited_at__gte=from_datepicker, visited_at__lte=to_datepicker
             )
             .values(
@@ -931,6 +1047,7 @@ def report_community(request):
             genetic_improvement_ovino_data,
             genetic_improvement_alpaca_data,
             components_data,
+            deworming_data,
         )
     )
     activities_data = {}
