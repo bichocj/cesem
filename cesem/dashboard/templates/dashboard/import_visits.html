@@ -28,6 +28,7 @@
   <button type="submit" class="btn btn-primary">Subir Archivo</button>
 </form>
 
+{% if file_type == 'animales' %}
 <div class="my-5">
   <h3>Encabezados</h3>
 </div>
@@ -296,6 +297,57 @@
     </tr>
   </table>
 </div>
+{% endif %}
+
+{% if file_type == 'componente2' %}
+<div class="my-5">
+  <h4>Encabezado</h4>
+  <table class="table table-striped table-bordered table-hover">
+    <tr>
+      <th>N</th>
+      <th>MES</th>
+      <th>FECHA</th>
+      <th>DATOS GENERALES</th>
+      <th>ZONA</th>
+      <th>COMUNIDAD</th>
+      <th>SECTOR/IRRIGACION</th>
+      <th>NOMBRE DEL RESPONSABLE UP</th>
+      <th>N DNI</th>
+      <th>SEXO RUP</th>
+      <th>EDAD RUP</th>
+      <th>TECNICO DE CADENAS</th>
+      <th>ESPECIALISTA DE CADENAS</th>
+      <th>CAPACITADOR</th>
+      <th>ACTIVIDAD REALIZADA</th>
+    </tr>
+  </table>
+</div>
+{% endif %}
+
+{% if file_type == 'componente3' %}
+<div class="my-5">
+  <h4>Encabezado</h4>
+  <table class="table table-striped table-bordered table-hover">
+    <tr>
+      <th>N</th>
+      <th>MES</th>
+      <th>FECHA</th>
+      <th>DATOS GENERALES</th>
+      <th>ZONA</th>
+      <th>COMUNIDAD</th>
+      <th>SECTOR/IRRIGACION</th>
+      <th>NOMBRE DEL RESPONSABLE UP</th>
+      <th>N DNI</th>
+      <th>SEXO RUP</th>
+      <th>EDAD RUP</th>
+      <th>TECNICO DE CADENAS</th>
+      <th>ESPECIALISTA DE CADENAS</th>
+      <th>CAPACITADOR</th>
+      <th>ACTIVIDAD REALIZADA</th>
+    </tr>
+  </table>
+</div>
+{% endif %}
 
 
 
